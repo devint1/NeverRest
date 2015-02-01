@@ -2,7 +2,7 @@
 using System.Collections;
 
 public class GameControl : MonoBehaviour {
-	public GameObject selected;
+	public ArrayList selected;
 	public GameObject white_blood_spawn_point;
 	public GameObject white_Blood_Cell_Prefab;
 	public Texture2D food_Bar_Full;
@@ -14,6 +14,7 @@ public class GameControl : MonoBehaviour {
 
 	void Start() {
 		time_of_last_spawn = Time.time;
+		selected = new ArrayList ();
 	}
 
 	void OnGUI() {

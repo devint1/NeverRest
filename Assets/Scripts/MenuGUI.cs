@@ -19,7 +19,7 @@ public class MenuGUI : MonoBehaviour {
 		}
 		if(GUILayout.Button("Quit"))
 		{
-			
+			Application.Quit();
 		}
 	}
 }

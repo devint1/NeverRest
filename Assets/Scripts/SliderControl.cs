@@ -13,6 +13,5 @@ public class NewBehaviourScript : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		Bloodslider.GetComponent<Slider> ().value += Random.Range( 0, 3 ) - 1;
 	}
 }

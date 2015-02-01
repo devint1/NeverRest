@@ -7,12 +7,11 @@ public class Block : MonoBehaviour {
 
 	// Clicked on. Send selected WhiteBloodCell here
 	void OnMouseDown() {
-		if (!game_Control.selected)
-			return;
-
-		WhiteBloodCell selected_white = game_Control.selected.GetComponent<WhiteBloodCell> ();
-
-		if (selected_white)
-			selected_white.current_Block = this.gameObject;
+		foreach (WhiteBloodCell cell in game_Control.selected) {
+			cell.renderer.material.color = Color.white;
+			cell.bIsSelected = false;
+			cell.current_Block = this.gameObject;
+		}
+		game_Control.selected = new ArrayList ();
 	}
 }

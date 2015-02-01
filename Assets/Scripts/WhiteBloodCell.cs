@@ -4,6 +4,7 @@ using System.Collections;
 public class WhiteBloodCell : MonoBehaviour {
 	public GameObject current_Block;
 	public GameControl game_Control;
+	public bool bIsSelected = false;
 	
 	float SPEED = 0.1f;
 	float MAX_TURN_DEGREES = 90f;
@@ -11,7 +12,6 @@ public class WhiteBloodCell : MonoBehaviour {
 
 	float turn_Degrees = 0f;
 	int diseases_absorbed = 0;
-	bool bIsSelected = false;
 	
 	void Start(){
 		StartCoroutine(Change_Turn_Degrees_Cycle());
@@ -19,8 +19,7 @@ public class WhiteBloodCell : MonoBehaviour {
 
 	// Clicked on and selected
 	void OnMouseDown() {
-		game_Control.selected = this.gameObject;
-		Debug.Log (gameObject.renderer.material.color);
+		game_Control.selected.Add (this);
 		if (bIsSelected) {
 			bIsSelected = !bIsSelected;
 			gameObject.renderer.material.color = Color.red;
@@ -51,7 +50,7 @@ public class WhiteBloodCell : MonoBehaviour {
 
 	// Moment Code
 	void Update () {
-		if (!current_Block.GetComponent<Renderer> ().bounds.Contains (this.transform.position) ) {
+		if (!current_Block.GetComponent<Renderer> ().bounds.Contains (this.transform.position)) {
 			var direction = current_Block.transform.position - this.transform.position;
 			var angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
 			transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
