@@ -14,19 +14,33 @@ public class WhiteBloodCell : MonoBehaviour {
 	int diseases_absorbed = 0;
 	
 	void Start(){
+		game_Control.
 		StartCoroutine(Change_Turn_Degrees_Cycle());
 	}
 
+	public void Select(){
+		if(!bIsSelected){
+			game_Control.selected.Add (this);
+			gameObject.renderer.material.color = Color.red;
+		}
+		bIsSelected = true;
+	}
+
+	public void DeSelect() {
+		if(bIsSelected) {
+			gameObject.renderer.material.color = Color.white;
+			//game_Control.selected.Remove (this);
+		}
+		bIsSelected = false;
+	}
 	// Clicked on and selected
 	void OnMouseDown() {
-		game_Control.selected.Add (this);
+
 		if (bIsSelected) {
-			bIsSelected = !bIsSelected;
-			gameObject.renderer.material.color = Color.red;
+			Select();
 		} 
 		else {
-			gameObject.renderer.material.color = Color.white;
-			bIsSelected = !bIsSelected;
+			DeSelect();
 		}
 	}
 
