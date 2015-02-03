@@ -15,11 +15,17 @@ public class GameControl : MonoBehaviour {
 	Vector3 mousePositionStart;
 	float time_of_last_spawn;
 	float food_Level = 1f;
+	bool mouse_down = false;
+	bool draw_text = false;
+	Texture2D text;
+	Rect box;
 
 	void Start() {
 		time_of_last_spawn = Time.time;
 		selected = new ArrayList ();
 		whiteBloodCells = new ArrayList ();
+		mousePositionStart = new Vector3 ();
+		Spawn_White_Blood_Cell ();
 	}
 
 	void OnGUI() {
@@ -36,39 +42,44 @@ public class GameControl : MonoBehaviour {
 		}
 		GUI.EndGroup ();
 
-		if (Input.GetMouseButton (0) == true) {
-			if( mousePressStart == -1 ){
-				mousePressStart = Time.frameCount;
-				mousePositionStart = Event.current.mousePosition;
-			}
-			else if(Time.frameCount - mousePressStart > 4){
-				//TODO - only need to make this texture once, rather than every time
-				Texture2D text = new Texture2D(1,1);
-				Color col = Color.green;
-				col.a = .15f;
-				text.SetPixel(1, 1, col);
-				text.Apply();
-				Rect box = new Rect(mousePositionStart.x, mousePositionStart.y,
-				                    Event.current.mousePosition.x - mousePositionStart.x, 
-				                    Event.current.mousePosition.y - mousePositionStart.y);
-				GUI.DrawTexture(box, text);
-			}
-		}
-		else{
-			if(mousePressStart != -1) {
-				Rect box = new Rect(mousePositionStart.x, mousePositionStart.y,
-				                    Event.current.mousePosition.x - mousePositionStart.x, 
-				                    Event.current.mousePosition.y - mousePositionStart.y);
-				foreach(WhiteBloodCell cell in whiteBloodCells){
-					Vector2 pos = Camera.main.WorldToScreenPoint(cell.transform.position);
-					pos.y = Camera.main.pixelHeight - pos.y;
-					if(box.Contains(pos, true)){
-						cell.Select();
-					}
+		if (draw_text) {
 
-				}
+			GUI.DrawTexture (box, text);
+			draw_text = false;
+		}
+
+		if (!mouse_down && Input.GetMouseButton (0)) {
+			mousePositionStart = Event.current.mousePosition;
+			mouse_down = true;
+			foreach(WhiteBloodCell cell in whiteBloodCells) {
+				cell.DeSelect();
 			}
-			mousePressStart = -1;
+		} else if (mouse_down && Input.GetMouseButton (0)) {
+			text = new Texture2D (1, 1);
+			Color col = Color.green;
+			col.a = .15f;
+			text.SetPixel (1, 1, col);
+			text.Apply ();
+			box = new Rect (mousePositionStart.x, mousePositionStart.y,
+			                Event.current.mousePosition.x - mousePositionStart.x, 
+			                Event.current.mousePosition.y - mousePositionStart.y);
+			GUI.DrawTexture (box, text);
+			draw_text = true;
+		} else if(mouse_down && !(Input.GetMouseButton (0))) {
+			box = new Rect(mousePositionStart.x, mousePositionStart.y,
+			               Event.current.mousePosition.x - mousePositionStart.x, 
+			               Event.current.mousePosition.y - mousePositionStart.y);
+			foreach(WhiteBloodCell cell in whiteBloodCells){
+				Vector2 pos = Camera.main.WorldToScreenPoint(cell.transform.position);
+				pos.y = Camera.main.pixelHeight - pos.y;
+				if(box.Contains(pos, true)){
+					cell.Select();
+				}
+				
+			}
+			mouse_down = false;
+			mousePositionStart.x = 0;
+			mousePositionStart.y = 0;
 		}
 	}
 
@@ -80,6 +91,13 @@ public class GameControl : MonoBehaviour {
 
 		if (food_Level <= 0f) {
 			Application.LoadLevel ("MenuScene"); 
+		}
+
+		foreach (WhiteBloodCell cell in whiteBloodCells) {
+			if(cell.destroy_me) {
+				whiteBloodCells.Remove(cell);
+				Destroy (cell, 2.0f);
+			}
 		}
 	}
 

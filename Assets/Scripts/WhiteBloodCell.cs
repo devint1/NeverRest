@@ -5,6 +5,7 @@ public class WhiteBloodCell : MonoBehaviour {
 	public GameObject current_Block;
 	public GameControl game_Control;
 	public bool bIsSelected = false;
+	public bool destroy_me = false;
 	
 	float SPEED = 0.1f;
 	float MAX_TURN_DEGREES = 90f;
@@ -21,7 +22,7 @@ public class WhiteBloodCell : MonoBehaviour {
 	public void Select(){
 		if(!bIsSelected){
 			game_Control.selected.Add (this);
-			gameObject.renderer.material.color = Color.red;
+			gameObject.renderer.material.color = Color.blue;
 		}
 		bIsSelected = true;
 	}
@@ -36,7 +37,7 @@ public class WhiteBloodCell : MonoBehaviour {
 	// Clicked on and selected
 	void OnMouseDown() {
 
-		if (bIsSelected) {
+		if (!bIsSelected) {
 			Select();
 		} 
 		else {
@@ -57,7 +58,8 @@ public class WhiteBloodCell : MonoBehaviour {
 
 			diseases_absorbed++;
 			if(diseases_absorbed >= MAX_DISEASE_ABSORBED) {
-				Destroy (this.gameObject, 2.0f);
+				//Destroy (this.gameObject, 2.0f);
+				destroy_me = true;
 			}
 		}
 	}
