@@ -25,12 +25,12 @@ public class Block : MonoBehaviour {
 	}
 
 	public void increaseWBCsTargeting() {
-		whiteCellsTargeting++;
-		if (whiteCellsTargeting > 0) {
+		if (whiteCellsTargeting == 0) {
 			destTarget = (GameObject)Instantiate(this.game_Control.destMarkPrefab,
 			                                       this.renderer.bounds.center,
 			                                       this.transform.rotation);
 		}
+		whiteCellsTargeting++;
 	}
 
 	public void decreaseWBCsTargeting() {

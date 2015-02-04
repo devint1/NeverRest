@@ -83,7 +83,6 @@ public class WhiteBloodCell : MonoBehaviour {
 			// Normal collision detection seems to not work for Unity2D
 			// Using overlapping bounds detection instead
 			if (this.renderer.bounds.Intersects(destBlock.renderer.bounds)) {
-				Debug.Log("Entered destination block");
 				destBlock.decreaseWBCsTargeting();
 				destBlock = null;
 			}
