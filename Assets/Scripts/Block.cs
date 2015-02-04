@@ -1,9 +1,12 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+public enum BlockType { HEART, OTHER }
+
 public class Block : MonoBehaviour {
 	public GameObject next_Block;	
 	public GameControl game_Control;
+	public BlockType blockType;
 
 	private int whiteCellsTargeting = 0; // Number of WhiteBloodCells moving to this block
 	GameObject destTarget = null;
