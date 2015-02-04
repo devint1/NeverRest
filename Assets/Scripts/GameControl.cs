@@ -29,8 +29,8 @@ public class GameControl : MonoBehaviour {
 	}
 
 	void OnGUI() {
-		white_blood_production = (int)GUI.HorizontalSlider(new Rect(25, 50, 100, 30), white_blood_production, 0.0F, 10.0F);
-		GUI.TextArea (new Rect(130, 45, 20, 20), "" + white_blood_production);
+		white_blood_production = (int)GUI.HorizontalSlider(new Rect(25, 50, 125, 30), white_blood_production, 0.0F, 10.0F);
+		GUI.TextArea (new Rect(25, 65, 125, 20), "1 per " + 30 / white_blood_production + " seconds");
 
 		GUI.BeginGroup (new Rect (20, 10, 125, 30));
 		GUI.Box (new Rect (0,0, 125, 30),food_Bar_Empty);
