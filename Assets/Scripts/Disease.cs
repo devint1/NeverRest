@@ -2,10 +2,12 @@
 using System.Collections;
 
 public class Disease : MonoBehaviour {
+	public GameControl gameControl;
 	public GameObject current_Block;
 	public GameObject disease_Prefab;
 	public bool captured = false;
 	public float speed = 0.07f;
+	public float heartHealthDamagePerSec = 0.001f;
 
 	float MAX_TURN_DEGREES = 90f;
 	float turn_Degrees = 0f;
@@ -14,6 +16,7 @@ public class Disease : MonoBehaviour {
 		StartCoroutine(Move_Cycle());
 		StartCoroutine(Duplicate_Cycle());
 		StartCoroutine(Change_Turn_Degrees_Cycle());
+		StartCoroutine (damageHeart ());
 	}
 
 	// Movement Code
@@ -72,5 +75,15 @@ public class Disease : MonoBehaviour {
 			new_Disease.GetComponent<Disease> ().current_Block = current_Block;
 			StartCoroutine(Duplicate_Cycle());
 		}
+	}
+
+	IEnumerator damageHeart() {
+		yield return new WaitForSeconds(1);
+		
+		if (!captured && current_Block.GetComponent<Block>().blockType == BlockType.HEART) {
+			gameControl.healthLevel -= heartHealthDamagePerSec;
+			Debug.Log(gameControl.healthLevel);
+		}
+		StartCoroutine(damageHeart());
 	}
 }
