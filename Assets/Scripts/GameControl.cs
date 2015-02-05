@@ -4,7 +4,7 @@ using System.Collections;
 public class GameControl : MonoBehaviour {
 	public ArrayList selected;
 	public ArrayList whiteBloodCells;
-	public GameObject whiteBloodSpawnPoint;
+	public Block whiteBloodSpawnPoint;
 	public GameObject whiteBloodCellPrefab;
 	public GameObject destMarkPrefab;
 	public Texture2D foodBarFull;
@@ -138,9 +138,11 @@ public class GameControl : MonoBehaviour {
 	}
 
 	void SpawnWhiteBloodCell() {
-		GameObject newWhite = (GameObject)Instantiate (whiteBloodCellPrefab, whiteBloodSpawnPoint.transform.position, this.transform.rotation);
-		newWhite.GetComponent<WhiteBloodCell> ().currentBlock = whiteBloodSpawnPoint;
-		newWhite.GetComponent<WhiteBloodCell> ().gameControl = this;
+		GameObject newWhite = (GameObject)Instantiate (whiteBloodCellPrefab, whiteBloodSpawnPoint.GetRandomPoint().transform.position, this.transform.rotation);
+		WhiteBloodCell newWhiteScript = newWhite.GetComponent<WhiteBloodCell> ();
+		newWhiteScript.currentBlock = whiteBloodSpawnPoint;
+		newWhiteScript.heading_toward = whiteBloodSpawnPoint.GetRandomPoint ();
+		newWhiteScript.gameControl = this;
 		whiteBloodCells.Add (newWhite.GetComponent<WhiteBloodCell>());
 		timeOfLastSpawn = Time.time;
 	}

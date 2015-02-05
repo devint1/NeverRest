@@ -3,66 +3,62 @@ using System.Collections;
 
 public class Disease : MonoBehaviour {
 	public GameControl gameControl;
-	public GameObject currentBlock;
+	public Block currentBlock;
 	public GameObject diseasePrefab;
 	public bool captured = false;
-	public float speed = 0.07f;
+	public float speed = 0.005f;
 	public float heartHealthDamagePerSec = 0.001f;
-
-	const float MAX_TURN_DEGREES = 90f;
-	float turnDegrees = 0f;
+	
+	GameObject destination;
 
 	void Start(){
+		if (currentBlock) {
+			destination = currentBlock.GetRandomPoint ();
+		}
+
 		StartCoroutine(MoveCycle());
 		StartCoroutine(DuplicateCycle());
-		StartCoroutine(ChangeTurnDegreesCycle());
 		StartCoroutine(DamageHeart());
 	}
 
 	// Movement Code
 	void Update () {
-		if (!currentBlock) {
-			Destroy(this.gameObject);
+		//If disease has reached is destination
+		if ( (destination.transform.position - this.transform.position).magnitude < 0.07) {
+
+			//If were captured then we just reached the inside of White Blood Cell. Immobilze ourselves and attach to White Blood Cell
+			if(captured) {
+				Destroy(gameObject.GetComponent<Rigidbody>());
+				Destroy(gameObject.GetComponent<CircleCollider2D>());
+				transform.parent = destination.transform;
+				Destroy(this);
+			}
+			else { //Else we just reached a waypoint. Choose next destination.
+				if(destination.tag == "ExitPoint") {
+					ExitPoint exitPoint = destination.GetComponent<ExitPoint>();
+					currentBlock = exitPoint.nextBlock;
+					destination = exitPoint.entrancePoint;
+				}
+				else {
+					destination = currentBlock.GetRandomPoint();
+				}
+			}
 		}
 
-		// Disease has been captured and sucked in. Immobilize and kill ourselves
-		if (captured && (currentBlock.transform.position - this.transform.position).magnitude < 0.025) {
-			Destroy(gameObject.GetComponent<Rigidbody>());
-			Destroy(gameObject.GetComponent<CircleCollider2D>());
-			transform.parent = currentBlock.transform;
-			Destroy(this);
-		}
+		Vector3 directionToDestination = (destination.transform.position - this.transform.position).normalized;
 
-		if (!currentBlock.GetComponent<Renderer> ().bounds.Contains (this.transform.position) || captured) {
-			var direction = currentBlock.transform.position - this.transform.position;
-			var angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-			transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
-		}
-		else {
-			Vector3 turnRotation = new Vector3( 0f, 0f, turnDegrees * Time.deltaTime);
-			this.transform.Rotate(turnRotation);
-		}
-
-		this.transform.Translate(this.transform.right * speed * Time.deltaTime, Space.World);
+		this.transform.position = new Vector3 ((directionToDestination.x * speed) + this.transform.position.x,
+		                                  		(directionToDestination.y * speed) + this.transform.position.y,
+		                                      	this.transform.position.z);
 	}
 
 	// Sends to next block every x seconds
 	IEnumerator MoveCycle() {
 		yield return new WaitForSeconds(30);
 
-		if (!captured) {
-			currentBlock = currentBlock.GetComponent<Block> ().nextBlock;
+		if (!captured && currentBlock.exitPoints[0].gameObject.GetComponent<ExitPoint>().isExitToHeart) {
+			destination = currentBlock.exitPoints[0].gameObject;
 			StartCoroutine (MoveCycle ());
-		}
-	}
-
-	// Varries direction were traveling in every x seconds
-	IEnumerator ChangeTurnDegreesCycle() {
-		yield return new WaitForSeconds(1);
-
-		if (!captured) {
-			turnDegrees = Random.Range (-MAX_TURN_DEGREES, MAX_TURN_DEGREES);
-			StartCoroutine (ChangeTurnDegreesCycle());
 		}
 	}
 
@@ -72,8 +68,10 @@ public class Disease : MonoBehaviour {
 
 		if(!captured) {
 			GameObject newDisease = (GameObject)Instantiate (diseasePrefab, this.transform.position, this.transform.rotation);
-			newDisease.GetComponent<Disease>().currentBlock = currentBlock;
-			newDisease.GetComponent<Disease>().gameControl = gameControl;
+			Disease newDiseaseScript = newDisease.GetComponent<Disease>();
+			newDiseaseScript.currentBlock = currentBlock;
+			newDiseaseScript.gameControl = gameControl;
+			newDiseaseScript.destination = destination;
 			StartCoroutine(DuplicateCycle());
 		}
 	}
@@ -81,10 +79,16 @@ public class Disease : MonoBehaviour {
 	IEnumerator DamageHeart() {
 		yield return new WaitForSeconds(1);
 		
-		if (!captured && currentBlock.GetComponent<Block>().blockType == BlockType.HEART) {
+		if (!captured && currentBlock.blockType == BlockType.HEART) {
 			gameControl.healthLevel -= heartHealthDamagePerSec;
 			Debug.Log(gameControl.healthLevel);
 		}
 		StartCoroutine(DamageHeart());
+	}
+
+	public void BeenCapturedBy(GameObject whiteBloodCell) {
+		destination = whiteBloodCell;
+		captured = true;
+		speed *= 2.5f;
 	}
 }

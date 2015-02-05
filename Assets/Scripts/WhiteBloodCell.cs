@@ -2,22 +2,17 @@
 using System.Collections;
 
 public class WhiteBloodCell : MonoBehaviour {
-	public GameObject currentBlock;
+	public Block currentBlock;
 	public GameControl gameControl;
 	public bool isSelected = false;
 	public bool destroyMe = false;
 	public Block destBlock = null; // Block the cell is moving to
 	
-	const float SPEED = 0.1f;
-	const float MAX_TURN_DEGREES = 90f;
+	const float SPEED = 0.005f;
 	const int MAX_DISEASE_ABSORBED = 8;
-
-	float turnDegrees = 0f;
-	int diseasesabsorbed = 0;
 	
-	void Start(){
-		gameControl.StartCoroutine(ChangeTurnDegreesCycle());
-	}
+	int diseasesabsorbed = 0;
+	public GameObject heading_toward; //Point, Exitpoint, or disease that WhiteBloodCell is moving towards right now
 
 	public void Select(){
 		if(!isSelected){
@@ -51,9 +46,7 @@ public class WhiteBloodCell : MonoBehaviour {
 
 		var diseaseScript = collidable.gameObject.GetComponent<Disease>();
 		if (!diseaseScript.captured) {
-			diseaseScript.currentBlock = this.gameObject;
-			diseaseScript.captured = true;
-			diseaseScript.speed *= 2;
+			diseaseScript.BeenCapturedBy(this.gameObject);
 
 			diseasesabsorbed++;
 			if (diseasesabsorbed >= MAX_DISEASE_ABSORBED) {
@@ -67,34 +60,76 @@ public class WhiteBloodCell : MonoBehaviour {
 
 	// Movement Code
 	void Update () {
-		if (!currentBlock.GetComponent<Renderer>().bounds.Contains (this.transform.position)) {
-			var direction = currentBlock.transform.position - this.transform.position;
-			var angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-			transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
+		//If we are not in our desination block and not on the way to ExitPoint then get to proper exit point
+		if (destBlock && destBlock != currentBlock && heading_toward.tag != "ExitPoint") {
+			foreach(Transform exitPoint in currentBlock.exitPoints) {
+				if( ExitPointLeadsToDestination(exitPoint.gameObject, destBlock, currentBlock) ) {
+					heading_toward = exitPoint.gameObject;
+					break;
+				}
+			}
 		}
-		else {
-			Vector3 turnRotation = new Vector3(0f, 0f, turnDegrees * Time.deltaTime);
-			this.transform.Rotate(turnRotation);
-		}
-		this.transform.Translate(this.transform.right * SPEED * Time.deltaTime, Space.World);
 
-		// Check to see if cell has collided with its destination block
+		//If cell has reached is destination
+		if ( (heading_toward.transform.position - this.transform.position).magnitude < 0.07) {
+			
+			//We just reached a waypoint. Choose next destination.
+			if(heading_toward.tag == "ExitPoint") {
+				ExitPoint exitPoint = heading_toward.GetComponent<ExitPoint>();
+				currentBlock = exitPoint.nextBlock;
+				heading_toward = exitPoint.entrancePoint;
+			}
+			else {
+				heading_toward = currentBlock.GetRandomPoint();
+			}
+		}
+
+		Vector3 directionToDestination = (heading_toward.transform.position - this.transform.position).normalized;
+		
+		this.transform.position = new Vector3 ((directionToDestination.x * SPEED) + this.transform.position.x,
+		                                       (directionToDestination.y * SPEED) + this.transform.position.y,
+		                                       this.transform.position.z);
+
+		// Check to see if cell is at destination block
 		if (destBlock) {
-			// Normal collision detection seems to not work for Unity2D
-			// Using overlapping bounds detection instead
-			if (this.renderer.bounds.Intersects(destBlock.renderer.bounds)) {
+			if (destBlock == currentBlock) {
 				destBlock.decreaseWBCsTargeting();
 				destBlock = null;
 			}
 		}
 	}
-	
-	IEnumerator ChangeTurnDegreesCycle() {
-		yield return new WaitForSeconds(1);
-		
-		turnDegrees = Random.Range (-MAX_TURN_DEGREES, MAX_TURN_DEGREES);
-		
-		StartCoroutine(ChangeTurnDegreesCycle());
+
+	GameObject FindExitPointToDestination(Block current, Block destination) {
+		foreach (Transform exitPoint in currentBlock.exitPoints) {
+			if(exitPoint.gameObject.GetComponent<ExitPoint>().nextBlock == destination) {
+				return exitPoint.gameObject;
+			}
+			else {
+				GameObject exitIntoDestination = FindExitPointToDestination(exitPoint.gameObject.GetComponent<ExitPoint>().nextBlock, destination);
+
+				if(exitIntoDestination) {
+					return exitPoint.gameObject;
+				}
+			}
+		}
+
+		return null;
+	}
+
+	bool ExitPointLeadsToDestination(GameObject exit, Block destination, Block curBlock) {
+		if(exit.gameObject.GetComponent<ExitPoint>().nextBlock == destination) {
+			return true;
+		}
+
+		foreach(Transform exitPoint in exit.GetComponent<ExitPoint>().nextBlock.exitPoints) {
+			if( curBlock != exitPoint.gameObject.GetComponent<ExitPoint>().nextBlock ) {
+				if( ExitPointLeadsToDestination(exitPoint.gameObject, destination, exit.GetComponent<ExitPoint>().nextBlock) ) {
+					return true;
+				}
+			}
+		}
+
+		return false;
 	}
 
 }
