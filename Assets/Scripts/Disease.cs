@@ -7,7 +7,7 @@ public class Disease : MonoBehaviour {
 	public GameObject diseasePrefab;
 	public bool captured = false;
 	public float speed = 0.005f;
-	public float heartHealthDamagePerSec = 0.001f;
+	public float heartHealthDamagePerSec = 0.01f;
 	
 	GameObject destination;
 	
@@ -15,7 +15,7 @@ public class Disease : MonoBehaviour {
 	const int MIN_DISEASE_RESPAWN_TIME = 20;
 	
 	
-	void Start(){
+	void Start() {
 		if (currentBlock) {
 			destination = currentBlock.GetRandomPoint ();
 		}
