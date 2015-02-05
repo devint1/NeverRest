@@ -3,97 +3,110 @@ using System.Collections;
 
 public class Disease : MonoBehaviour {
 	public GameControl gameControl;
-	public GameObject currentBlock;
+	public Block currentBlock;
 	public GameObject diseasePrefab;
 	public bool captured = false;
-	public float speed = 0.07f;
+	public float speed = 0.005f;
 	public float heartHealthDamagePerSec = 0.001f;
-
-	const float MAX_TURN_DEGREES = 90f;
-	float turnDegrees = 0f;
-
+	
+	GameObject destination;
+	
+	const int MAX_DISEASE_RESPAWN_TIME = 10;
+	const int MIN_DISEASE_RESPAWN_TIME = 20;
+	
+	
 	void Start(){
+		if (currentBlock) {
+			destination = currentBlock.GetRandomPoint ();
+		}
+		
 		StartCoroutine(MoveCycle());
 		StartCoroutine(DuplicateCycle());
-		StartCoroutine(ChangeTurnDegreesCycle());
 		StartCoroutine(DamageHeart());
-
+		
 		if(currentBlock != null)
-			currentBlock.GetComponent<Block> ().diseases.Add (this);
+			currentBlock.diseases.Add (this);
 	}
-
+	
 	// Movement Code
 	void Update () {
-		if (!currentBlock) {
-			Destroy(this.gameObject);
+		//If disease has reached is destination
+		if ( (destination.transform.position - this.transform.position).magnitude < 0.07) {
+			
+			//If were captured then we just reached the inside of White Blood Cell. Immobilze ourselves and attach to White Blood Cell
+			if(captured) {
+				Destroy(gameObject.GetComponent<Rigidbody>());
+				Destroy(gameObject.GetComponent<CircleCollider2D>());
+				transform.parent = destination.transform;
+				Destroy(this);
+			}
+			else { //Else we just reached a waypoint. Choose next destination.
+				if(destination.tag == "ExitPoint") {
+					ExitPoint exitPoint = destination.GetComponent<ExitPoint>();
+					currentBlock = exitPoint.nextBlock;
+					destination = exitPoint.entrancePoint;
+				}
+				else {
+					destination = currentBlock.GetRandomPoint();
+				}
+			}
 		}
-
-		// Disease has been captured and sucked in. Immobilize and kill ourselves
-		if (captured && (currentBlock.transform.position - this.transform.position).magnitude < 0.025) {
-			Destroy(gameObject.GetComponent<Rigidbody>());
-			Destroy(gameObject.GetComponent<CircleCollider2D>());
-			transform.parent = currentBlock.transform;
-			Destroy(this);
-		}
-
-		if (!currentBlock.GetComponent<Renderer> ().bounds.Contains (this.transform.position) || captured) {
-			var direction = currentBlock.transform.position - this.transform.position;
-			var angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-			transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
-		}
-		else {
-			Vector3 turnRotation = new Vector3( 0f, 0f, turnDegrees * Time.deltaTime);
-			this.transform.Rotate(turnRotation);
-		}
-
-		this.transform.Translate(this.transform.right * speed * Time.deltaTime, Space.World);
+		
+		Vector3 directionToDestination = (destination.transform.position - this.transform.position).normalized;
+		
+		this.transform.position = new Vector3 ((directionToDestination.x * speed) + this.transform.position.x,
+		                                       (directionToDestination.y * speed) + this.transform.position.y,
+		                                       this.transform.position.z);
 	}
-
+	
 	// Sends to next block every x seconds
 	IEnumerator MoveCycle() {
 		yield return new WaitForSeconds(30);
-
-		if (!captured && currentBlock.GetComponent<Block> ().nextBlock.GetComponent<Block> ().diseases.Count < Block.MAX_NUM_DISEASE_PER_BLOCK) {
-			currentBlock.GetComponent<Block> ().diseases.Remove (this);
-			currentBlock = currentBlock.GetComponent<Block> ().nextBlock;
-			currentBlock.GetComponent<Block> ().diseases.Add (this);
+		if (!captured 
+		    && currentBlock.exitPoints[0].gameObject.GetComponent<ExitPoint>().nextBlock.diseases.Count < Block.MAX_NUM_DISEASE_PER_BLOCK 
+		    && currentBlock.exitPoints[0].gameObject.GetComponent<ExitPoint>().isExitToHeart) {
+			
+			currentBlock.diseases.Remove (this);
+			currentBlock = currentBlock.exitPoints[0].gameObject.GetComponent<ExitPoint>().nextBlock;
+			currentBlock.diseases.Add (this);
 			StartCoroutine (MoveCycle ());
 		} else if (!captured) {
 			StartCoroutine (MoveCycle ());
 		}
 	}
-
-	// Varries direction were traveling in every x seconds
-	IEnumerator ChangeTurnDegreesCycle() {
-		yield return new WaitForSeconds(1);
-
-		if (!captured) {
-			turnDegrees = Random.Range (-MAX_TURN_DEGREES, MAX_TURN_DEGREES);
-			StartCoroutine (ChangeTurnDegreesCycle());
-		}
-	}
-
+	
 	// Creates new disease every x seconds
 	IEnumerator DuplicateCycle() {
-		yield return new WaitForSeconds(15);
-
-		if (!captured && currentBlock.GetComponent<Block> ().diseases.Count < Block.MAX_NUM_DISEASE_PER_BLOCK) {
-			GameObject newDisease = (GameObject)Instantiate (diseasePrefab, this.transform.position, this.transform.rotation);
-			newDisease.GetComponent<Disease>().currentBlock = currentBlock;
-			newDisease.GetComponent<Disease>().gameControl = gameControl;
-			++gameControl.numDiseaseCells;
-		} else if (!captured) {
-			StartCoroutine (DuplicateCycle ());
+		while (!captured) {
+			int waitFor = Random.Range (MIN_DISEASE_RESPAWN_TIME, MAX_DISEASE_RESPAWN_TIME);
+			yield return new WaitForSeconds(waitFor);
+			
+			if (!captured && currentBlock.diseases.Count < Block.MAX_NUM_DISEASE_PER_BLOCK) {
+				GameObject newDisease = (GameObject)Instantiate (diseasePrefab, this.transform.position, this.transform.rotation);
+				Disease newDiseaseScript = newDisease.GetComponent<Disease>();
+				newDiseaseScript.currentBlock = currentBlock;
+				newDiseaseScript.gameControl = gameControl;
+				newDiseaseScript.destination = destination;
+				++gameControl.numDiseaseCells;
+			}
 		}
+		
 	}
-
+	
 	IEnumerator DamageHeart() {
 		yield return new WaitForSeconds(1);
 		
-		if (!captured && currentBlock.GetComponent<Block>().blockType == BlockType.HEART) {
+		if (!captured && currentBlock.blockType == BlockType.HEART) {
 			gameControl.healthLevel -= heartHealthDamagePerSec;
 			Debug.Log(gameControl.healthLevel);
 		}
 		StartCoroutine(DamageHeart());
+	}
+	
+	public void BeenCapturedBy(GameObject whiteBloodCell) {
+		destination = whiteBloodCell;
+		captured = true;
+		speed *= 2.5f;
+		currentBlock.diseases.Remove(this);
 	}
 }
