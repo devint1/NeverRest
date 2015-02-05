@@ -98,7 +98,6 @@ public class Disease : MonoBehaviour {
 		
 		if (!captured && currentBlock.blockType == BlockType.HEART) {
 			gameControl.healthLevel -= heartHealthDamagePerSec;
-			Debug.Log(gameControl.healthLevel);
 		}
 		StartCoroutine(DamageHeart());
 	}
