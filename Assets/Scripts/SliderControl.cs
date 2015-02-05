@@ -4,11 +4,11 @@ using System.Collections;
 
 public class NewBehaviourScript : MonoBehaviour {
 
-	private GameObject Bloodslider;
+//	private GameObject Bloodslider;
 
 	// Use this for initialization
 	void Start () {
-		Bloodslider = GameObject.Find("Bloodslider");
+//		Bloodslider = GameObject.Find("Bloodslider");
 	}
 	
 	// Update is called once per frame

@@ -6,13 +6,15 @@ public class GameControl : MonoBehaviour {
 	public ArrayList whiteBloodCells;
 	public GameObject whiteBloodSpawnPoint;
 	public GameObject whiteBloodCellPrefab;
+	public GameObject destMarkPrefab;
 	public Texture2D foodBarFull;
 	public Texture2D healthBarFull;
 	public Texture2D barEmpty;
 	public float healthLevel = 1f;
 
 	int whiteBloodProduction = 0;
-	int mousePressStart = -1;
+	// int mousePressStart = -1;
+
 	Vector3 mousePositionStart;
 	float timeOfLastSpawn;
 	float foodLevel = 1f;
@@ -20,6 +22,7 @@ public class GameControl : MonoBehaviour {
 	bool drawText = false;
 	Texture2D text;
 	Rect box;
+	float WHITE_BLOOD_CELL_FOOD_RATE = 0.05f;
 
 	void Start() {
 		timeOfLastSpawn = Time.time;
@@ -74,17 +77,21 @@ public class GameControl : MonoBehaviour {
 				}
 			}
 		} else if (mouseDown && Input.GetMouseButton (0)) {
+			// Beginning of box selection
+			// Draw selection box
 			text = new Texture2D (1, 1);
 			Color col = Color.green;
 			col.a = .15f;
 			text.SetPixel (1, 1, col);
 			text.Apply ();
-			box = new Rect (mousePositionStart.x, mousePositionStart.y,
+			box = new Rect(mousePositionStart.x, mousePositionStart.y,
 			                Event.current.mousePosition.x - mousePositionStart.x, 
 			                Event.current.mousePosition.y - mousePositionStart.y);
 			GUI.DrawTexture (box, text);
 			drawText = true;
 		} else if(mouseDown && !(Input.GetMouseButton (0))) {
+			// End of box selection
+			// Select cells in box
 			box = new Rect(mousePositionStart.x, mousePositionStart.y,
 			               Event.current.mousePosition.x - mousePositionStart.x, 
 			               Event.current.mousePosition.y - mousePositionStart.y);
@@ -107,7 +114,7 @@ public class GameControl : MonoBehaviour {
 	void Update() {
 		if (whiteBloodProduction > 0 && (Time.time - timeOfLastSpawn) > 30 / whiteBloodProduction) {
 			SpawnWhiteBloodCell ();
-			foodLevel -= 0.05f;
+			foodLevel -= WHITE_BLOOD_CELL_FOOD_RATE;
 		}
 
 		if (foodLevel <= 0f || healthLevel <= 0f) {
@@ -115,10 +122,16 @@ public class GameControl : MonoBehaviour {
 		}
 
 		if (whiteBloodCells != null) {
-			foreach (WhiteBloodCell cell in whiteBloodCells) {
+			//foreach (WhiteBloodCell cell in whiteBloodCells) {
+			for(int i = 0; i < whiteBloodCells.Count; i++) {
+				WhiteBloodCell cell = (WhiteBloodCell)(whiteBloodCells[i]);
 				if (cell.destroyMe) {
-					whiteBloodCells.Remove (cell);
-					Destroy (cell, 2.0f);
+					Debug.Log ("deleting white blood cell...");
+					//whiteBloodCells.Remove (cell);
+					Destroy (((WhiteBloodCell)(whiteBloodCells[i])).gameObject, 2);
+					whiteBloodCells.RemoveAt(i);
+					foodLevel += WHITE_BLOOD_CELL_FOOD_RATE * 0.8f;
+					i--;
 				}
 			}
 		}
@@ -131,4 +144,5 @@ public class GameControl : MonoBehaviour {
 		whiteBloodCells.Add (newWhite.GetComponent<WhiteBloodCell>());
 		timeOfLastSpawn = Time.time;
 	}
+
 }
