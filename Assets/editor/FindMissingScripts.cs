@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEditor;
 public class FindMissingScriptsRecursively : EditorWindow 
 {
-    static int go_count = 0, components_count = 0, missing_count = 0;
+    static int goCount = 0, componentsCount = 0, missingCount = 0;
  
     [MenuItem("Window/FindMissingScriptsRecursively")]
     public static void ShowWindow()
@@ -20,26 +20,26 @@ public class FindMissingScriptsRecursively : EditorWindow
     private static void FindInSelected()
     {
         GameObject[] go = Selection.gameObjects;
-        go_count = 0;
-		components_count = 0;
-		missing_count = 0;
+        goCount = 0;
+		componentsCount = 0;
+		missingCount = 0;
         foreach (GameObject g in go)
         {
    			FindInGO(g);
         }
-        Debug.Log(string.Format("Searched {0} GameObjects, {1} components, found {2} missing", go_count, components_count, missing_count));
+        Debug.Log(string.Format("Searched {0} GameObjects, {1} components, found {2} missing", goCount, componentsCount, missingCount));
     }
  
     private static void FindInGO(GameObject g)
     {
-        go_count++;
+        goCount++;
         Component[] components = g.GetComponents<Component>();
         for (int i = 0; i < components.Length; i++)
         {
-            components_count++;
+            componentsCount++;
             if (components[i] == null)
             {
-                missing_count++;
+                missingCount++;
                 string s = g.name;
                 Transform t = g.transform;
                 while (t.parent != null) 

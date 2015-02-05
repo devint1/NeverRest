@@ -4,76 +4,76 @@ using System.Collections;
 public class GameControl : MonoBehaviour {
 	public ArrayList selected;
 	public ArrayList whiteBloodCells;
-	public GameObject white_blood_spawn_point;
-	public GameObject white_Blood_Cell_Prefab;
-	public Texture2D food_Bar_Full;
-	public Texture2D health_Bar_Full;
-	public Texture2D bar_Empty;
+	public GameObject whiteBloodSpawnPoint;
+	public GameObject whiteBloodCellPrefab;
+	public Texture2D foodBarFull;
+	public Texture2D healthBarFull;
+	public Texture2D barEmpty;
 	public float healthLevel = 1f;
 
-	int white_blood_production = 0;
+	int whiteBloodProduction = 0;
 	int mousePressStart = -1;
 	Vector3 mousePositionStart;
-	float time_of_last_spawn;
-	float food_Level = 1f;
-	bool mouse_down = false;
-	bool draw_text = false;
+	float timeOfLastSpawn;
+	float foodLevel = 1f;
+	bool mouseDown = false;
+	bool drawText = false;
 	Texture2D text;
 	Rect box;
 
 	void Start() {
-		time_of_last_spawn = Time.time;
+		timeOfLastSpawn = Time.time;
 		selected = new ArrayList ();
 		whiteBloodCells = new ArrayList ();
 		mousePositionStart = new Vector3 ();
-		Spawn_White_Blood_Cell ();
+		SpawnWhiteBloodCell();
 	}
 
 	void OnGUI() {
 		// Get white blood cell production from slider
-		white_blood_production = (int)GUI.HorizontalSlider(new Rect(25, 90, 125, 30), white_blood_production, 0.0F, 10.0F);
+		whiteBloodProduction = (int)GUI.HorizontalSlider(new Rect(25, 90, 125, 30), whiteBloodProduction, 0.0F, 10.0F);
 		
 		// Display wihte blood cell production status
-		if (white_blood_production > 0) {
-			GUI.TextArea (new Rect (25, 105, 125, 20), "1 per " + 30 / white_blood_production + " seconds");
+		if (whiteBloodProduction > 0) {
+			GUI.TextArea (new Rect (25, 105, 125, 20), "1 per " + 30 / whiteBloodProduction + " seconds");
 		} else {
 			GUI.TextArea (new Rect (25, 105, 125, 20), "Production off");
 		}
 
 		// Display food bar
 		GUI.BeginGroup (new Rect (20, 10, 125, 30));
-		GUI.Box (new Rect (0,0, 125, 30),bar_Empty);
+		GUI.Box (new Rect (0,0, 125, 30),barEmpty);
 		// draw the filled-in part:
-		GUI.BeginGroup (new Rect (0, 0, 125 * food_Level, 30));
-		GUI.Box (new Rect (0,0, 125, 30),food_Bar_Full);
+		GUI.BeginGroup (new Rect (0, 0, 125 * foodLevel, 30));
+		GUI.Box (new Rect (0,0, 125, 30),foodBarFull);
 		GUI.EndGroup ();
 		GUI.EndGroup ();
 
 		// Display health bar
 		GUI.BeginGroup (new Rect (20, 50, 125, 30));
-		GUI.Box (new Rect (0, 0, 125, 30), bar_Empty);
+		GUI.Box (new Rect (0, 0, 125, 30), barEmpty);
 		// draw the filled-in part:
 		GUI.BeginGroup (new Rect (0, 0, 125 * healthLevel, 30));
-		GUI.Box (new Rect (0,0, 125, 30), health_Bar_Full);
+		GUI.Box (new Rect (0,0, 125, 30), healthBarFull);
 		GUI.EndGroup ();
 		GUI.EndGroup ();
 
 		// Draw text if enabled
-		if (draw_text) {
+		if (drawText) {
 			GUI.DrawTexture (box, text);
-			draw_text = false;
+			drawText = false;
 		}
 
 		// Handle selection
-		if (!mouse_down && Input.GetMouseButton (0)) {
+		if (!mouseDown && Input.GetMouseButton (0)) {
 			mousePositionStart = Event.current.mousePosition;
-			mouse_down = true;
+			mouseDown = true;
 			if (whiteBloodCells != null) {
 				foreach(WhiteBloodCell cell in whiteBloodCells) {
 					cell.DeSelect();
 				}
 			}
-		} else if (mouse_down && Input.GetMouseButton (0)) {
+		} else if (mouseDown && Input.GetMouseButton (0)) {
 			text = new Texture2D (1, 1);
 			Color col = Color.green;
 			col.a = .15f;
@@ -83,8 +83,8 @@ public class GameControl : MonoBehaviour {
 			                Event.current.mousePosition.x - mousePositionStart.x, 
 			                Event.current.mousePosition.y - mousePositionStart.y);
 			GUI.DrawTexture (box, text);
-			draw_text = true;
-		} else if(mouse_down && !(Input.GetMouseButton (0))) {
+			drawText = true;
+		} else if(mouseDown && !(Input.GetMouseButton (0))) {
 			box = new Rect(mousePositionStart.x, mousePositionStart.y,
 			               Event.current.mousePosition.x - mousePositionStart.x, 
 			               Event.current.mousePosition.y - mousePositionStart.y);
@@ -98,25 +98,25 @@ public class GameControl : MonoBehaviour {
 					
 				}
 			}
-			mouse_down = false;
+			mouseDown = false;
 			mousePositionStart.x = 0;
 			mousePositionStart.y = 0;
 		}
 	}
 
 	void Update() {
-		if (white_blood_production > 0 && (Time.time - time_of_last_spawn) > 30 / white_blood_production) {
-			Spawn_White_Blood_Cell ();
-			food_Level -= 0.05f;
+		if (whiteBloodProduction > 0 && (Time.time - timeOfLastSpawn) > 30 / whiteBloodProduction) {
+			SpawnWhiteBloodCell ();
+			foodLevel -= 0.05f;
 		}
 
-		if (food_Level <= 0f || healthLevel <= 0f) {
+		if (foodLevel <= 0f || healthLevel <= 0f) {
 			Application.LoadLevel ("MenuScene");
 		}
 
 		if (whiteBloodCells != null) {
 			foreach (WhiteBloodCell cell in whiteBloodCells) {
-				if (cell.destroy_me) {
+				if (cell.destroyMe) {
 					whiteBloodCells.Remove (cell);
 					Destroy (cell, 2.0f);
 				}
@@ -124,11 +124,11 @@ public class GameControl : MonoBehaviour {
 		}
 	}
 
-	void Spawn_White_Blood_Cell() {
-		GameObject new_White = (GameObject)Instantiate (white_Blood_Cell_Prefab, white_blood_spawn_point.transform.position, this.transform.rotation);
-		new_White.GetComponent<WhiteBloodCell> ().current_Block = white_blood_spawn_point;
-		new_White.GetComponent<WhiteBloodCell> ().game_Control = this;
-		whiteBloodCells.Add (new_White.GetComponent<WhiteBloodCell>());
-		time_of_last_spawn = Time.time;
+	void SpawnWhiteBloodCell() {
+		GameObject newWhite = (GameObject)Instantiate (whiteBloodCellPrefab, whiteBloodSpawnPoint.transform.position, this.transform.rotation);
+		newWhite.GetComponent<WhiteBloodCell> ().currentBlock = whiteBloodSpawnPoint;
+		newWhite.GetComponent<WhiteBloodCell> ().gameControl = this;
+		whiteBloodCells.Add (newWhite.GetComponent<WhiteBloodCell>());
+		timeOfLastSpawn = Time.time;
 	}
 }

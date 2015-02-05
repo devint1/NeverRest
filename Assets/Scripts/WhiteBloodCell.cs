@@ -2,42 +2,40 @@
 using System.Collections;
 
 public class WhiteBloodCell : MonoBehaviour {
-	public GameObject current_Block;
-	public GameControl game_Control;
-	public bool bIsSelected = false;
-	public bool destroy_me = false;
+	public GameObject currentBlock;
+	public GameControl gameControl;
+	public bool isSelected = false;
+	public bool destroyMe = false;
 	
-	float SPEED = 0.1f;
-	float MAX_TURN_DEGREES = 90f;
-	int MAX_DISEASE_ABSORBED = 8;
+	const float SPEED = 0.1f;
+	const float MAX_TURN_DEGREES = 90f;
+	const int MAX_DISEASE_ABSORBED = 8;
 
-	float turn_Degrees = 0f;
-	int diseases_absorbed = 0;
+	float turnDegrees = 0f;
+	int diseasesabsorbed = 0;
 	
 	void Start(){
-		game_Control.
-		StartCoroutine(Change_Turn_Degrees_Cycle());
+		gameControl.StartCoroutine(ChangeTurnDegreesCycle());
 	}
 
 	public void Select(){
-		if(!bIsSelected){
-			game_Control.selected.Add (this);
+		if(!isSelected){
+			gameControl.selected.Add (this);
 			gameObject.renderer.material.color = Color.blue;
 		}
-		bIsSelected = true;
+		isSelected = true;
 	}
 
 	public void DeSelect() {
-		if(bIsSelected) {
+		if(isSelected) {
 			gameObject.renderer.material.color = Color.white;
 			//game_Control.selected.Remove (this);
 		}
-		bIsSelected = false;
+		isSelected = false;
 	}
 	// Clicked on and selected
 	void OnMouseDown() {
-
-		if (!bIsSelected) {
+		if (!isSelected) {
 			Select();
 		} 
 		else {
@@ -50,40 +48,40 @@ public class WhiteBloodCell : MonoBehaviour {
 		if (disease.gameObject.tag != "Disease")
 			return;
 
-		var disease_script = disease.gameObject.GetComponent<Disease> ();
-		if(!disease_script.captured) {
-			disease_script.current_Block = this.gameObject;
-			disease_script.captured = true;
-			disease_script.speed *= 2;
+		var diseaseScript = disease.gameObject.GetComponent<Disease> ();
+		if(!diseaseScript.captured) {
+			diseaseScript.currentBlock = this.gameObject;
+			diseaseScript.captured = true;
+			diseaseScript.speed *= 2;
 
-			diseases_absorbed++;
-			if(diseases_absorbed >= MAX_DISEASE_ABSORBED) {
+			diseasesabsorbed++;
+			if(diseasesabsorbed >= MAX_DISEASE_ABSORBED) {
 				//Destroy (this.gameObject, 2.0f);
-				destroy_me = true;
+				destroyMe = true;
 			}
 		}
 	}
 
 	// Moment Code
 	void Update () {
-		if (!current_Block.GetComponent<Renderer> ().bounds.Contains (this.transform.position)) {
-			var direction = current_Block.transform.position - this.transform.position;
+		if (!currentBlock.GetComponent<Renderer> ().bounds.Contains (this.transform.position)) {
+			var direction = currentBlock.transform.position - this.transform.position;
 			var angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
 			transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
 		}
 		else {
-			Vector3 turn_rotation = new Vector3( 0f, 0f, turn_Degrees * Time.deltaTime);
-			this.transform.Rotate(turn_rotation);
+			Vector3 turnRotation = new Vector3( 0f, 0f, turnDegrees * Time.deltaTime);
+			this.transform.Rotate(turnRotation);
 		}
 		this.transform.Translate(this.transform.right * SPEED * Time.deltaTime, Space.World);
 	}
 	
-	IEnumerator Change_Turn_Degrees_Cycle() {
+	IEnumerator ChangeTurnDegreesCycle() {
 		yield return new WaitForSeconds(1);
 		
-		turn_Degrees = Random.Range (-MAX_TURN_DEGREES, MAX_TURN_DEGREES);
+		turnDegrees = Random.Range (-MAX_TURN_DEGREES, MAX_TURN_DEGREES);
 		
-		StartCoroutine(Change_Turn_Degrees_Cycle());
+		StartCoroutine(ChangeTurnDegreesCycle());
 	}
 
 }
