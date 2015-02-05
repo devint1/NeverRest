@@ -51,6 +51,7 @@ public class WhiteBloodCell : MonoBehaviour {
 
 		var diseaseScript = collidable.gameObject.GetComponent<Disease>();
 		if (!diseaseScript.captured) {
+			diseaseScript.currentBlock.GetComponent<Block> ().diseases.Remove(diseaseScript);
 			diseaseScript.currentBlock = this.gameObject;
 			diseaseScript.captured = true;
 			diseaseScript.speed *= 2;

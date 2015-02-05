@@ -7,9 +7,17 @@ public class Block : MonoBehaviour {
 	public GameObject nextBlock;	
 	public GameControl gameControl;
 	public BlockType blockType;
+	public ArrayList diseases = new ArrayList();
+
+	public static int MAX_NUM_DISEASE_PER_BLOCK = 8;
 
 	private int whiteCellsTargeting = 0; // Number of WhiteBloodCells moving to this block
 	GameObject destTarget = null;
+
+	void Start() {
+		//diseases = new ArrayList ();
+	}
+
 
 	// Block clicked. Send selected WhiteBloodCell here
 	void OnMouseDown() {

@@ -17,6 +17,9 @@ public class Disease : MonoBehaviour {
 		StartCoroutine(DuplicateCycle());
 		StartCoroutine(ChangeTurnDegreesCycle());
 		StartCoroutine(DamageHeart());
+
+		if(currentBlock != null)
+			currentBlock.GetComponent<Block> ().diseases.Add (this);
 	}
 
 	// Movement Code
@@ -50,8 +53,12 @@ public class Disease : MonoBehaviour {
 	IEnumerator MoveCycle() {
 		yield return new WaitForSeconds(30);
 
-		if (!captured) {
+		if (!captured && currentBlock.GetComponent<Block> ().nextBlock.GetComponent<Block> ().diseases.Count < Block.MAX_NUM_DISEASE_PER_BLOCK) {
+			currentBlock.GetComponent<Block> ().diseases.Remove (this);
 			currentBlock = currentBlock.GetComponent<Block> ().nextBlock;
+			currentBlock.GetComponent<Block> ().diseases.Add (this);
+			StartCoroutine (MoveCycle ());
+		} else if (!captured) {
 			StartCoroutine (MoveCycle ());
 		}
 	}
@@ -70,12 +77,13 @@ public class Disease : MonoBehaviour {
 	IEnumerator DuplicateCycle() {
 		yield return new WaitForSeconds(15);
 
-		if(!captured) {
+		if (!captured && currentBlock.GetComponent<Block> ().diseases.Count < Block.MAX_NUM_DISEASE_PER_BLOCK) {
 			GameObject newDisease = (GameObject)Instantiate (diseasePrefab, this.transform.position, this.transform.rotation);
 			newDisease.GetComponent<Disease>().currentBlock = currentBlock;
 			newDisease.GetComponent<Disease>().gameControl = gameControl;
 			++gameControl.numDiseaseCells;
-			StartCoroutine(DuplicateCycle());
+		} else if (!captured) {
+			StartCoroutine (DuplicateCycle ());
 		}
 	}
 
