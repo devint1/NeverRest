@@ -133,7 +133,7 @@ public class GameControl : MonoBehaviour {
 
 		// Check winning condition
 		if (numDiseaseCells <= 0) {
-			StartCoroutine (win ());
+			StartCoroutine (Win ());
 		}
 
 		if (whiteBloodCells != null) {
@@ -163,7 +163,7 @@ public class GameControl : MonoBehaviour {
 	}
 
 	// Wins the game!
-	IEnumerator win() {
+	IEnumerator Win() {
 		if (won) {
 			yield break;
 		}
