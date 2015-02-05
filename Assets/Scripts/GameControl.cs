@@ -149,7 +149,7 @@ public class GameControl : MonoBehaviour {
 		GameObject newWhite = (GameObject)Instantiate (whiteBloodCellPrefab, whiteBloodSpawnPoint.GetRandomPoint().transform.position, this.transform.rotation);
 		WhiteBloodCell newWhiteScript = newWhite.GetComponent<WhiteBloodCell> ();
 		newWhiteScript.currentBlock = whiteBloodSpawnPoint;
-		newWhiteScript.heading_toward = whiteBloodSpawnPoint.GetRandomPoint ();
+		newWhiteScript.headingToward = whiteBloodSpawnPoint.GetRandomPoint ();
 		newWhiteScript.gameControl = this;
 		whiteBloodCells.Add (newWhite.GetComponent<WhiteBloodCell>());
 		timeOfLastSpawn = Time.time;

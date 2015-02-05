@@ -12,7 +12,7 @@ public class WhiteBloodCell : MonoBehaviour {
 	const int MAX_DISEASE_ABSORBED = 8;
 	
 	int diseasesabsorbed = 0;
-	public GameObject heading_toward; //Point, Exitpoint, or disease that WhiteBloodCell is moving towards right now
+	public GameObject headingToward; //Point, Exitpoint, or disease that WhiteBloodCell is moving towards right now
 	
 	public void Select(){
 		if(!isSelected){
@@ -61,30 +61,30 @@ public class WhiteBloodCell : MonoBehaviour {
 	// Movement Code
 	void Update () {
 		//If we are not in our desination block and not on the way to ExitPoint then get to proper exit point
-		if (destBlock && destBlock != currentBlock && heading_toward.tag != "ExitPoint") {
+		if (destBlock && destBlock != currentBlock && headingToward.tag != "ExitPoint") {
 			foreach(Transform exitPoint in currentBlock.exitPoints) {
 				if( ExitPointLeadsToDestination(exitPoint.gameObject, destBlock, currentBlock) ) {
-					heading_toward = exitPoint.gameObject;
+					headingToward = exitPoint.gameObject;
 					break;
 				}
 			}
 		}
 		
 		//If cell has reached is destination
-		if ( (heading_toward.transform.position - this.transform.position).magnitude < 0.07) {
+		if ( (headingToward.transform.position - this.transform.position).magnitude < 0.07) {
 			
 			//We just reached a waypoint. Choose next destination.
-			if(heading_toward.tag == "ExitPoint") {
-				ExitPoint exitPoint = heading_toward.GetComponent<ExitPoint>();
+			if(headingToward.tag == "ExitPoint") {
+				ExitPoint exitPoint = headingToward.GetComponent<ExitPoint>();
 				currentBlock = exitPoint.nextBlock;
-				heading_toward = exitPoint.entrancePoint;
+				headingToward = exitPoint.entrancePoint;
 			}
 			else {
-				heading_toward = currentBlock.GetRandomPoint();
+				headingToward = currentBlock.GetRandomPoint();
 			}
 		}
 		
-		Vector3 directionToDestination = (heading_toward.transform.position - this.transform.position).normalized;
+		Vector3 directionToDestination = (headingToward.transform.position - this.transform.position).normalized;
 		
 		this.transform.position = new Vector3 ((directionToDestination.x * SPEED) + this.transform.position.x,
 		                                       (directionToDestination.y * SPEED) + this.transform.position.y,
