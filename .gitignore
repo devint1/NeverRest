@@ -6,6 +6,7 @@
 [Bb]uild
 [Mm]etadata
 [Ll]ibrary/*
+*[Dd]ata/*
 sysinfo.txt
  
 # ===================================== #
@@ -34,3 +35,4 @@ ehthumbs.db
 
 # Other
 Assets/placeholderforgit.meta
+*.exe
