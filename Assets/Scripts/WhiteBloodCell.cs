@@ -56,6 +56,7 @@ public class WhiteBloodCell : MonoBehaviour {
 			diseaseScript.speed *= 2;
 
 			diseasesabsorbed++;
+			--gameControl.numDiseaseCells;
 			if (diseasesabsorbed >= MAX_DISEASE_ABSORBED) {
 				//Destroy (this.gameObject, 2.0f);
 				destroyMe = true;

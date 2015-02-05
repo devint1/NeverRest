@@ -74,6 +74,7 @@ public class Disease : MonoBehaviour {
 			GameObject newDisease = (GameObject)Instantiate (diseasePrefab, this.transform.position, this.transform.rotation);
 			newDisease.GetComponent<Disease>().currentBlock = currentBlock;
 			newDisease.GetComponent<Disease>().gameControl = gameControl;
+			++gameControl.numDiseaseCells;
 			StartCoroutine(DuplicateCycle());
 		}
 	}

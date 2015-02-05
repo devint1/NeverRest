@@ -11,10 +11,12 @@ public class GameControl : MonoBehaviour {
 	public Texture2D healthBarFull;
 	public Texture2D barEmpty;
 	public float healthLevel = 1f;
+	public int numDiseaseCells = 4;
+	
+	const float WHITE_BLOOD_CELL_FOOD_RATE = 0.05f;
 
 	int whiteBloodProduction = 0;
 	// int mousePressStart = -1;
-
 	Vector3 mousePositionStart;
 	float timeOfLastSpawn;
 	float foodLevel = 1f;
@@ -22,13 +24,13 @@ public class GameControl : MonoBehaviour {
 	bool drawText = false;
 	Texture2D text;
 	Rect box;
-	float WHITE_BLOOD_CELL_FOOD_RATE = 0.05f;
+	bool won = false;
 
 	void Start() {
 		timeOfLastSpawn = Time.time;
-		selected = new ArrayList ();
-		whiteBloodCells = new ArrayList ();
-		mousePositionStart = new Vector3 ();
+		selected = new ArrayList();
+		whiteBloodCells = new ArrayList();
+		mousePositionStart = new Vector3();
 		SpawnWhiteBloodCell();
 	}
 
@@ -117,8 +119,14 @@ public class GameControl : MonoBehaviour {
 			foodLevel -= WHITE_BLOOD_CELL_FOOD_RATE;
 		}
 
+		// Check losing condition
 		if (foodLevel <= 0f || healthLevel <= 0f) {
-			Application.LoadLevel ("MenuScene");
+			Application.LoadLevel("MenuScene");
+		}
+
+		// Check winning condition
+		if (numDiseaseCells <= 0) {
+			StartCoroutine (win ());
 		}
 
 		if (whiteBloodCells != null) {
@@ -145,4 +153,20 @@ public class GameControl : MonoBehaviour {
 		timeOfLastSpawn = Time.time;
 	}
 
+	// Wins the game!
+	IEnumerator win() {
+		if (won) {
+			yield break;
+		}
+		won = true;
+		GameObject winTextObj = new GameObject("WinText");
+		winTextObj.transform.position = new Vector3(0.465f, 0.561f, 1f);
+		GUIText winText = (GUIText)winTextObj.AddComponent(typeof(GUIText));
+		winText.text = "YOU WIN!!!";
+		winText.anchor = TextAnchor.MiddleCenter;
+		winText.alignment = TextAlignment.Center;
+		winText.fontSize = 100;
+		yield return new WaitForSeconds(5);
+		Application.LoadLevel("MenuScene");
+	}
 }
