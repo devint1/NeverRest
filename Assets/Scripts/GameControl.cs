@@ -21,6 +21,7 @@ public class GameControl : MonoBehaviour {
 	bool draw_text = false;
 	Texture2D text;
 	Rect box;
+	float WHITE_BLOOD_CELL_FOOD_RATE = 0.05f;
 
 	void Start() {
 		time_of_last_spawn = Time.time;
@@ -112,7 +113,7 @@ public class GameControl : MonoBehaviour {
 	void Update() {
 		if (white_blood_production > 0 && (Time.time - time_of_last_spawn) > 30 / white_blood_production) {
 			Spawn_White_Blood_Cell ();
-			food_Level -= 0.05f;
+			food_Level -= WHITE_BLOOD_CELL_FOOD_RATE;
 		}
 
 		if (food_Level <= 0f || healthLevel <= 0f) {
@@ -120,10 +121,16 @@ public class GameControl : MonoBehaviour {
 		}
 
 		if (whiteBloodCells != null) {
-			foreach (WhiteBloodCell cell in whiteBloodCells) {
+			//foreach (WhiteBloodCell cell in whiteBloodCells) {
+			for(int i = 0; i < whiteBloodCells.Count; i++) {
+				WhiteBloodCell cell = (WhiteBloodCell)(whiteBloodCells[i]);
 				if (cell.destroy_me) {
-					whiteBloodCells.Remove (cell);
-					Destroy (cell, 2.0f);
+					Debug.Log ("deleting white blood cell...");
+					//whiteBloodCells.Remove (cell);
+					Destroy (((WhiteBloodCell)(whiteBloodCells[i])).gameObject, 2);
+					whiteBloodCells.RemoveAt(i);
+					food_Level += WHITE_BLOOD_CELL_FOOD_RATE * 0.8f;
+					i--;
 				}
 			}
 		}
@@ -138,4 +145,5 @@ public class GameControl : MonoBehaviour {
 		whiteBloodCells.Add (new_White.GetComponent<WhiteBloodCell>());
 		time_of_last_spawn = Time.time;
 	}
+
 }
