@@ -12,6 +12,7 @@ public class GameControl : MonoBehaviour {
 	public Texture2D barEmpty;
 	public float healthLevel = 1f;
 	public int numDiseaseCells = 2;
+	public AudioClip backGroundMusic = null;
 	
 	const float WHITE_BLOOD_CELL_FOOD_RATE = 0.05f;
 
@@ -27,6 +28,12 @@ public class GameControl : MonoBehaviour {
 	bool won = false;
 
 	void Start() {
+		if (backGroundMusic) {
+			AudioSource temp = gameObject.AddComponent<AudioSource> ();
+			temp.clip = backGroundMusic;
+			temp.Play();
+		}
+
 		timeOfLastSpawn = Time.time;
 		selected = new ArrayList();
 		whiteBloodCells = new ArrayList();

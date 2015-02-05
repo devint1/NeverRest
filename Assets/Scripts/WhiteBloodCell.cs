@@ -7,13 +7,20 @@ public class WhiteBloodCell : MonoBehaviour {
 	public bool isSelected = false;
 	public bool destroyMe = false;
 	public Block destBlock = null; // Block the cell is moving to
+	public AudioClip spawnSound =  null;
 	
 	const float SPEED = 0.005f;
 	const int MAX_DISEASE_ABSORBED = 8;
 	
 	int diseasesabsorbed = 0;
 	public GameObject headingToward; //Point, Exitpoint, or disease that WhiteBloodCell is moving towards right now
-	
+
+	public void Start(){
+		AudioSource temp = gameObject.AddComponent<AudioSource> ();
+		temp.clip = spawnSound;
+		temp.Play ();
+	}
+
 	public void Select(){
 		if(!isSelected){
 			gameControl.selected.Add (this);
