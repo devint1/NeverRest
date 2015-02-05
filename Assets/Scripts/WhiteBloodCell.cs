@@ -13,7 +13,7 @@ public class WhiteBloodCell : MonoBehaviour {
 	
 	int diseasesabsorbed = 0;
 	public GameObject heading_toward; //Point, Exitpoint, or disease that WhiteBloodCell is moving towards right now
-
+	
 	public void Select(){
 		if(!isSelected){
 			gameControl.selected.Add (this);
@@ -21,7 +21,7 @@ public class WhiteBloodCell : MonoBehaviour {
 		}
 		isSelected = true;
 	}
-
+	
 	public void DeSelect() {
 		if(isSelected) {
 			gameObject.renderer.material.color = Color.white;
@@ -29,7 +29,7 @@ public class WhiteBloodCell : MonoBehaviour {
 		}
 		isSelected = false;
 	}
-
+	
 	// Clicked on and selected
 	void OnMouseDown() {
 		if (!isSelected) {
@@ -38,17 +38,17 @@ public class WhiteBloodCell : MonoBehaviour {
 			DeSelect();
 		}
 	}
-
+	
 	// Running into a disease: Initiate the process of sucking it in
 	void OnTriggerEnter2D(Collider2D collidable) {
 		if (collidable.gameObject.tag != "Disease")
 			return;
-
+		
 		var diseaseScript = collidable.gameObject.GetComponent<Disease>();
 		if (!diseaseScript.captured) {
 			diseaseScript.BeenCapturedBy(this.gameObject);
-
 			diseasesabsorbed++;
+			--gameControl.numDiseaseCells;
 			if (diseasesabsorbed >= MAX_DISEASE_ABSORBED) {
 				//Destroy (this.gameObject, 2.0f);
 				destroyMe = true;
@@ -57,7 +57,7 @@ public class WhiteBloodCell : MonoBehaviour {
 			return;
 		}
 	}
-
+	
 	// Movement Code
 	void Update () {
 		//If we are not in our desination block and not on the way to ExitPoint then get to proper exit point
@@ -69,7 +69,7 @@ public class WhiteBloodCell : MonoBehaviour {
 				}
 			}
 		}
-
+		
 		//If cell has reached is destination
 		if ( (heading_toward.transform.position - this.transform.position).magnitude < 0.07) {
 			
@@ -83,13 +83,13 @@ public class WhiteBloodCell : MonoBehaviour {
 				heading_toward = currentBlock.GetRandomPoint();
 			}
 		}
-
+		
 		Vector3 directionToDestination = (heading_toward.transform.position - this.transform.position).normalized;
 		
 		this.transform.position = new Vector3 ((directionToDestination.x * SPEED) + this.transform.position.x,
 		                                       (directionToDestination.y * SPEED) + this.transform.position.y,
 		                                       this.transform.position.z);
-
+		
 		// Check to see if cell is at destination block
 		if (destBlock) {
 			if (destBlock == currentBlock) {
@@ -98,7 +98,7 @@ public class WhiteBloodCell : MonoBehaviour {
 			}
 		}
 	}
-
+	
 	GameObject FindExitPointToDestination(Block current, Block destination) {
 		foreach (Transform exitPoint in currentBlock.exitPoints) {
 			if(exitPoint.gameObject.GetComponent<ExitPoint>().nextBlock == destination) {
@@ -106,21 +106,21 @@ public class WhiteBloodCell : MonoBehaviour {
 			}
 			else {
 				GameObject exitIntoDestination = FindExitPointToDestination(exitPoint.gameObject.GetComponent<ExitPoint>().nextBlock, destination);
-
+				
 				if(exitIntoDestination) {
 					return exitPoint.gameObject;
 				}
 			}
 		}
-
+		
 		return null;
 	}
-
+	
 	bool ExitPointLeadsToDestination(GameObject exit, Block destination, Block curBlock) {
 		if(exit.gameObject.GetComponent<ExitPoint>().nextBlock == destination) {
 			return true;
 		}
-
+		
 		foreach(Transform exitPoint in exit.GetComponent<ExitPoint>().nextBlock.exitPoints) {
 			if( curBlock != exitPoint.gameObject.GetComponent<ExitPoint>().nextBlock ) {
 				if( ExitPointLeadsToDestination(exitPoint.gameObject, destination, exit.GetComponent<ExitPoint>().nextBlock) ) {
@@ -128,8 +128,8 @@ public class WhiteBloodCell : MonoBehaviour {
 				}
 			}
 		}
-
+		
 		return false;
 	}
-
+	
 }

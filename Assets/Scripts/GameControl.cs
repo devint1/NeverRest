@@ -11,6 +11,7 @@ public class GameControl : MonoBehaviour {
 	public Texture2D healthBarFull;
 	public Texture2D barEmpty;
 	public float healthLevel = 1f;
+	public int numDiseaseCells = 0;
 
 	int whiteBloodProduction = 0;
 	// int mousePressStart = -1;

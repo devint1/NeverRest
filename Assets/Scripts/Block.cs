@@ -7,18 +7,21 @@ public enum BlockType { HEART, OTHER }
 public class Block : MonoBehaviour {
 	public GameControl gameControl;
 	public BlockType blockType;
-
+	public ArrayList diseases = new ArrayList();
+	
+	public static int MAX_NUM_DISEASE_PER_BLOCK = 15;
+	
 	private int whiteCellsTargeting = 0; // Number of WhiteBloodCells moving to this block
 	GameObject destTarget = null;
-
+	
 	List<Transform> points = new List<Transform>();
 	public List<Transform> exitPoints = new List<Transform>(); //First one is always exit point that leads to heart
-
+	
 	void Start() {
 		if (points.Count == 0)
 			PopulatePointsLists ();
 	}
-
+	
 	void PopulatePointsLists() {
 		foreach (Transform child in transform) //Iterate through all children
 		{
@@ -37,7 +40,8 @@ public class Block : MonoBehaviour {
 			}
 		}
 	}
-
+	
+	
 	// Block clicked. Send selected WhiteBloodCell here
 	void OnMouseDown() {
 		foreach (WhiteBloodCell cell in gameControl.selected) {
@@ -47,26 +51,26 @@ public class Block : MonoBehaviour {
 			this.increaseWBCsTargeting();
 		}
 		gameControl.selected.Clear();
-//		game_Control.selected = new ArrayList ();
+		//		game_Control.selected = new ArrayList ();
 	}
-
+	
 	public GameObject GetRandomPoint() {
 		if (points.Count == 0)
 			PopulatePointsLists ();
-
+		
 		int randomPointIndex = Random.Range (0, points.Count-1);
 		return points [randomPointIndex].gameObject;
 	}
-
+	
 	public void increaseWBCsTargeting() {
 		if (whiteCellsTargeting == 0) {
 			destTarget = (GameObject)Instantiate(this.gameControl.destMarkPrefab,
-			                                       GetRandomPoint().transform.position,
-			                                       this.transform.rotation);
+			                                     GetRandomPoint().transform.position,
+			                                     this.transform.rotation);
 		}
 		whiteCellsTargeting++;
 	}
-
+	
 	public void decreaseWBCsTargeting() {
 		whiteCellsTargeting--;
 		if (whiteCellsTargeting == 0) {
