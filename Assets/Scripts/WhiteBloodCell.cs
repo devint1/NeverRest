@@ -46,8 +46,9 @@ public class WhiteBloodCell : MonoBehaviour {
 
 	// Running into a disease: Initiate the process of sucking it in
 	void OnTriggerEnter2D(Collider2D collidable) {
-		if (collidable.gameObject.tag == "Disease")
+		if (collidable.gameObject.tag != "Disease")
 			return;
+
 		var diseaseScript = collidable.gameObject.GetComponent<Disease>();
 		if (!diseaseScript.captured) {
 			diseaseScript.currentBlock = this.gameObject;
