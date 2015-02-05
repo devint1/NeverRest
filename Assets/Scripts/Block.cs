@@ -9,7 +9,7 @@ public class Block : MonoBehaviour {
 	public BlockType blockType;
 	public ArrayList diseases = new ArrayList();
 	
-	public static int MAX_NUM_DISEASE_PER_BLOCK = 15;
+	public static int MAX_NUM_DISEASE_PER_BLOCK = 200;
 	
 	private int whiteCellsTargeting = 0; // Number of WhiteBloodCells moving to this block
 	GameObject destTarget = null;
