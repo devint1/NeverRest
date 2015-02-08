@@ -9,7 +9,7 @@ public class WhiteBloodCell : MonoBehaviour {
 	public Block destBlock = null; // Block the cell is moving to
 	public AudioClip spawnSound =  null;
 	
-	const float SPEED = 0.005f;
+	const float SPEED = 0.075f;
 	const int MAX_DISEASE_ABSORBED = 8;
 	
 	int diseasesabsorbed = 0;
@@ -45,28 +45,31 @@ public class WhiteBloodCell : MonoBehaviour {
 			DeSelect();
 		}
 	}
-	
-	// Running into a disease: Initiate the process of sucking it in
-	void OnTriggerEnter2D(Collider2D collidable) {
-		if (collidable.gameObject.tag != "Disease")
-			return;
-		
-		var diseaseScript = collidable.gameObject.GetComponent<Disease>();
-		if (!diseaseScript.captured) {
-			diseaseScript.BeenCapturedBy(this.gameObject);
-			diseasesabsorbed++;
-			--gameControl.numDiseaseCells;
-			if (diseasesabsorbed >= MAX_DISEASE_ABSORBED) {
-				//Destroy (this.gameObject, 2.0f);
-				destroyMe = true;
+
+	void CheckCollisionOnDisease(){
+		ArrayList capture = new ArrayList ();
+
+		foreach (Disease disease in currentBlock.diseases){
+			if (Vector3.Distance (disease.transform.position, transform.position) < .2){
+				if (!disease.captured) {
+					capture.Add (disease);
+					diseasesabsorbed++;
+					--gameControl.numDiseaseCells;
+					if (diseasesabsorbed >= MAX_DISEASE_ABSORBED) {
+						destroyMe = true;
+					}
+				}
 			}
-		} else {
-			return;
+		}
+		foreach (Disease disease in capture) {
+			disease.BeenCapturedBy (this.gameObject);
 		}
 	}
-	
+
 	// Movement Code
 	void Update () {
+		CheckCollisionOnDisease ();
+
 		//If we are not in our desination block and not on the way to ExitPoint then get to proper exit point
 		if (destBlock && destBlock != currentBlock && headingToward.tag != "ExitPoint") {
 			foreach(Transform exitPoint in currentBlock.exitPoints) {
