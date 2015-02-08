@@ -6,19 +6,26 @@ public class WhiteBloodCell : MonoBehaviour {
 	public GameControl gameControl;
 	public bool isSelected = false;
 	public bool destroyMe = false;
-	public Block destBlock = null; // Block the cell is moving to
 	public AudioClip spawnSound =  null;
+
+	public GameObject headingToward; //Point, Exitpoint, or disease that WhiteBloodCell is moving towards right now
 	
-	const float SPEED = 0.075f;
+	const float SPEED = 0.0075f;
 	const int MAX_DISEASE_ABSORBED = 8;
 	
 	int diseasesabsorbed = 0;
-	public GameObject headingToward; //Point, Exitpoint, or disease that WhiteBloodCell is moving towards right now
+	Block destBlock = null; // Block the cell is moving to
+	bool destChanged = false;
 
 	public void Start(){
 		AudioSource temp = gameObject.AddComponent<AudioSource> ();
 		temp.clip = spawnSound;
 		temp.Play ();
+	}
+
+	public void SetDestination( Block dest ){
+		destBlock = dest;
+		destChanged = true;
 	}
 
 	public void Select(){
@@ -71,7 +78,9 @@ public class WhiteBloodCell : MonoBehaviour {
 		CheckCollisionOnDisease ();
 
 		//If we are not in our desination block and not on the way to ExitPoint then get to proper exit point
-		if (destBlock && destBlock != currentBlock && headingToward.tag != "ExitPoint") {
+		if (destBlock && destBlock != currentBlock && headingToward.tag != "ExitPoint"
+		    || destChanged) {
+			destChanged = false;
 			foreach(Transform exitPoint in currentBlock.exitPoints) {
 				if( ExitPointLeadsToDestination(exitPoint.gameObject, destBlock, currentBlock) ) {
 					headingToward = exitPoint.gameObject;

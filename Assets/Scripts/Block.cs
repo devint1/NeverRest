@@ -46,7 +46,7 @@ public class Block : MonoBehaviour {
 		foreach (WhiteBloodCell cell in gameControl.selected) {
 			cell.renderer.material.color = Color.white;
 			cell.isSelected = false;
-			cell.destBlock = this;
+			cell.SetDestination (this);
 			this.increaseWBCsTargeting();
 		}
 		gameControl.selected.Clear();
@@ -54,8 +54,9 @@ public class Block : MonoBehaviour {
 	}
 	
 	public GameObject GetRandomPoint() {
-		if (points.Count == 0)
+		if (points.Count == 0){
 			PopulatePointsLists ();
+		}
 		
 		int randomPointIndex = Random.Range (0, points.Count-1);
 		return points [randomPointIndex].gameObject;
