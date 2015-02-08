@@ -8,11 +8,11 @@ public class Block : MonoBehaviour {
 	public GameControl gameControl;
 	public BlockType blockType;
 	public ArrayList diseases = new ArrayList();
-	
+	public GameObject destMarkPrefab;
+
+	Vector3 MousePos;
+
 	public static int MAX_NUM_DISEASE_PER_BLOCK = 200;
-	
-	private int whiteCellsTargeting = 0; // Number of WhiteBloodCells moving to this block
-	GameObject destTarget = null;
 	
 	List<Transform> points = new List<Transform>();
 	public List<Transform> exitPoints = new List<Transform>(); //First one is always exit point that leads to heart
@@ -47,12 +47,13 @@ public class Block : MonoBehaviour {
 		if (!Input.GetMouseButtonDown(1)){
 			return;
 		}
+		MousePos = Camera.main.ScreenToWorldPoint (Input.mousePosition);
 		foreach (WhiteBloodCell cell in gameControl.selected) {
 			cell.renderer.material.color = Color.white;
 			cell.isSelected = false;
-			cell.SetDestination (this, Camera.main.ScreenToWorldPoint(Input.mousePosition));
-			this.increaseWBCsTargeting();
+			cell.SetDestination (this, MousePos);
 		}
+		StartCoroutine(FireMouseClick());
 		gameControl.selected.Clear();
 	}
 	
@@ -64,20 +65,19 @@ public class Block : MonoBehaviour {
 		int randomPointIndex = Random.Range (0, points.Count-1);
 		return points [randomPointIndex].gameObject;
 	}
-	
-	public void increaseWBCsTargeting() {
-		if (whiteCellsTargeting == 0) {
-			destTarget = (GameObject)Instantiate(this.gameControl.destMarkPrefab,
-			                                     GetRandomPoint().transform.position,
-			                                     this.transform.rotation);
+
+	IEnumerator FireMouseClick()
+	{
+		if (!destMarkPrefab.activeSelf) {
+			destMarkPrefab.SetActive(true);
 		}
-		whiteCellsTargeting++;
-	}
-	
-	public void decreaseWBCsTargeting() {
-		whiteCellsTargeting--;
-		if (whiteCellsTargeting == 0) {
-			Destroy(destTarget);	
+		GameObject mouseTarget = (GameObject)Instantiate (destMarkPrefab, (Vector2)MousePos, Quaternion.identity);
+		Color c = Color.green;
+		while (c.a > 0){
+			yield return new WaitForSeconds(.1f);
+			c.a -= .05f;
+			mouseTarget.renderer.material.color = c;
 		}
+		Destroy (mouseTarget);
 	}
 }

@@ -6,7 +6,6 @@ public class GameControl : MonoBehaviour {
 	public ArrayList whiteBloodCells;
 	public Block whiteBloodSpawnPoint;
 	public GameObject whiteBloodCellPrefab;
-	public GameObject destMarkPrefab;
 	public Texture2D foodBarFull;
 	public Texture2D healthBarFull;
 	public Texture2D barEmpty;
