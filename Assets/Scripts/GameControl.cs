@@ -26,6 +26,7 @@ public class GameControl : MonoBehaviour {
 	Texture2D text;
 	Rect box;
 	bool won = false;
+	bool isPaused = false;
 
 	void Start() {
 		if (backGroundMusic) {
@@ -39,6 +40,58 @@ public class GameControl : MonoBehaviour {
 		whiteBloodCells = new ArrayList();
 		mousePositionStart = new Vector3();
 		SpawnWhiteBloodCell();
+	}
+
+	public bool CheckIfPaused(){
+		return isPaused;
+	}
+
+	void TogglePauseGame(){
+		isPaused = !isPaused;
+	}
+
+	//Only call this function from on GUI
+	void MouseSelection(){
+		if (!mouseDown && Input.GetMouseButton (0)) {
+			mousePositionStart = Event.current.mousePosition;
+			mouseDown = true;
+			if (whiteBloodCells != null) {
+				foreach(WhiteBloodCell cell in whiteBloodCells) {
+					cell.DeSelect();
+				}
+			}
+		} else if (mouseDown && Input.GetMouseButton (0)) {
+			// Beginning of box selection
+			// Draw selection box
+			text = new Texture2D (1, 1);
+			Color col = Color.green;
+			col.a = .15f;
+			text.SetPixel (1, 1, col);
+			text.Apply ();
+			box = new Rect(mousePositionStart.x, mousePositionStart.y,
+			               Event.current.mousePosition.x - mousePositionStart.x, 
+			               Event.current.mousePosition.y - mousePositionStart.y);
+			GUI.DrawTexture (box, text);
+			drawText = true;
+		} else if(mouseDown && !(Input.GetMouseButton (0))) {
+			// End of box selection
+			// Select cells in box
+			box = new Rect(mousePositionStart.x, mousePositionStart.y,
+			               Event.current.mousePosition.x - mousePositionStart.x, 
+			               Event.current.mousePosition.y - mousePositionStart.y);
+			if (whiteBloodCells != null) {
+				foreach(WhiteBloodCell cell in whiteBloodCells){
+					Vector2 pos = Camera.main.WorldToScreenPoint(cell.transform.position);
+					pos.y = Camera.main.pixelHeight - pos.y;
+					if(box.Contains(pos, true)){
+						cell.Select();
+					}
+				}
+			}
+			mouseDown = false;
+			mousePositionStart.x = 0;
+			mousePositionStart.y = 0;
+		}
 	}
 
 	void OnGUI() {
@@ -77,50 +130,23 @@ public class GameControl : MonoBehaviour {
 		}
 
 		// Handle selection
-		if (!mouseDown && Input.GetMouseButton (0)) {
-			mousePositionStart = Event.current.mousePosition;
-			mouseDown = true;
-			if (whiteBloodCells != null) {
-				foreach(WhiteBloodCell cell in whiteBloodCells) {
-					cell.DeSelect();
-				}
-			}
-		} else if (mouseDown && Input.GetMouseButton (0)) {
-			// Beginning of box selection
-			// Draw selection box
-			text = new Texture2D (1, 1);
-			Color col = Color.green;
-			col.a = .15f;
-			text.SetPixel (1, 1, col);
-			text.Apply ();
-			box = new Rect(mousePositionStart.x, mousePositionStart.y,
-			                Event.current.mousePosition.x - mousePositionStart.x, 
-			                Event.current.mousePosition.y - mousePositionStart.y);
-			GUI.DrawTexture (box, text);
-			drawText = true;
-		} else if(mouseDown && !(Input.GetMouseButton (0))) {
-			// End of box selection
-			// Select cells in box
-			box = new Rect(mousePositionStart.x, mousePositionStart.y,
-			               Event.current.mousePosition.x - mousePositionStart.x, 
-			               Event.current.mousePosition.y - mousePositionStart.y);
-			if (whiteBloodCells != null) {
-				foreach(WhiteBloodCell cell in whiteBloodCells){
-					Vector2 pos = Camera.main.WorldToScreenPoint(cell.transform.position);
-					pos.y = Camera.main.pixelHeight - pos.y;
-					if(box.Contains(pos, true)){
-						cell.Select();
-					}
-					
-				}
-			}
-			mouseDown = false;
-			mousePositionStart.x = 0;
-			mousePositionStart.y = 0;
+		if (!CheckIfPaused()){
+			MouseSelection ();
+		}
+		else{
+			//Call function to handle pause menu here
 		}
 	}
 
 	void Update() {
+		if (Input.GetKeyDown("p")){
+			TogglePauseGame();
+		}
+
+		if (CheckIfPaused()){
+			return;
+		}
+
 		if (whiteBloodProduction > 0 && (Time.time - timeOfLastSpawn) > 30 / whiteBloodProduction) {
 			SpawnWhiteBloodCell ();
 			foodLevel -= WHITE_BLOOD_CELL_FOOD_RATE;

@@ -14,9 +14,4 @@ public class Body : MonoBehaviour {
 			blocks.Add(child.gameObject);
 		}
 	}
-
-	// Block clicked. Find which one, then send selected WhiteBloodCell here
-	void OnMouseDown() {
-		Debug.Log ("MouseDown!");
-	}
 }

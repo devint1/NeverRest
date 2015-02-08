@@ -30,6 +30,9 @@ public class Disease : MonoBehaviour {
 	
 	// Movement Code
 	void Update () {
+		if( gameControl.CheckIfPaused() ){
+			return;
+		}
 		//If disease has reached is destination
 		if ( (destination.transform.position - this.transform.position).magnitude < 0.07) {
 			

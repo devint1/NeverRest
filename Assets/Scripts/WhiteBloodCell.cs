@@ -75,6 +75,9 @@ public class WhiteBloodCell : MonoBehaviour {
 
 	// Movement Code
 	void Update () {
+		if( gameControl.CheckIfPaused() ){
+			return;
+		}
 		CheckCollisionOnDisease ();
 
 		//If we are not in our desination block and not on the way to ExitPoint then get to proper exit point
