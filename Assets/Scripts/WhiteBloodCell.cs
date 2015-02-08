@@ -16,6 +16,9 @@ public class WhiteBloodCell : MonoBehaviour {
 	int diseasesabsorbed = 0;
 	Block destBlock = null; // Block the cell is moving to
 	bool destChanged = false;
+	Vector2 userDest;
+	bool hasUserDest; //Need to use this since userDest cannot = null
+	ExitPoint pathingToEntrance = null;
 
 	public void Start(){
 		AudioSource temp = gameObject.AddComponent<AudioSource> ();
@@ -23,9 +26,11 @@ public class WhiteBloodCell : MonoBehaviour {
 		temp.Play ();
 	}
 
-	public void SetDestination( Block dest ){
+	public void SetDestination(Block dest, Vector2 coords){
 		destBlock = dest;
 		destChanged = true;
+		userDest = coords;
+		hasUserDest = true;
 	}
 
 	public void Select(){
@@ -39,7 +44,6 @@ public class WhiteBloodCell : MonoBehaviour {
 	public void DeSelect() {
 		if(isSelected) {
 			gameObject.renderer.material.color = Color.white;
-			//game_Control.selected.Remove (this);
 		}
 		isSelected = false;
 	}
@@ -80,44 +84,49 @@ public class WhiteBloodCell : MonoBehaviour {
 		}
 		CheckCollisionOnDisease ();
 
-		//If we are not in our desination block and not on the way to ExitPoint then get to proper exit point
-		if (destBlock && destBlock != currentBlock && headingToward.tag != "ExitPoint"
-		    || destChanged) {
-			destChanged = false;
-			foreach(Transform exitPoint in currentBlock.exitPoints) {
-				if( ExitPointLeadsToDestination(exitPoint.gameObject, destBlock, currentBlock) ) {
-					headingToward = exitPoint.gameObject;
-					break;
+		//If we are at current way point or the destination has been changed
+		if (!headingToward || Vector3.Distance (headingToward.transform.position, this.transform.position) < .03 || destChanged) {
+			//If we have arrived at our exit node, our next node should be the next cells entrance node
+			//Dest change is to check if it was a destchange request or we reach current node
+			if( headingToward && headingToward.tag == "ExitPoint" && !destChanged ){
+				pathingToEntrance = headingToward.GetComponent<ExitPoint>();
+				headingToward = headingToward.GetComponent<ExitPoint>().entrancePoint;
+			}
+			//Otherwise if we are not in the correct block we need to find the next exit
+			else if (destBlock && destBlock != currentBlock) {
+				if (pathingToEntrance){
+					currentBlock = pathingToEntrance.GetComponent<ExitPoint>().nextBlock;
+					pathingToEntrance = null;
+					headingToward = null;
+				}
+				else{
+					foreach (Transform exitPoint in currentBlock.exitPoints) {
+						if( ExitPointLeadsToDestination(exitPoint.gameObject, destBlock, currentBlock) ) {
+							headingToward = exitPoint.gameObject;
+							break;
+						}
+					}	
 				}
 			}
-		}
-		
-		//If cell has reached is destination
-		if ( (headingToward.transform.position - this.transform.position).magnitude < 0.07) {
-			
-			//We just reached a waypoint. Choose next destination.
-			if(headingToward.tag == "ExitPoint") {
-				ExitPoint exitPoint = headingToward.GetComponent<ExitPoint>();
-				currentBlock = exitPoint.nextBlock;
-				headingToward = exitPoint.entrancePoint;
+			//If we are in the correct block we need to go to users click
+			else if (hasUserDest){
+				headingToward = new GameObject();
+				headingToward.transform.position = userDest;
+				hasUserDest = false;
 			}
-			else {
+			//Last option is going to a random waypoint
+			else{
 				headingToward = currentBlock.GetRandomPoint();
 			}
-		}
-		
-		Vector3 directionToDestination = (headingToward.transform.position - this.transform.position).normalized;
-		
-		this.transform.position = new Vector3 ((directionToDestination.x * SPEED) + this.transform.position.x,
-		                                       (directionToDestination.y * SPEED) + this.transform.position.y,
-		                                       this.transform.position.z);
-		
-		// Check to see if cell is at destination block
-		if (destBlock) {
-			if (destBlock == currentBlock) {
-				destBlock.decreaseWBCsTargeting();
-				destBlock = null;
+			if( destChanged ){
+				destChanged = false;
 			}
+		}
+		if (headingToward) {
+			Vector3 directionToDestination = (headingToward.transform.position - this.transform.position).normalized;			
+			this.transform.position = new Vector3 ((directionToDestination.x * SPEED) + this.transform.position.x,
+			                                       (directionToDestination.y * SPEED) + this.transform.position.y,
+			                                       this.transform.position.z);
 		}
 	}
 	
@@ -142,7 +151,8 @@ public class WhiteBloodCell : MonoBehaviour {
 		if(exit.gameObject.GetComponent<ExitPoint>().nextBlock == destination) {
 			return true;
 		}
-		
+
+		//TODO - We should cache lookups
 		foreach(Transform exitPoint in exit.GetComponent<ExitPoint>().nextBlock.exitPoints) {
 			if( curBlock != exitPoint.gameObject.GetComponent<ExitPoint>().nextBlock ) {
 				if( ExitPointLeadsToDestination(exitPoint.gameObject, destination, exit.GetComponent<ExitPoint>().nextBlock) ) {

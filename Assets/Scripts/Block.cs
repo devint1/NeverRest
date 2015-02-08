@@ -43,17 +43,17 @@ public class Block : MonoBehaviour {
 
 	// Block clicked. Send selected WhiteBloodCell here
 	void OnMouseOver() {
+		//Quit out if not a right click
 		if (!Input.GetMouseButtonDown(1)){
 			return;
 		}
 		foreach (WhiteBloodCell cell in gameControl.selected) {
 			cell.renderer.material.color = Color.white;
 			cell.isSelected = false;
-			cell.SetDestination (this);
+			cell.SetDestination (this, Camera.main.ScreenToWorldPoint(Input.mousePosition));
 			this.increaseWBCsTargeting();
 		}
 		gameControl.selected.Clear();
-		//		game_Control.selected = new ArrayList ();
 	}
 	
 	public GameObject GetRandomPoint() {
