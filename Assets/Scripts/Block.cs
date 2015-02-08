@@ -42,7 +42,10 @@ public class Block : MonoBehaviour {
 	}
 
 	// Block clicked. Send selected WhiteBloodCell here
-	void OnMouseDown() {
+	void OnMouseOver() {
+		if (!Input.GetMouseButtonDown(1)){
+			return;
+		}
 		foreach (WhiteBloodCell cell in gameControl.selected) {
 			cell.renderer.material.color = Color.white;
 			cell.isSelected = false;
