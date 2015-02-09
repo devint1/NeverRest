@@ -13,8 +13,6 @@ public class GameControl : MonoBehaviour {
 	public float healthLevel = 1f;
 	public int numDiseaseCells = 2;
 	public AudioClip backGroundMusic = null;
-	public bool paused = false;
-
 	
 	const float WHITE_BLOOD_CELL_FOOD_RATE = 0.05f;
 
@@ -28,7 +26,6 @@ public class GameControl : MonoBehaviour {
 	Texture2D text;
 	Rect box;
 	bool won = false;
-
 
 	void Start() {
 		if (backGroundMusic) {
@@ -45,20 +42,6 @@ public class GameControl : MonoBehaviour {
 	}
 
 	void OnGUI() {
-		if (paused){     
-			GUI.Box(new Rect(Screen.width/4, Screen.height/4, Screen.width/2, Screen.height/2), "PAUSED");
-			//GUI.Label(new Rect(Screen.width/4+10, Screen.height/4+Screen.height/10+10, Screen.width/2-20, Screen.height/10), "YOUR SCORE: "+ ((int)score));
-			
-			if (GUI.Button(new Rect(Screen.width/4+10, Screen.height/4+Screen.height/10+10, Screen.width/2-20, Screen.height/10), "RESUME")){
-				paused = false;
-			}
-			/*
-			if (GUI.Button(new Rect(Screen.width/4+10, Screen.height/4+2*Screen.height/10+10, Screen.width/2-20, Screen.height/10), "RESTART")){
-				Application.LoadLevel(Application.loadedLevel);
-			}
-			*/
-			 
-		}
 		// Get white blood cell production from slider
 		whiteBloodProduction = (int)GUI.HorizontalSlider(new Rect(25, 90, 125, 30), whiteBloodProduction, 0.0F, 10.0F);
 		
@@ -138,45 +121,34 @@ public class GameControl : MonoBehaviour {
 	}
 
 	void Update() {
-		if (Input.GetKey(KeyCode.Escape) ) //check if Escape key/Back key is pressed
-		{
-			if (paused)
-				paused = false;  //unpause the game if already paused
-			else
-				paused = true;  //pause the game if not paused
+		if (whiteBloodProduction > 0 && (Time.time - timeOfLastSpawn) > 30 / whiteBloodProduction) {
+			SpawnWhiteBloodCell ();
+			foodLevel -= WHITE_BLOOD_CELL_FOOD_RATE;
 		}
-		
-		if(paused)
-			Time.timeScale = 0;  //set the timeScale to 0 so that all the procedings are halted
-		else
-			Time.timeScale = 1;  //set it back to 1 on unpausing the game
-		if (paused) {
-			if (whiteBloodProduction > 0 && (Time.time - timeOfLastSpawn) > 30 / whiteBloodProduction) {
-				SpawnWhiteBloodCell ();
-				foodLevel -= WHITE_BLOOD_CELL_FOOD_RATE;
+
+		// Check losing condition
+		if (foodLevel <= 0f || healthLevel <= 0f) {
+			Application.LoadLevel("MenuScene");
+		}
+
+		// Check winning condition
+		if (numDiseaseCells <= 0) {
+			StartCoroutine (win ());
+		}
+
+		if (whiteBloodCells != null) {
+			//foreach (WhiteBloodCell cell in whiteBloodCells) {
+			for(int i = 0; i < whiteBloodCells.Count; i++) {
+				WhiteBloodCell cell = (WhiteBloodCell)(whiteBloodCells[i]);
+				if (cell.destroyMe) {
+					Debug.Log ("deleting white blood cell...");
+					//whiteBloodCells.Remove (cell);
+					Destroy (((WhiteBloodCell)(whiteBloodCells[i])).gameObject, 2);
+					whiteBloodCells.RemoveAt(i);
+					foodLevel += WHITE_BLOOD_CELL_FOOD_RATE * 0.8f;
+					i--;
 				}
-			// Check losing condition
-			if (foodLevel <= 0f || healthLevel <= 0f) {
-				Application.LoadLevel ("MenuScene");
 			}
-			// Check winning condition
-			if (numDiseaseCells <= 0) {
-				StartCoroutine (win ());
-				}
-			if (whiteBloodCells != null) {
-				//foreach (WhiteBloodCell cell in whiteBloodCells) {
-				for (int i = 0; i < whiteBloodCells.Count; i++) {
-					WhiteBloodCell cell = (WhiteBloodCell)(whiteBloodCells [i]);
-					if (cell.destroyMe) {
-						Debug.Log ("deleting white blood cell...");
-						//whiteBloodCells.Remove (cell);
-						Destroy (((WhiteBloodCell)(whiteBloodCells [i])).gameObject, 2);
-						whiteBloodCells.RemoveAt (i);
-						foodLevel += WHITE_BLOOD_CELL_FOOD_RATE * 0.8f;
-						i--;
-						}
-					}
-				}
 		}
 	}
 
