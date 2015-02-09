@@ -25,6 +25,7 @@ public class GameControl : MonoBehaviour {
 	Rect box;
 	bool gameOver = false;
 	bool isPaused = false;
+	bool showMenu = false;
 
 	void Start() {
 		if (backGroundMusic) {
@@ -101,11 +102,18 @@ public class GameControl : MonoBehaviour {
 
 	void OnGUI() {
 		// Get white blood cell production from slider
-		if (isPaused){
-			GUI.Box(new Rect(Screen.width/4, Screen.height/4, Screen.width/4, Screen.height/4), "PAUSED");
-			if (GUI.Button(new Rect(Screen.width/4+10, Screen.height/4+Screen.height/10+10, Screen.width/4-20, Screen.height/10), "RESUME")){
+		if (isPaused && showMenu){
+			GUI.Box(new Rect(Screen.width/4, Screen.height/4, Screen.width/2, Screen.height/2), "PAUSED");
+
+			if (GUI.Button(new Rect(Screen.width/4+10, Screen.height/4+Screen.height/10+10, Screen.width/2-20, Screen.height/10), "RESUME")){
 				isPaused = false;
 			}
+			if (GUI.Button(new Rect(Screen.width/4+10, Screen.height/4+3*Screen.height/10+10, Screen.width/2-20, Screen.height/10), "MAIN MENU")){
+				Application.LoadLevel("MenuScene");
+			} 
+		}
+		if (isPaused && showMenu == false){
+			GUI.Box(new Rect(Screen.width/3, Screen.height/18, Screen.width/4, Screen.height/8), "PAUSED \n Space Bar to Resume");
 		}
 		whiteBloodProduction = (int)GUI.HorizontalSlider(new Rect(25, 90, 125, 30), whiteBloodProduction, 0.0F, 10.0F);
 		
@@ -150,7 +158,12 @@ public class GameControl : MonoBehaviour {
 	}
 
 	void Update() {
-		if (Input.GetKeyDown(KeyCode.Escape)|| Input.GetKeyDown(KeyCode.Space)){
+		if (Input.GetKeyDown(KeyCode.Escape)){
+
+			TogglePauseGame();
+			showMenu = !showMenu;
+		}
+		if (Input.GetKeyDown(KeyCode.Space)){
 			TogglePauseGame();
 		}
 
