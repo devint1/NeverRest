@@ -55,7 +55,7 @@ public class Disease : MonoBehaviour {
 			}
 		}
 		
-		Vector3 directionToDestination = (destination.transform.position - this.transform.position).normalized;
+		Vector2 directionToDestination = ((Vector2)destination.transform.position - (Vector2)this.transform.position).normalized;
 		
 		this.transform.position = new Vector3 ((directionToDestination.x * speed) + this.transform.position.x,
 		                                       (directionToDestination.y * speed) + this.transform.position.y,

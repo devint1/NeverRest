@@ -85,7 +85,7 @@ public class WhiteBloodCell : MonoBehaviour {
 		CheckCollisionOnDisease ();
 
 		//If we are at current way point or the destination has been changed
-		if (!headingToward || Vector3.Distance (headingToward.transform.position, this.transform.position) < .03 || destChanged) {
+		if (!headingToward || Vector2.Distance (headingToward.transform.position, this.transform.position) < .03 || destChanged) {
 			//If we have arrived at our exit node, our next node should be the next cells entrance node
 			//Dest change is to check if it was a destchange request or we reach current node
 			if( headingToward && headingToward.tag == "ExitPoint" && !destChanged ){
@@ -123,7 +123,7 @@ public class WhiteBloodCell : MonoBehaviour {
 			}
 		}
 		if (headingToward) {
-			Vector3 directionToDestination = (headingToward.transform.position - this.transform.position).normalized;			
+			Vector2 directionToDestination = ((Vector2)headingToward.transform.position - (Vector2)this.transform.position).normalized;			
 			this.transform.position = new Vector3 ((directionToDestination.x * SPEED) + this.transform.position.x,
 			                                       (directionToDestination.y * SPEED) + this.transform.position.y,
 			                                       this.transform.position.z);
