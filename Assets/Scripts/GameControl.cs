@@ -12,7 +12,6 @@ public class GameControl : MonoBehaviour {
 	public float healthLevel = 1f;
 	public int numDiseaseCells = 2;
 	public AudioClip backGroundMusic = null;
-	
 	const float WHITE_BLOOD_CELL_FOOD_RATE = 0.05f;
 
 	int whiteBloodProduction = 0;
@@ -46,7 +45,14 @@ public class GameControl : MonoBehaviour {
 	}
 
 	void TogglePauseGame(){
+		if (isPaused == false) {
+			Time.timeScale = 0;
+		}
+		else
+			Time.timeScale = 1;
+
 		isPaused = !isPaused;
+
 	}
 
 	//Only call this function from on GUI
@@ -95,6 +101,12 @@ public class GameControl : MonoBehaviour {
 
 	void OnGUI() {
 		// Get white blood cell production from slider
+		if (isPaused){
+			GUI.Box(new Rect(Screen.width/4, Screen.height/4, Screen.width/4, Screen.height/4), "PAUSED");
+			if (GUI.Button(new Rect(Screen.width/4+10, Screen.height/4+Screen.height/10+10, Screen.width/4-20, Screen.height/10), "RESUME")){
+				isPaused = false;
+			}
+		}
 		whiteBloodProduction = (int)GUI.HorizontalSlider(new Rect(25, 90, 125, 30), whiteBloodProduction, 0.0F, 10.0F);
 		
 		// Display wihte blood cell production status
@@ -138,7 +150,7 @@ public class GameControl : MonoBehaviour {
 	}
 
 	void Update() {
-		if (Input.GetKeyDown("p")){
+		if (Input.GetKeyDown(KeyCode.Escape)|| Input.GetKeyDown(KeyCode.Space)){
 			TogglePauseGame();
 		}
 
