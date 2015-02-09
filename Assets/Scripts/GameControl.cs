@@ -51,7 +51,6 @@ public class GameControl : MonoBehaviour {
 		}
 		else{
 			Time.timeScale = 1;
-			showMenu = false;
 		}
 		isPaused = !isPaused;
 
@@ -108,13 +107,16 @@ public class GameControl : MonoBehaviour {
 
 			if (GUI.Button(new Rect(Screen.width/4+10, Screen.height/4+Screen.height/10+10, Screen.width/2-20, Screen.height/10), "RESUME")){
 				isPaused = false;
+				showMenu = false;
 			}
 			if (GUI.Button(new Rect(Screen.width/4+10, Screen.height/4+3*Screen.height/10+10, Screen.width/2-20, Screen.height/10), "MAIN MENU")){
 				Application.LoadLevel("MenuScene");
+
 			} 
 		}
 		if (isPaused && showMenu == false){
 			GUI.Box(new Rect(Screen.width/3, Screen.height/18, Screen.width/4, Screen.height/8), "PAUSED \n Space Bar to Resume");
+
 		}
 		whiteBloodProduction = (int)GUI.HorizontalSlider(new Rect(25, 90, 125, 30), whiteBloodProduction, 0.0F, 10.0F);
 		
@@ -161,11 +163,16 @@ public class GameControl : MonoBehaviour {
 	void Update() {
 		if (Input.GetKeyDown(KeyCode.Escape)){
 
-			TogglePauseGame();
-			showMenu = !showMenu;
+			TogglePauseGame(); 
+			if (isPaused){
+				showMenu = true;
+			}
+			else
+				showMenu = false;
 		}
 		if (Input.GetKeyDown(KeyCode.Space)){
 			TogglePauseGame();
+			showMenu = false;
 		}
 
 		if (CheckIfPaused()){
