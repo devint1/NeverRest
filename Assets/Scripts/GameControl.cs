@@ -24,7 +24,7 @@ public class GameControl : MonoBehaviour {
 	bool drawText = false;
 	Texture2D text;
 	Rect box;
-	bool won = false;
+	bool gameOver = false;
 	bool isPaused = false;
 
 	void Start() {
@@ -153,7 +153,7 @@ public class GameControl : MonoBehaviour {
 
 		// Check losing condition
 		if (foodLevel <= 0f || healthLevel <= 0f) {
-			Application.LoadLevel("MenuScene");
+			StartCoroutine (Lose ());
 		}
 
 		// Check winning condition
@@ -189,14 +189,30 @@ public class GameControl : MonoBehaviour {
 
 	// Wins the game!
 	IEnumerator Win() {
-		if (won) {
+		if (gameOver) {
 			yield break;
 		}
-		won = true;
+		gameOver = true;
 		GameObject winTextObj = new GameObject("WinText");
 		winTextObj.transform.position = new Vector3(0.465f, 0.561f, 1f);
 		GUIText winText = (GUIText)winTextObj.AddComponent(typeof(GUIText));
 		winText.text = "YOU WIN!!!";
+		winText.anchor = TextAnchor.MiddleCenter;
+		winText.alignment = TextAlignment.Center;
+		winText.fontSize = 100;
+		yield return new WaitForSeconds(5);
+		Application.LoadLevel("MenuScene");
+	}
+
+	IEnumerator Lose() {
+		if (gameOver) {
+			yield break;
+		}
+		gameOver = true;
+		GameObject winTextObj = new GameObject("WinText");
+		winTextObj.transform.position = new Vector3(0.465f, 0.561f, 1f);
+		GUIText winText = (GUIText)winTextObj.AddComponent(typeof(GUIText));
+		winText.text = "YOU LOSE!!!";
 		winText.anchor = TextAnchor.MiddleCenter;
 		winText.alignment = TextAlignment.Center;
 		winText.fontSize = 100;
