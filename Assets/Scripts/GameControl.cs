@@ -49,9 +49,10 @@ public class GameControl : MonoBehaviour {
 		if (isPaused == false) {
 			Time.timeScale = 0;
 		}
-		else
+		else{
 			Time.timeScale = 1;
-
+			showMenu = false;
+		}
 		isPaused = !isPaused;
 
 	}
