@@ -21,7 +21,7 @@ public class Block : MonoBehaviour {
 	void Start() {
 		var collider = this.GetComponent<PolygonCollider2D> ();
 		if (collider) {
-			Tesselator tesselator = new Tesselator (collider.points);
+			tesselator = new Tesselator (collider.points);
 		}
 		if (points.Count == 0)
 			PopulatePointsLists ();
