@@ -10,7 +10,8 @@ public class Block : MonoBehaviour {
 	public ArrayList diseases = new ArrayList();
 	public GameObject destMarkPrefab;
 
-	Vector3 MousePos;
+	private Vector3 mousePos;
+	private Tesselator tesselator;
 
 	public static int MAX_NUM_DISEASE_PER_BLOCK = 200;
 	
@@ -18,6 +19,10 @@ public class Block : MonoBehaviour {
 	public List<Transform> exitPoints = new List<Transform>(); //First one is always exit point that leads to heart
 	
 	void Start() {
+		var collider = this.GetComponent<PolygonCollider2D> ();
+		if (collider) {
+			Tesselator tesselator = new Tesselator (collider.points);
+		}
 		if (points.Count == 0)
 			PopulatePointsLists ();
 	}
@@ -47,11 +52,11 @@ public class Block : MonoBehaviour {
 		if (!Input.GetMouseButtonDown(1)){
 			return;
 		}
-		MousePos = Camera.main.ScreenToWorldPoint (Input.mousePosition);
+		mousePos = Camera.main.ScreenToWorldPoint (Input.mousePosition);
 		foreach (WhiteBloodCell cell in gameControl.selected) {
 			cell.renderer.material.color = Color.white;
 			cell.isSelected = false;
-			cell.SetDestination (this, MousePos);
+			cell.SetDestination (this, mousePos);
 		}
 		StartCoroutine(FireMouseClick());
 		gameControl.selected.Clear();
@@ -71,7 +76,7 @@ public class Block : MonoBehaviour {
 		if (!destMarkPrefab.activeSelf) {
 			destMarkPrefab.SetActive(true);
 		}
-		GameObject mouseTarget = (GameObject)Instantiate (destMarkPrefab, (Vector2)MousePos, Quaternion.identity);
+		GameObject mouseTarget = (GameObject)Instantiate (destMarkPrefab, (Vector2)mousePos, Quaternion.identity);
 		Color c = Color.green;
 		while (c.a > 0){
 			yield return new WaitForSeconds(.1f);
