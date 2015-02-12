@@ -22,6 +22,7 @@ public class Block : MonoBehaviour {
 		var collider = this.GetComponent<PolygonCollider2D> ();
 		if (collider) {
 			tesselator = new Tesselator (collider.points);
+			tesselator.DrawTriangles(this.transform.gameObject);
 		}
 		if (points.Count == 0)
 			PopulatePointsLists ();
@@ -63,6 +64,24 @@ public class Block : MonoBehaviour {
 	}
 	
 	public GameObject GetRandomPoint() {
+		// Needs some work
+		/*
+		Vector2[] triangle = tesselator.GetRandomTriangle ();
+		float randomWeight1 = Random.value;
+		float randomWeight2 = Random.value;
+		float randomWeight3 = Random.value;
+		triangle [0] *= randomWeight1;
+		triangle [1] *= randomWeight2;
+		triangle [2] *= randomWeight3;
+
+		GameObject point = new GameObject ();
+		point.transform.position = new Vector3((triangle [0].x + triangle [1].x + triangle [2].x) / 3,
+			(triangle [0].y + triangle [1].y + triangle [2].y / 3),
+			transform.position.z);
+
+		return point;
+		*/
+
 		if (points.Count == 0){
 			PopulatePointsLists ();
 		}

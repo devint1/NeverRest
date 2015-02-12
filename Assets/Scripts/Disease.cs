@@ -34,7 +34,7 @@ public class Disease : MonoBehaviour {
 			return;
 		}
 		//If disease has reached is destination
-		if ( (destination.transform.position - this.transform.position).magnitude < 0.07) {
+		if ( destination && (destination.transform.position - this.transform.position).magnitude < 0.07) {
 			
 			//If were captured then we just reached the inside of White Blood Cell. Immobilze ourselves and attach to White Blood Cell
 			if(captured) {
@@ -54,12 +54,14 @@ public class Disease : MonoBehaviour {
 				}
 			}
 		}
-		
-		Vector2 directionToDestination = ((Vector2)destination.transform.position - (Vector2)this.transform.position).normalized;
-		
-		this.transform.position = new Vector3 ((directionToDestination.x * speed) + this.transform.position.x,
-		                                       (directionToDestination.y * speed) + this.transform.position.y,
-		                                       this.transform.position.z);
+
+		if (destination) {
+			Vector2 directionToDestination = ((Vector2)destination.transform.position - (Vector2)this.transform.position).normalized;
+
+			this.transform.position = new Vector3 ((directionToDestination.x * speed) + this.transform.position.x,
+                               (directionToDestination.y * speed) + this.transform.position.y,
+                               this.transform.position.z);
+		}
 	}
 	
 	// Sends to next block every x seconds

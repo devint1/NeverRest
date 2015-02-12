@@ -137,4 +137,15 @@ public class Tesselator {
 		filter.renderer.material = material;
 		filter.mesh = mesh;
 	}
+
+	public Vector2[] GetRandomTriangle() {
+		int numTriangles = indicesArray.Length / 3;
+		int triangleNum = (int)Mathf.Round(Random.value * (numTriangles - 1));
+		int startIndex = triangleNum * 3;
+		Vector2[] triangle = new Vector2[3];
+		triangle [0] = points [indicesArray[startIndex]];
+		triangle [1] = points [indicesArray[startIndex + 1]];
+		triangle [2] = points [indicesArray[startIndex + 2]];
+		return triangle;
+	}
 }
