@@ -140,7 +140,7 @@ public class Tesselator {
 
 	public Vector2[] GetRandomTriangle() {
 		int numTriangles = indicesArray.Length / 3;
-		int triangleNum = (int)Mathf.Round(Random.value * (numTriangles - 1));
+		int triangleNum = Random.Range(0, numTriangles);
 		int startIndex = triangleNum * 3;
 		Vector2[] triangle = new Vector2[3];
 		triangle [0] = points [indicesArray[startIndex]];
