@@ -33,6 +33,12 @@ public class Disease : MonoBehaviour {
 		if( gameControl.CheckIfPaused() ){
 			return;
 		}
+
+		if (gameControl.toggleRBC)
+			this.renderer.enabled = false;
+		else
+			this.renderer.enabled = true;
+		
 		//If disease has reached is destination
 		if ( destination && (destination.transform.position - this.transform.position).magnitude < 0.07) {
 			
