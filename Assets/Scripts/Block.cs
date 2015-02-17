@@ -9,6 +9,7 @@ public class Block : MonoBehaviour {
 	public BlockType blockType;
 	public ArrayList diseases = new ArrayList();
 	public GameObject destMarkPrefab;
+	public bool notClotted = true;
 
 	private Vector3 mousePos;
 	private Tesselator tesselator;
@@ -21,6 +22,22 @@ public class Block : MonoBehaviour {
 		var collider = this.GetComponent<PolygonCollider2D> ();
 		if (collider) {
 			tesselator = new Tesselator (collider.points);
+		}
+		PopulateExitPointsList ();
+	}
+	
+	void PopulateExitPointsList() {
+		foreach (Transform child in transform) //Iterate through all children
+		{
+			if(child.tag == "ExitPoint") {
+				ExitPoint exitPoint = child.GetComponent<ExitPoint>();
+				if(exitPoint.isExitToHeart) {
+					exitPoints.Insert(0, child);
+				}
+				else {
+					exitPoints.Add (child);
+				}
+			}
 		}
 	}
 
@@ -74,5 +91,11 @@ public class Block : MonoBehaviour {
 			mouseTarget.renderer.material.color = c;
 		}
 		Destroy (mouseTarget);
+	}
+
+	void OnMouseDown() {
+		if (gameControl.toggleRBC) {
+			notClotted = !notClotted;
+		}
 	}
 }

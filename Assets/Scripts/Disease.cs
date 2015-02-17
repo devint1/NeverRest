@@ -39,6 +39,11 @@ public class Disease : MonoBehaviour {
 		else
 			this.renderer.enabled = true;
 		
+		if (!currentBlock.notClotted)
+			speed = 0.00001f;
+		else
+			speed = 0.0075f;
+
 		//If disease has reached is destination
 		if ( destination && (destination.transform.position - this.transform.position).magnitude < 0.07) {
 			

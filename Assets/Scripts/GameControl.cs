@@ -271,6 +271,10 @@ public class GameControl : MonoBehaviour {
 		timeOfLastSpawn = Time.time;
 	}
 
+	IEnumerator Wait(float f) {
+		yield return new WaitForSeconds (f);
+	}
+
 	// Wins the game!
 	IEnumerator Win() {
 		if (gameOver) {

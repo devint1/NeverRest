@@ -9,9 +9,9 @@ public class RedBloodScript : MonoBehaviour {
 	public bool returnToHeart;		//set to true if on path back to heart, false otherwise
 	public GameObject headingToward; //Point, Exitpoint, or disease that WhiteBloodCell is moving towards right now
 	public bool oxygenated = true;	//set to false upon arrival at destination (room)
-	
-	const float SPEED = 0.0075f;
+	public float speed = 0.0075f;
 	public Block destBlock = null; // Block the cell is moving to
+
 	bool destChanged = false;
 	Vector2 userDest;
 	bool hasUserDest; //Need to use this since userDest cannot = null
@@ -37,6 +37,11 @@ public class RedBloodScript : MonoBehaviour {
 			this.renderer.material.SetColor("_Color", new Color(172.0f / 255.0f,0.0f,0.0f));
 		else
 			this.renderer.material.SetColor("_Color", new Color(255.0f / 255.0f,0.0f,0.0f));
+
+		if (!currentBlock.notClotted)
+			speed = 0.00001f;
+		else
+			speed = 0.0075f;
 		
 		//If we are at current way point or the destination has been changed
 		if (!headingToward || Vector2.Distance (headingToward.transform.position, this.transform.position) < .03 || destChanged) {
@@ -95,8 +100,8 @@ public class RedBloodScript : MonoBehaviour {
 		}
 		if (headingToward) {
 			Vector2 directionToDestination = ((Vector2)headingToward.transform.position - (Vector2)this.transform.position).normalized;			
-			this.transform.position = new Vector3 ((directionToDestination.x * SPEED) + this.transform.position.x,
-			                                       (directionToDestination.y * SPEED) + this.transform.position.y,
+			this.transform.position = new Vector3 ((directionToDestination.x * speed) + this.transform.position.x,
+			                                       (directionToDestination.y * speed) + this.transform.position.y,
 			                                       this.transform.position.z);
 		}
 	}

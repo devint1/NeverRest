@@ -7,10 +7,9 @@ public class WhiteBloodCell : MonoBehaviour {
 	public bool isSelected = false;
 	public bool destroyMe = false;
 	public AudioClip spawnSound =  null;
-
 	public GameObject headingToward; //Point, Exitpoint, or disease that WhiteBloodCell is moving towards right now
-	
-	const float SPEED = 0.0075f;
+	public float speed = 0.0075f;
+
 	const int MAX_DISEASE_ABSORBED = 8;
 	
 	int diseasesabsorbed = 0;
@@ -83,6 +82,11 @@ public class WhiteBloodCell : MonoBehaviour {
 			return;
 		}
 		CheckCollisionOnDisease ();
+		
+		if (!currentBlock.notClotted)
+			speed = 0.00001f;
+		else
+			speed = 0.0075f;
 
 		//If we are at current way point or the destination has been changed
 		if (!headingToward || Vector2.Distance (headingToward.transform.position, this.transform.position) < .03 || destChanged) {
@@ -124,8 +128,8 @@ public class WhiteBloodCell : MonoBehaviour {
 		}
 		if (headingToward) {
 			Vector2 directionToDestination = ((Vector2)headingToward.transform.position - (Vector2)this.transform.position).normalized;			
-			this.transform.position = new Vector3 ((directionToDestination.x * SPEED) + this.transform.position.x,
-			                                       (directionToDestination.y * SPEED) + this.transform.position.y,
+			this.transform.position = new Vector3 ((directionToDestination.x * speed) + this.transform.position.x,
+			                                       (directionToDestination.y * speed) + this.transform.position.y,
 			                                       this.transform.position.z);
 		}
 	}
