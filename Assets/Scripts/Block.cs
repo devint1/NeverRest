@@ -14,8 +14,6 @@ public class Block : MonoBehaviour {
 	private Tesselator tesselator;
 
 	public static int MAX_NUM_DISEASE_PER_BLOCK = 200;
-
-	public List<Transform> exitPoints = new List<Transform>(); //First one is always exit point that leads to heart
 	
 	void Start() {
 		var collider = this.GetComponent<PolygonCollider2D> ();
@@ -40,7 +38,7 @@ public class Block : MonoBehaviour {
 		gameControl.selected.Clear();
 	}
 	
-	public GameObject GetRandomPoint() {
+	public Vector3 GetRandomPoint() {
 		// Needs some work
 		var collider = this.GetComponent<PolygonCollider2D> ();
 		Vector2[] triangle = tesselator.GetRandomTriangle ();
@@ -55,10 +53,15 @@ public class Block : MonoBehaviour {
 		                                     randomPoint.y + transform.position.y,
 		                                     2);
 
-		GameObject point = new GameObject ();
-		point.transform.position = randomPoint3D;
+		return randomPoint3D;
+	}
 
-		return point;
+	public ExitPoint GetExitPoint() {
+		return transform.gameObject.GetComponentInChildren<ExitPoint>();
+	}
+
+	public ExitPoint[] GetExitPoints() {
+		return transform.gameObject.GetComponentsInChildren<ExitPoint>();
 	}
 
 	IEnumerator FireMouseClick()

@@ -9,11 +9,10 @@ public class Disease : MonoBehaviour {
 	public float speed = 0.005f;
 	public float heartHealthDamagePerSec = 0.01f;
 	
-	GameObject destination;
+	Vector3 destination;
 	
 	const int MAX_DISEASE_RESPAWN_TIME = 10;
 	const int MIN_DISEASE_RESPAWN_TIME = 20;
-	
 	
 	void Start() {
 		if (currentBlock) {
@@ -34,20 +33,23 @@ public class Disease : MonoBehaviour {
 			return;
 		}
 		//If disease has reached is destination
-		if ( destination && (destination.transform.position - this.transform.position).magnitude < 0.07) {
-			
+		if ( destination != null && (destination - this.transform.position).magnitude < 0.07) {
 			//If were captured then we just reached the inside of White Blood Cell. Immobilze ourselves and attach to White Blood Cell
 			if(captured) {
 				Destroy(gameObject.GetComponent<Rigidbody>());
 				Destroy(gameObject.GetComponent<CircleCollider2D>());
-				transform.parent = destination.transform;
-				Destroy(this);
+				transform.position = destination;
+				// Destroy(this);
 			}
-			else { //Else we just reached a waypoint. Choose next destination.
-				if(destination.tag == "ExitPoint") {
-					ExitPoint exitPoint = destination.GetComponent<ExitPoint>();
+			else {
+				// Else we just reached a waypoint. Choose next destination.
+				// Roll a random dice with 3% chance of exiting
+				float dice = Random.value;
+				bool exit = dice >= 0.97f;
+				if(exit) {
+					ExitPoint exitPoint = currentBlock.GetExitPoint();
 					currentBlock = exitPoint.nextBlock;
-					destination = exitPoint.entrancePoint;
+					destination = currentBlock.GetRandomPoint();
 				}
 				else {
 					destination = currentBlock.GetRandomPoint();
@@ -55,8 +57,8 @@ public class Disease : MonoBehaviour {
 			}
 		}
 
-		if (destination) {
-			Vector2 directionToDestination = ((Vector2)destination.transform.position - (Vector2)this.transform.position).normalized;
+		if (destination != null && !captured) {
+			Vector2 directionToDestination = ((Vector2)destination - (Vector2)this.transform.position).normalized;
 
 			this.transform.position = new Vector3 ((directionToDestination.x * speed) + this.transform.position.x,
                                (directionToDestination.y * speed) + this.transform.position.y,
@@ -68,11 +70,11 @@ public class Disease : MonoBehaviour {
 	IEnumerator MoveCycle() {
 		yield return new WaitForSeconds(30);
 		if (!captured 
-		    && currentBlock.exitPoints[0].gameObject.GetComponent<ExitPoint>().nextBlock.diseases.Count < Block.MAX_NUM_DISEASE_PER_BLOCK 
-		    && currentBlock.exitPoints[0].gameObject.GetComponent<ExitPoint>().isExitToHeart) {
+		    && currentBlock.GetExitPoint().nextBlock.diseases.Count < Block.MAX_NUM_DISEASE_PER_BLOCK 
+		    && currentBlock.GetExitPoint().isExitToHeart) {
 			
 			currentBlock.diseases.Remove (this);
-			currentBlock = currentBlock.exitPoints[0].gameObject.GetComponent<ExitPoint>().nextBlock;
+			currentBlock = currentBlock.GetExitPoint().nextBlock;
 			currentBlock.diseases.Add (this);
 			StartCoroutine (MoveCycle ());
 		} else if (!captured) {
@@ -108,7 +110,7 @@ public class Disease : MonoBehaviour {
 	}
 	
 	public void BeenCapturedBy(GameObject whiteBloodCell) {
-		destination = whiteBloodCell;
+		destination = whiteBloodCell.transform.position;
 		captured = true;
 		speed *= 2.5f;
 		currentBlock.diseases.Remove(this);
