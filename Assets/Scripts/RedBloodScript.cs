@@ -7,7 +7,7 @@ public class RedBloodScript : MonoBehaviour {
 	public Block heartBlock;		//pointer to the heart
 	public GameControl gameControl;
 	public bool returnToHeart;		//set to true if on path back to heart, false otherwise
-	public GameObject headingToward; //Point, Exitpoint, or disease that WhiteBloodCell is moving towards right now
+	public Vector3 destination; //Point, Exitpoint, or disease that WhiteBloodCell is moving towards right now
 	public bool oxygenated = true;	//set to false upon arrival at destination (room)
 	public float speed = 0.0075f;
 	public Block destBlock = null; // Block the cell is moving to
@@ -44,33 +44,21 @@ public class RedBloodScript : MonoBehaviour {
 			speed = 0.0075f;
 		
 		//If we are at current way point or the destination has been changed
-		if (!headingToward || Vector2.Distance (headingToward.transform.position, this.transform.position) < .03 || destChanged) {
+		if (destination == null || Vector2.Distance (destination, this.transform.position) < .03 || destChanged) {
 			//If we have arrived at our exit node, our next node should be the next cells entrance node
 			//Dest change is to check if it was a destchange request or we reach current node
-			if( headingToward && headingToward.tag == "ExitPoint" && !destChanged ){
-				pathingToEntrance = headingToward.GetComponent<ExitPoint>();
-				headingToward = headingToward.GetComponent<ExitPoint>().entrancePoint;
-			}
-			//Otherwise if we are not in the correct block we need to find the next exit
-			else if (destBlock && destBlock != currentBlock) {
-				if (pathingToEntrance){
-					currentBlock = pathingToEntrance.GetComponent<ExitPoint>().nextBlock;
-					pathingToEntrance = null;
-					headingToward = null;
-				}
-				else{
-					foreach (Transform exitPoint in currentBlock.exitPoints) {
-						if( ExitPointLeadsToDestination(exitPoint.gameObject, destBlock, currentBlock) ) {
-							headingToward = exitPoint.gameObject;
-							break;
-						}
-					}	
+			if (destBlock && destBlock != currentBlock) {
+				foreach (ExitPoint exitPoint in currentBlock.GetExitPoints()) {
+					if( ExitPointLeadsToDestination(exitPoint.gameObject, destBlock, currentBlock) ) {
+						destination = exitPoint.gameObject.transform.position;
+						currentBlock = exitPoint.nextBlock;
+						break;
+					}
 				}
 			}
 			//If we are in the correct block we need to go to users click
 			else if (hasUserDest){
-				headingToward = new GameObject();
-				headingToward.transform.position = userDest;
+				destination = (Vector3)userDest;
 				hasUserDest = false;
 			}
 			//Last option is going to a random waypoint
@@ -91,15 +79,15 @@ public class RedBloodScript : MonoBehaviour {
 					}
 				}
 				else {
-					headingToward = currentBlock.GetRandomPoint();
+					destination = currentBlock.GetRandomPoint();
 				}
 			}
 			if( destChanged ){
 				destChanged = false;
 			}
 		}
-		if (headingToward) {
-			Vector2 directionToDestination = ((Vector2)headingToward.transform.position - (Vector2)this.transform.position).normalized;			
+		if (destination != null) {
+			Vector2 directionToDestination = ((Vector2)destination - (Vector2)this.transform.position).normalized;			
 			this.transform.position = new Vector3 ((directionToDestination.x * speed) + this.transform.position.x,
 			                                       (directionToDestination.y * speed) + this.transform.position.y,
 			                                       this.transform.position.z);
@@ -112,7 +100,7 @@ public class RedBloodScript : MonoBehaviour {
 		}
 		
 		//TODO - We should cache lookups
-		foreach(Transform exitPoint in exit.GetComponent<ExitPoint>().nextBlock.exitPoints) {
+		foreach(ExitPoint exitPoint in exit.GetComponent<ExitPoint>().nextBlock.GetExitPoints()) {
 			if( curBlock != exitPoint.gameObject.GetComponent<ExitPoint>().nextBlock ) {
 				if( ExitPointLeadsToDestination(exitPoint.gameObject, destination, exit.GetComponent<ExitPoint>().nextBlock) ) {
 					return true;

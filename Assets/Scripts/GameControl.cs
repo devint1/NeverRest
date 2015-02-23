@@ -232,20 +232,20 @@ public class GameControl : MonoBehaviour {
 		if (toggleRBC && !changed) {
 			int i = 0;
 			for(; i < numRBCs; i++) {
-				GameObject newRBC = (GameObject)Instantiate (redBloodCellPrefab, redBloodSpawnPoint.GetRandomPoint().transform.position, this.transform.rotation);
+				GameObject newRBC = (GameObject)Instantiate (redBloodCellPrefab, redBloodSpawnPoint.GetRandomPoint(), this.transform.rotation);
 				RedBloodScript newRedScript = newRBC.GetComponent<RedBloodScript> ();
 				newRedScript.currentBlock = redBloodSpawnPoint;
-				newRedScript.headingToward = redBloodSpawnPoint.GetRandomPoint ();
+				newRedScript.destination = redBloodSpawnPoint.GetRandomPoint ();
 				newRedScript.origBlock = body.GetBodyPart((numRBCs - i) / 3);
 				newRedScript.destBlock = newRedScript.origBlock;
 				newRedScript.heartBlock = body.GetChest ();
 				newRedScript.gameControl = this;
 			}
 			for(; i > 0; i--) {
-				GameObject newRBC = (GameObject)Instantiate (redBloodCellPrefab, body.GetBodyPart((numRBCs - i) / 3).GetRandomPoint().transform.position, this.transform.rotation);
+				GameObject newRBC = (GameObject)Instantiate (redBloodCellPrefab, body.GetBodyPart((numRBCs - i) / 3).GetRandomPoint(), this.transform.rotation);
 				RedBloodScript newRedScript = newRBC.GetComponent<RedBloodScript> ();
 				newRedScript.currentBlock = body.GetBodyPart((numRBCs - i) / 3);
-				newRedScript.headingToward = body.GetBodyPart((numRBCs - i) / 3).GetRandomPoint ();
+				newRedScript.destination = body.GetBodyPart((numRBCs - i) / 3).GetRandomPoint ();
 				newRedScript.origBlock = body.GetBodyPart((numRBCs - i) / 3);
 				newRedScript.heartBlock = body.GetChest ();
 				newRedScript.destBlock = newRedScript.heartBlock;
@@ -258,10 +258,10 @@ public class GameControl : MonoBehaviour {
 	}
 
 	void SpawnWhiteBloodCell() {
-		GameObject newWhite = (GameObject)Instantiate (whiteBloodCellPrefab, whiteBloodSpawnPoint.GetRandomPoint().transform.position, this.transform.rotation);
+		GameObject newWhite = (GameObject)Instantiate (whiteBloodCellPrefab, whiteBloodSpawnPoint.GetRandomPoint(), this.transform.rotation);
 		WhiteBloodCell newWhiteScript = newWhite.GetComponent<WhiteBloodCell> ();
 		newWhiteScript.currentBlock = whiteBloodSpawnPoint;
-		newWhiteScript.headingToward = whiteBloodSpawnPoint.GetRandomPoint ();
+		newWhiteScript.destination = whiteBloodSpawnPoint.GetRandomPoint ();
 		newWhiteScript.gameControl = this;
 		
 		if (toggleRBC)
