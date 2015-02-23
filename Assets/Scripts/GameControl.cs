@@ -169,17 +169,25 @@ public class GameControl : MonoBehaviour {
 
 	void Update() {
 		if (Input.GetKeyDown(KeyCode.Escape)){
-
 			TogglePauseGame(); 
 			if (isPaused){
 				showMenu = true;
 			}
-			else
+			else{
 				showMenu = false;
+			}
 		}
+
 		if (Input.GetKeyDown(KeyCode.Space)){
 			TogglePauseGame();
 			showMenu = false;
+		}
+
+		if (Input.GetKeyDown(KeyCode.Z)){
+			//Just a proof of concept atm
+			TogglePauseGame();
+			showMenu = false;
+			Instantiate(Resources.Load("UpgradeMenu"), Vector3.zero, Quaternion.identity);
 		}
 
 		if (CheckIfPaused()){
