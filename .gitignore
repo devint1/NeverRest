@@ -36,3 +36,4 @@ ehthumbs.db
 # Other
 Assets/placeholderforgit.meta
 *.exe
+Assets/Scripts/GameControl.cs

@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-using UnityEngine.UI;
+//using UnityEngine.UI;
 using System.Collections;
 
 using UpgradeTypes;
@@ -61,6 +61,6 @@ public class UpgradeText : MonoBehaviour {
 			}
 			break;
 		}
-		GetComponent<Text> ().text = value.ToString ();
+		//GetComponent<Text> ().text = value.ToString ();
 	}
 }
