@@ -6,6 +6,7 @@ public class Disease : MonoBehaviour {
 	public Block currentBlock;
 	public GameObject diseasePrefab;
 	public bool captured = false;
+	public bool removedFromCell = false;
 	public float speed = 0.005f;
 	public float heartHealthDamagePerSec = 0.01f;
 	
@@ -44,12 +45,12 @@ public class Disease : MonoBehaviour {
 			speed = 0.0075f;
 
 		//If disease has reached is destination
-		if ( destination != null && (destination - this.transform.position).magnitude < 0.07) {
+		if ((destination - this.transform.position).magnitude < 0.07) {
 			//If were captured then we just reached the inside of White Blood Cell. Immobilze ourselves and attach to White Blood Cell
 			if(captured) {
 				Destroy(gameObject.GetComponent<Rigidbody>());
 				Destroy(gameObject.GetComponent<CircleCollider2D>());
-				transform.position = destination;
+				//transform.position = destination;
 				// Destroy(this);
 			}
 			else {
@@ -68,7 +69,7 @@ public class Disease : MonoBehaviour {
 			}
 		}
 
-		if (destination != null && !captured) {
+		if (!captured) {
 			Vector2 directionToDestination = ((Vector2)destination - (Vector2)this.transform.position).normalized;
 
 			this.transform.position = new Vector3 ((directionToDestination.x * speed) + this.transform.position.x,
@@ -121,9 +122,9 @@ public class Disease : MonoBehaviour {
 	}
 	
 	public void BeenCapturedBy(GameObject whiteBloodCell) {
-		destination = whiteBloodCell.transform.position;
+		transform.position = whiteBloodCell.transform.position + new Vector3 (Random.Range (-.07f, .07f), Random.Range (-.07f, .07f), 0);
+		transform.parent = whiteBloodCell.transform;
 		captured = true;
 		speed *= 2.5f;
-		currentBlock.diseases.Remove(this);
 	}
 }

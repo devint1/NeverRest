@@ -41,7 +41,6 @@ public class Block : MonoBehaviour {
 	
 	public Vector3 GetRandomPoint() {
 		// Needs some work
-		var collider = this.GetComponent<PolygonCollider2D> ();
 		Vector2[] triangle = tesselator.GetRandomTriangle ();
 		float randomWeight1 = Random.value;
 		float randomWeight2 = Random.value;

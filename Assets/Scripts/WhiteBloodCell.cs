@@ -17,7 +17,6 @@ public class WhiteBloodCell : MonoBehaviour {
 	bool destChanged = false;
 	Vector2 userDest;
 	bool hasUserDest; //Need to use this since userDest cannot = null
-	ExitPoint pathingToEntrance = null;
 	ArrayList capture = new ArrayList ();
 
 	public void Start(){
@@ -59,20 +58,25 @@ public class WhiteBloodCell : MonoBehaviour {
 
 	void CheckCollisionOnDisease(){
 		foreach (Disease disease in currentBlock.diseases){
-			if (Vector3.Distance (disease.transform.position, transform.position) < .2){
+			if ( disease && Vector3.Distance (disease.transform.position, transform.position) < .2){
 				if (!disease.captured) {
 					disease.captured = true;
+					disease.BeenCapturedBy (this.gameObject);
 					capture.Add (disease);
 					diseasesabsorbed++;
 					--gameControl.numDiseaseCells;
-					if (diseasesabsorbed >= MAX_DISEASE_ABSORBED) {
-						destroyMe = true;
-					}
 				}
 			}
 		}
 		foreach (Disease disease in capture) {
-			disease.BeenCapturedBy (this.gameObject);
+			if(!disease.removedFromCell){
+				disease.removedFromCell = true;
+				disease.currentBlock.diseases.Remove(this);
+			}
+		}
+
+		if (diseasesabsorbed >= MAX_DISEASE_ABSORBED) {
+			destroyMe = true;
 		}
 	}
 
@@ -89,7 +93,7 @@ public class WhiteBloodCell : MonoBehaviour {
 			speed = 0.0075f;
 
 		//If we are at current way point or the destination has been changed
-		if (destination == null || Vector2.Distance (destination, this.transform.position) < .03 || destChanged) {
+		if (Vector2.Distance (destination, this.transform.position) < .03 || destChanged) {
 			//If we have arrived at our exit node, our next node should be the next cells entrance node
 			//Dest change is to check if it was a destchange request or we reach current node
 			//Otherwise if we are not in the correct block we need to find the next exit
@@ -115,13 +119,11 @@ public class WhiteBloodCell : MonoBehaviour {
 				destChanged = false;
 			}
 		}
-		
-		if (destination != null) {
-			Vector2 directionToDestination = ((Vector2)destination - (Vector2)this.transform.position).normalized;			
-			this.transform.position = new Vector3 ((directionToDestination.x * speed) + this.transform.position.x,
-			                                       (directionToDestination.y * speed) + this.transform.position.y,
-			                                       this.transform.position.z);
-		}
+
+		Vector2 directionToDestination = ((Vector2)destination - (Vector2)this.transform.position).normalized;			
+		this.transform.position = new Vector3 ((directionToDestination.x * speed) + this.transform.position.x,
+		                                       (directionToDestination.y * speed) + this.transform.position.y,
+		                                       this.transform.position.z);
 	}
 	
 	GameObject FindExitPointToDestination(Block current, Block destination) {

@@ -15,7 +15,6 @@ public class RedBloodScript : MonoBehaviour {
 	bool destChanged = false;
 	Vector2 userDest;
 	bool hasUserDest; //Need to use this since userDest cannot = null
-	ExitPoint pathingToEntrance = null;
 	
 	// Use this for initialization
 	void Start () {
@@ -44,7 +43,7 @@ public class RedBloodScript : MonoBehaviour {
 			speed = 0.0075f;
 		
 		//If we are at current way point or the destination has been changed
-		if (destination == null || Vector2.Distance (destination, this.transform.position) < .03 || destChanged) {
+		if (Vector2.Distance (destination, this.transform.position) < .03 || destChanged) {
 			//If we have arrived at our exit node, our next node should be the next cells entrance node
 			//Dest change is to check if it was a destchange request or we reach current node
 			if (destBlock && destBlock != currentBlock) {
@@ -55,11 +54,6 @@ public class RedBloodScript : MonoBehaviour {
 						break;
 					}
 				}
-			}
-			//If we are in the correct block we need to go to users click
-			else if (hasUserDest){
-				destination = (Vector3)userDest;
-				hasUserDest = false;
 			}
 			//Last option is going to a random waypoint
 			else{
@@ -86,12 +80,10 @@ public class RedBloodScript : MonoBehaviour {
 				destChanged = false;
 			}
 		}
-		if (destination != null) {
-			Vector2 directionToDestination = ((Vector2)destination - (Vector2)this.transform.position).normalized;			
-			this.transform.position = new Vector3 ((directionToDestination.x * speed) + this.transform.position.x,
-			                                       (directionToDestination.y * speed) + this.transform.position.y,
-			                                       this.transform.position.z);
-		}
+		Vector2 directionToDestination = ((Vector2)destination - (Vector2)this.transform.position).normalized;			
+		this.transform.position = new Vector3 ((directionToDestination.x * speed) + this.transform.position.x,
+		                                       (directionToDestination.y * speed) + this.transform.position.y,
+		                                       this.transform.position.z);
 	}
 	
 	bool ExitPointLeadsToDestination(GameObject exit, Block destination, Block curBlock) {
