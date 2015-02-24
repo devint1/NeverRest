@@ -17,7 +17,7 @@ public class GameControl : MonoBehaviour {
 	public GameObject redBloodCellPrefab;
 	public Block redBloodSpawnPoint;
 	public Body body;
-
+	public bool isSelected = false;
 	const float WHITE_BLOOD_CELL_FOOD_RATE = 0.05f;
 
 	int whiteBloodProduction = 0;

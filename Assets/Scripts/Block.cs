@@ -34,7 +34,9 @@ public class Block : MonoBehaviour {
 			cell.renderer.material.color = Color.white;
 			cell.isSelected = false;
 			cell.SetDestination (this, mousePos);
+			gameControl.isSelected = true;
 		}
+
 		StartCoroutine(FireMouseClick());
 		gameControl.selected.Clear();
 	}
@@ -67,16 +69,19 @@ public class Block : MonoBehaviour {
 	IEnumerator FireMouseClick()
 	{
 		if (!destMarkPrefab.activeSelf) {
-			destMarkPrefab.SetActive(true);
+			destMarkPrefab.SetActive (true);
 		}
-		GameObject mouseTarget = (GameObject)Instantiate (destMarkPrefab, (Vector2)mousePos, Quaternion.identity);
-		Color c = Color.green;
-		while (c.a > 0){
-			yield return new WaitForSeconds(.1f);
-			c.a -= .05f;
-			mouseTarget.renderer.material.color = c;
+		if (gameControl.isSelected) {
+			GameObject mouseTarget = (GameObject)Instantiate (destMarkPrefab, (Vector2)mousePos, Quaternion.identity);
+			Color c = Color.green;
+			while (c.a > 0) {
+				yield return new WaitForSeconds (.1f);
+				c.a -= .05f;
+				mouseTarget.renderer.material.color = c;
+			}
+			gameControl.isSelected = false;
+			Destroy (mouseTarget);
 		}
-		Destroy (mouseTarget);
 	}
 
 	void OnMouseDown() {
