@@ -50,8 +50,6 @@ public class Disease : MonoBehaviour {
 			if(captured) {
 				Destroy(gameObject.GetComponent<Rigidbody>());
 				Destroy(gameObject.GetComponent<CircleCollider2D>());
-				//transform.position = destination;
-				// Destroy(this);
 			}
 			else {
 				// Else we just reached a waypoint. Choose next destination.
@@ -59,7 +57,8 @@ public class Disease : MonoBehaviour {
 				float dice = Random.value;
 				bool exit = dice >= 0.97f;
 				if(exit) {
-					ExitPoint exitPoint = currentBlock.GetExitPoint();
+					ExitPoint[] exitPoints = currentBlock.GetExitPoints();
+					ExitPoint exitPoint = exitPoints[(Random.Range( 0, exitPoints.Length ))]; //Not -1 since exclusive
 					currentBlock = exitPoint.nextBlock;
 					destination = currentBlock.GetRandomPoint();
 				}
