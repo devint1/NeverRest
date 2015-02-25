@@ -43,7 +43,7 @@ public class RedBloodScript : MonoBehaviour {
 			this.renderer.material.SetColor("_Color", new Color(255.0f / 255.0f,0.0f,0.0f));
 
 		if (!currentBlock.notClotted)
-			speed = 0.00001f;
+			speed = gameControl.rbcSpeed / 1000.0f;
 		else
 			speed = gameControl.rbcSpeed / 250.0f;
 		

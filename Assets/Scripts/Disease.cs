@@ -44,7 +44,7 @@ public class Disease : MonoBehaviour {
 		}
 		
 		if (!currentBlock.notClotted)
-			speed = 0.00001f;
+			speed = gameControl.rbcSpeed / 1000.0f;
 		else
 			speed = gameControl.rbcSpeed / 250.0f;
 

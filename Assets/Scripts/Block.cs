@@ -6,13 +6,19 @@ public enum BlockType { HEART, OTHER }
 
 public class Block : MonoBehaviour {
 	public GameControl gameControl;
+	public Transform StatsPoint;
 	public BlockType blockType;
 	public ArrayList diseases = new ArrayList();
 	public GameObject destMarkPrefab;
 	public bool notClotted = true;
 
+	public float oxygenLevel = 1.0f;
+	public float temperaturePercent = 1.0f;
+	public float overallHealth = 1.0f;
+
 	private Vector3 mousePos;
 	private Tesselator tesselator;
+	private bool showStats = false;
 
 	public static int MAX_NUM_DISEASE_PER_BLOCK = 200;
 	
@@ -25,6 +31,7 @@ public class Block : MonoBehaviour {
 
 	// Block clicked. Send selected WhiteBloodCell here
 	void OnMouseOver() {
+		showStats = true;
 		//Quit out if not a right click
 		if (!Input.GetMouseButtonDown(1)){
 			return;
@@ -50,8 +57,23 @@ public class Block : MonoBehaviour {
 		StartCoroutine(FireMouseClick());
 		//gameControl.selected.Clear();
 	}
+
+	void OnMouseExit() {
+		showStats = false;
+	}
+
+	void OnGUI(){
+		if (showStats) {
+			Vector3 position = Camera.main.WorldToScreenPoint (StatsPoint.position);
+
+			GUI.TextArea(new Rect(position.x,Screen.height-position.y,98,55), "Health:    " +overallHealth*100 + "\nOxygen:  " + oxygenLevel*100 + "%" + "\nDiseases:" + diseases.Count);
+		}
+	}
 	
 	public Vector3 GetRandomPoint() {
+		if (tesselator == null) {
+			return GetExitPoint().transform.position;
+		}
 		// Needs some work
 		Vector2[] triangle = tesselator.GetRandomTriangle ();
 		float randomWeight1 = Random.value;
@@ -96,10 +118,12 @@ public class Block : MonoBehaviour {
 	}
 
 	void OnMouseDown() {
-		/*
+
 		if (gameControl.toggleRBC) {
 			notClotted = !notClotted;
 		}
-		*/
+
 	}
+
+
 }
