@@ -36,6 +36,7 @@ public class Block : MonoBehaviour {
 
 	void Update() {
 		//Change color based on healh
+		renderer.material.color = Color.Lerp(Color.white, Color.black, 1.0f-overallHealth);
 
 		if(dead) {
 			DestroyAllDiseases();
