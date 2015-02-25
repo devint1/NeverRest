@@ -23,7 +23,7 @@ public class Body : MonoBehaviour {
 	
 	public Block GetChest() {
 		for (int i = 0; i < blocks.Count; i++) {
-			if(blocks[i].blockType == BlockType.HEART) {
+			if(blocks[i].blockType == BlockType.CHEST) {
 				return blocks[i];
 			}
 		}

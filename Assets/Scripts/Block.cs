@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public enum BlockType { HEART, OTHER }
+public enum BlockType { CHEST, LIMB, OTHER }
 
 public class Block : MonoBehaviour {
 	public GameControl gameControl;
@@ -12,15 +12,20 @@ public class Block : MonoBehaviour {
 	public GameObject destMarkPrefab;
 	public bool notClotted = true;
 
-	public float oxygenLevel = 1.0f;
-	public float temperaturePercent = 1.0f;
+	public float oxygenLevel = 1.0f; //Should range from 1(good) to 0(very bad)
+	public float temperaturePercent = 1.0f; //Should range from 1(good, 98.6 degrees) to 0(very bad, 70 degrees, aka. dead)
 	public float overallHealth = 1.0f;
+	public bool dead = false;
 
 	private Vector3 mousePos;
 	private Tesselator tesselator;
 	private bool showStats = false;
 
 	public static int MAX_NUM_DISEASE_PER_BLOCK = 200;
+	private float HEALH_REGENERATION = 0.03f;
+	private float DAMAGE_PER_DISEASE = 0.001f;
+	private float COLD_DAMAGE = 0.03f;
+	private float NO_OXYGEN_DAMAGE = 0.03f;
 	
 	void Start() {
 		var collider = this.GetComponent<PolygonCollider2D> ();
@@ -29,9 +34,44 @@ public class Block : MonoBehaviour {
 		}
 	}
 
+	void Update() {
+		//Change color based on healh
+
+		if(dead) {
+			DestroyAllDiseases();
+			return;
+		}
+
+		//If vitals are mostly good, slowly increase health. Else, take damage
+		if(oxygenLevel >= 0.75f && temperaturePercent >= 0.75f && diseases.Count == 0 && overallHealth <= 1.0) {
+			overallHealth += HEALH_REGENERATION * Time.deltaTime;
+		}
+		else {
+			if(oxygenLevel < 0.75f){
+				overallHealth -= (NO_OXYGEN_DAMAGE*(1.0f-oxygenLevel)) * Time.deltaTime;
+			}
+			if(temperaturePercent < 0.75f){
+				overallHealth -= (COLD_DAMAGE*(1.0f-temperaturePercent)) * Time.deltaTime;
+			}
+			overallHealth -= DAMAGE_PER_DISEASE * diseases.Count * Time.deltaTime;
+		}
+
+		if(overallHealth <= 0) {
+			overallHealth = 0.0f;
+			oxygenLevel = 0.0f; 
+			temperaturePercent = 0.0f;
+			dead = true;
+		}
+	}
+
 	// Block clicked. Send selected WhiteBloodCell here
 	void OnMouseOver() {
 		showStats = true;
+
+		if(dead) {
+			return;
+		}
+
 		//Quit out if not a right click
 		if (!Input.GetMouseButtonDown(1)){
 			return;
@@ -66,7 +106,7 @@ public class Block : MonoBehaviour {
 		if (showStats) {
 			Vector3 position = Camera.main.WorldToScreenPoint (StatsPoint.position);
 
-			GUI.TextArea(new Rect(position.x,Screen.height-position.y,98,55), "Health:    " +overallHealth*100 + "\nOxygen:  " + oxygenLevel*100 + "%" + "\nDiseases:" + diseases.Count);
+			GUI.TextArea(new Rect(position.x,Screen.height-position.y,98,55), "Health:    " +(int)(overallHealth*100) + "\nOxygen:  " + oxygenLevel*100 + "%" + "\nDiseases:" + diseases.Count);
 		}
 	}
 	
@@ -100,6 +140,10 @@ public class Block : MonoBehaviour {
 
 	IEnumerator FireMouseClick()
 	{
+		if(dead) {
+			return false;
+		}
+
 		if (!destMarkPrefab.activeSelf) {
 			destMarkPrefab.SetActive (true);
 		}
@@ -118,6 +162,9 @@ public class Block : MonoBehaviour {
 	}
 
 	void OnMouseDown() {
+		if(dead) {
+			return;
+		}
 
 		if (gameControl.toggleRBC) {
 			notClotted = !notClotted;
@@ -125,5 +172,11 @@ public class Block : MonoBehaviour {
 
 	}
 
-
+	void DestroyAllDiseases() {
+		for (int i = diseases.Count-1; i>=0; i++) {
+			Disease toDestroy = (Disease)diseases[i];
+			diseases.Remove(toDestroy);
+			GameObject.Destroy( toDestroy.gameObject );
+		}
+	}
 }

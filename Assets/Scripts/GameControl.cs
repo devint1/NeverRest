@@ -43,6 +43,7 @@ public class GameControl : MonoBehaviour {
 	bool showMenu = false;
 	bool changed = true;
 	bool wbcChanged = true;
+	float levelProgressSpeed = 1.0f;
 
 	void Start() {
 		if (backGroundMusic) {
@@ -158,17 +159,17 @@ public class GameControl : MonoBehaviour {
 			GUI.Box(new Rect(Screen.width/3, Screen.height/18, Screen.width/4, Screen.height/8), "PAUSED \n Space Bar to Resume");
 
 		}
-		whiteBloodProduction = (int)GUI.HorizontalSlider(new Rect(25, 90, 125, 30), whiteBloodProduction, 0.0F, 10.0F);
-		rbcSpeed = (int)GUI.HorizontalSlider(new Rect(25, 135, 125, 30), rbcSpeed, 1.0F, 10.0F);
+		whiteBloodProduction = (int)GUI.HorizontalSlider(new Rect(25, 50, 125, 30), whiteBloodProduction, 0.0F, 10.0F);
+		rbcSpeed = (int)GUI.HorizontalSlider(new Rect(25, 95, 125, 30), rbcSpeed, 1.0F, 10.0F);
 		
 		// Display wihte blood cell production status
 		if (whiteBloodProduction > 0) {
-			GUI.TextArea (new Rect (25, 105, 125, 20), "1 per " + 30 / whiteBloodProduction + " seconds");
+			GUI.TextArea (new Rect (25, 65, 125, 20), "1 per " + 30 / whiteBloodProduction + " seconds");
 		} else {
-			GUI.TextArea (new Rect (25, 105, 125, 20), "Production off");
+			GUI.TextArea (new Rect (25, 65, 125, 20), "Production off");
 		}
 		
-		GUI.TextArea (new Rect (25, 150, 125, 20), "Heart Rate");
+		GUI.TextArea (new Rect (25, 110, 125, 20), "Heart Rate");
 
 		// Display food bar
 		GUI.BeginGroup (new Rect (20, 10, 125, 30));
@@ -180,13 +181,13 @@ public class GameControl : MonoBehaviour {
 		GUI.EndGroup ();
 
 		// Display health bar
-		GUI.BeginGroup (new Rect (20, 50, 125, 30));
+		/*GUI.BeginGroup (new Rect (20, 50, 125, 30));
 		GUI.Box (new Rect (0, 0, 125, 30), barEmpty);
 		// draw the filled-in part:
 		GUI.BeginGroup (new Rect (0, 0, 125 * healthLevel, 30));
 		GUI.Box (new Rect (0,0, 125, 30), healthBarFull);
 		GUI.EndGroup ();
-		GUI.EndGroup ();
+		GUI.EndGroup ();*/
 
 		// Draw text if enabled
 		if (drawText) {
@@ -254,13 +255,20 @@ public class GameControl : MonoBehaviour {
 		}
 
 		// Check losing condition
-		if (foodLevel <= 0f || healthLevel <= 0f) {
+		/*if (foodLevel <= 0f || healthLevel <= 0f) {
 			StartCoroutine (Lose ());
-		}
+		}*/
 
 		// Check winning condition
-		if (numDiseaseCells <= 0) {
+		/*if (numDiseaseCells <= 0) {
 			StartCoroutine (Win ());
+		}*/
+
+		if (checkLoseCondition ()) {
+			StartCoroutine (Lose ());
+		}
+		else {
+			levelProgressSpeed = calcLevelProgressSpeed();
 		}
 
 		if (whiteBloodCells != null) {
@@ -375,5 +383,27 @@ public class GameControl : MonoBehaviour {
 		winText.fontSize = 100;
 		yield return new WaitForSeconds(5);
 		Application.LoadLevel("MenuScene");
+	}
+
+	// Lose if Chest is at 0 health or if all limbs are at 0 health
+	bool checkLoseCondition(){
+		int deadLimbs = 0;
+		foreach (Block b in body.blocks) {
+			if(b.blockType == BlockType.CHEST && b.overallHealth <= 0) {
+				return true;
+			}
+			if(b.blockType == BlockType.LIMB && b.overallHealth <= 0){
+				deadLimbs++;
+			}
+		}
+
+		if (deadLimbs >= 4)
+			return true;
+		else
+			return false;
+	}
+
+	float calcLevelProgressSpeed() {
+		return 1.0f;
 	}
 }

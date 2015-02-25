@@ -118,7 +118,7 @@ public class Disease : MonoBehaviour {
 	IEnumerator DamageHeart() {
 		yield return new WaitForSeconds(1);
 		
-		if (!captured && currentBlock.blockType == BlockType.HEART) {
+		if (!captured && currentBlock.blockType == BlockType.CHEST) {
 			gameControl.healthLevel -= heartHealthDamagePerSec;
 		}
 		StartCoroutine(DamageHeart());
