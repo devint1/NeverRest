@@ -91,6 +91,11 @@ public class WhiteBloodCell : MonoBehaviour {
 			this.speed = gameControl.rbcSpeed / 250.0f;
 		}
 		
+		if (!gameControl.toggleWBC)
+			this.renderer.enabled = false;
+		else
+			this.renderer.enabled = true;
+
 		if (!currentBlock.notClotted)
 			speed = 0.00001f;
 		else

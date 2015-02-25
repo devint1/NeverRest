@@ -229,13 +229,6 @@ public class GameControl : MonoBehaviour {
 			//foreach (WhiteBloodCell cell in whiteBloodCells) {
 			for(int i = 0; i < whiteBloodCells.Count; i++) {
 				WhiteBloodCell cell = (WhiteBloodCell)(whiteBloodCells[i]);
-
-				if(toggleWBC && !wbcChanged) {
-					cell.renderer.enabled = false;
-				}
-				else if(!toggleWBC && !wbcChanged) {
-					cell.renderer.enabled = true;
-				}
 				
 				if (cell.destroyMe) {
 					Debug.Log ("deleting white blood cell...");

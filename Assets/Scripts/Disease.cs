@@ -34,7 +34,7 @@ public class Disease : MonoBehaviour {
 			return;
 		}
 
-		if (gameControl.toggleWBC)
+		if (!gameControl.toggleWBC)
 			this.renderer.enabled = false;
 		else
 			this.renderer.enabled = true;
