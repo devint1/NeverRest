@@ -232,6 +232,7 @@ public class GameControl : MonoBehaviour {
 		
 		if (Input.GetKeyDown (KeyCode.B)) {
 			toggleRBC = !toggleRBC;
+			Debug.Log("KeyDown!");
 			changed = false;
 		}
 		if (Input.GetKeyDown (KeyCode.W)) {
@@ -280,6 +281,7 @@ public class GameControl : MonoBehaviour {
 		}
 
 		if (toggleRBC && !changed) {
+			changed = true;
 			int i = 0;
 			for(; i < numRBCs; i++) {
 				Vector3 randpt = redBloodSpawnPoint.GetRandomPoint();
@@ -305,7 +307,7 @@ public class GameControl : MonoBehaviour {
 				newRedScript.gameControl = this;
 			}
 			
-			changed = true;
+
 		}
 	}
 
