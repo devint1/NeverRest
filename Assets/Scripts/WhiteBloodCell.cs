@@ -87,10 +87,14 @@ public class WhiteBloodCell : MonoBehaviour {
 		}
 		CheckCollisionOnDisease ();
 		
+		if (this.speed != gameControl.rbcSpeed) {
+			this.speed = gameControl.rbcSpeed / 250.0f;
+		}
+		
 		if (!currentBlock.notClotted)
 			speed = 0.00001f;
 		else
-			speed = 0.0075f;
+			speed = gameControl.rbcSpeed / 250.0f;
 
 		//If we are at current way point or the destination has been changed
 		if (Vector2.Distance (destination, this.transform.position) < .03 || destChanged) {

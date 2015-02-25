@@ -13,12 +13,15 @@ public class GameControl : MonoBehaviour {
 	public int numDiseaseCells = 2;
 	public AudioClip backGroundMusic = null;
 	public bool toggleRBC = false;
+	public bool toggleWBC = true;
 	public int numRBCs = 18;
 	public GameObject redBloodCellPrefab;
 	public Block redBloodSpawnPoint;
 	public Body body;
 	public bool isSelected = false;
-	const float WHITE_BLOOD_CELL_FOOD_RATE = 0.05f;
+	public int rbcSpeed = 1;
+
+		const float WHITE_BLOOD_CELL_FOOD_RATE = 0.05f;
 
 	int whiteBloodProduction = 0;
 	// int mousePressStart = -1;
@@ -33,6 +36,7 @@ public class GameControl : MonoBehaviour {
 	bool isPaused = false;
 	bool showMenu = false;
 	bool changed = true;
+	bool wbcChanged = true;
 
 	void Start() {
 		if (backGroundMusic) {
@@ -126,6 +130,7 @@ public class GameControl : MonoBehaviour {
 
 		}
 		whiteBloodProduction = (int)GUI.HorizontalSlider(new Rect(25, 90, 125, 30), whiteBloodProduction, 0.0F, 10.0F);
+		rbcSpeed = (int)GUI.HorizontalSlider(new Rect(25, 135, 125, 30), rbcSpeed, 1.0F, 10.0F);
 		
 		// Display wihte blood cell production status
 		if (whiteBloodProduction > 0) {
@@ -133,6 +138,8 @@ public class GameControl : MonoBehaviour {
 		} else {
 			GUI.TextArea (new Rect (25, 105, 125, 20), "Production off");
 		}
+		
+		GUI.TextArea (new Rect (25, 150, 125, 20), "Heart Rate");
 
 		// Display food bar
 		GUI.BeginGroup (new Rect (20, 10, 125, 30));
@@ -198,6 +205,10 @@ public class GameControl : MonoBehaviour {
 			toggleRBC = !toggleRBC;
 			changed = false;
 		}
+		if (Input.GetKeyDown (KeyCode.W)) {
+			toggleWBC = !toggleWBC;
+			wbcChanged = false;
+		}
 
 		if (whiteBloodProduction > 0 && (Time.time - timeOfLastSpawn) > 30 / whiteBloodProduction) {
 			SpawnWhiteBloodCell ();
@@ -219,10 +230,10 @@ public class GameControl : MonoBehaviour {
 			for(int i = 0; i < whiteBloodCells.Count; i++) {
 				WhiteBloodCell cell = (WhiteBloodCell)(whiteBloodCells[i]);
 
-				if(toggleRBC && !changed) {
+				if(toggleWBC && !wbcChanged) {
 					cell.renderer.enabled = false;
 				}
-				else if(!toggleRBC && !changed) {
+				else if(!toggleWBC && !wbcChanged) {
 					cell.renderer.enabled = true;
 				}
 				
@@ -235,26 +246,29 @@ public class GameControl : MonoBehaviour {
 					i--;
 				}
 			}
+			wbcChanged = true;
 		}
 
 		if (toggleRBC && !changed) {
 			int i = 0;
 			for(; i < numRBCs; i++) {
-				GameObject newRBC = (GameObject)Instantiate (redBloodCellPrefab, redBloodSpawnPoint.GetRandomPoint(), this.transform.rotation);
+				Vector3 randpt = redBloodSpawnPoint.GetRandomPoint();
+				GameObject newRBC = (GameObject)Instantiate (redBloodCellPrefab, new Vector3(randpt.x, randpt.y, 1.0f) , this.transform.rotation);
 				RedBloodScript newRedScript = newRBC.GetComponent<RedBloodScript> ();
 				newRedScript.currentBlock = redBloodSpawnPoint;
 				newRedScript.destination = redBloodSpawnPoint.GetRandomPoint ();
-				newRedScript.origBlock = body.GetBodyPart((numRBCs - i) / 3);
+				newRedScript.origBlock = body.GetBodyPart((numRBCs - i) / (numRBCs / body.blocks.Count));
 				newRedScript.destBlock = newRedScript.origBlock;
 				newRedScript.heartBlock = body.GetChest ();
 				newRedScript.gameControl = this;
 			}
 			for(; i > 0; i--) {
-				GameObject newRBC = (GameObject)Instantiate (redBloodCellPrefab, body.GetBodyPart((numRBCs - i) / 3).GetRandomPoint(), this.transform.rotation);
+				Vector3 randpt = body.GetBodyPart((numRBCs - i) / (numRBCs / body.blocks.Count)).GetRandomPoint();
+				GameObject newRBC = (GameObject)Instantiate (redBloodCellPrefab, new Vector3(randpt.x, randpt.y, 1.0f), this.transform.rotation);
 				RedBloodScript newRedScript = newRBC.GetComponent<RedBloodScript> ();
-				newRedScript.currentBlock = body.GetBodyPart((numRBCs - i) / 3);
-				newRedScript.destination = body.GetBodyPart((numRBCs - i) / 3).GetRandomPoint ();
-				newRedScript.origBlock = body.GetBodyPart((numRBCs - i) / 3);
+				newRedScript.currentBlock = body.GetBodyPart((numRBCs - i) / (numRBCs / body.blocks.Count));
+				newRedScript.destination = body.GetBodyPart((numRBCs - i) / (numRBCs / body.blocks.Count)).GetRandomPoint ();
+				newRedScript.origBlock = body.GetBodyPart((numRBCs - i) / (numRBCs / body.blocks.Count));
 				newRedScript.heartBlock = body.GetChest ();
 				newRedScript.destBlock = newRedScript.heartBlock;
 				newRedScript.oxygenated = false;
@@ -272,7 +286,7 @@ public class GameControl : MonoBehaviour {
 		newWhiteScript.destination = whiteBloodSpawnPoint.GetRandomPoint ();
 		newWhiteScript.gameControl = this;
 		
-		if (toggleRBC)
+		if (toggleWBC)
 			newWhiteScript.renderer.enabled = false;
 		
 		whiteBloodCells.Add (newWhite.GetComponent<WhiteBloodCell>());

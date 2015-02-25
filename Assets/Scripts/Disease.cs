@@ -34,15 +34,19 @@ public class Disease : MonoBehaviour {
 			return;
 		}
 
-		if (gameControl.toggleRBC)
+		if (gameControl.toggleWBC)
 			this.renderer.enabled = false;
 		else
 			this.renderer.enabled = true;
 		
+		if (this.speed != gameControl.rbcSpeed) {
+			this.speed = gameControl.rbcSpeed / 250.0f;
+		}
+		
 		if (!currentBlock.notClotted)
 			speed = 0.00001f;
 		else
-			speed = 0.0075f;
+			speed = gameControl.rbcSpeed / 250.0f;
 
 		//If disease has reached is destination
 		if ((destination - this.transform.position).magnitude < 0.07) {

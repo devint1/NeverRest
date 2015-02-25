@@ -15,6 +15,7 @@ public class RedBloodScript : MonoBehaviour {
 	bool destChanged = false;
 	Vector2 userDest;
 	bool hasUserDest; //Need to use this since userDest cannot = null
+	bool leavingCurrBlock = true;
 	
 	// Use this for initialization
 	void Start () {
@@ -31,6 +32,10 @@ public class RedBloodScript : MonoBehaviour {
 			Destroy(this.gameObject);
 			Destroy(this);
 		}
+
+		if (this.speed != gameControl.rbcSpeed) {
+			this.speed = gameControl.rbcSpeed / 250.0f;
+		}
 		
 		if(!oxygenated)
 			this.renderer.material.SetColor("_Color", new Color(172.0f / 255.0f,0.0f,0.0f));
@@ -40,7 +45,7 @@ public class RedBloodScript : MonoBehaviour {
 		if (!currentBlock.notClotted)
 			speed = 0.00001f;
 		else
-			speed = 0.0075f;
+			speed = gameControl.rbcSpeed / 250.0f;
 		
 		//If we are at current way point or the destination has been changed
 		if (Vector2.Distance (destination, this.transform.position) < .03 || destChanged) {
@@ -54,9 +59,32 @@ public class RedBloodScript : MonoBehaviour {
 						break;
 					}
 				}
+				if(!leavingCurrBlock) {
+					if(origBlock != heartBlock) {
+						if(returnToHeart) {
+							oxygenated = false;		//set the color to dark red
+						}
+						else {
+							oxygenated = true;
+						}
+					}
+					else {
+						if(!returnToHeart) {
+							destination = currentBlock.GetRandomPoint();
+							oxygenated = false;
+							returnToHeart = true;
+						}
+						else {
+							destination = heartBlock.GetExitPoint().transform.position;
+							oxygenated = true;
+							returnToHeart = false;
+						}
+					}
+					leavingCurrBlock = true;
+				}
 			}
 			//Last option is going to a random waypoint
-			else{
+			else if( currentBlock != destBlock ) {
 				//headingToward = currentBlock.GetRandomPoint();
 				if(origBlock != heartBlock) {
 					if(!returnToHeart) {
@@ -73,7 +101,50 @@ public class RedBloodScript : MonoBehaviour {
 					}
 				}
 				else {
-					destination = currentBlock.GetRandomPoint();
+					if(!returnToHeart) {
+						destination = currentBlock.GetRandomPoint();
+						oxygenated = false;
+						returnToHeart = true;
+					}
+					else {
+						destination = heartBlock.GetExitPoint().transform.position;
+						oxygenated = true;
+						returnToHeart = false;
+					}
+				}
+			}
+			else {
+				leavingCurrBlock = false;
+				if(origBlock != heartBlock) {
+					if(!returnToHeart) {
+						returnToHeart = true;
+						destBlock = heartBlock;
+						destChanged = true;
+					}
+					else {
+						returnToHeart = false;
+						destBlock = origBlock;
+						destChanged = true;
+					}
+				}
+				else {
+					if(!returnToHeart) {
+						destination = currentBlock.GetRandomPoint();
+						oxygenated = false;
+						returnToHeart = true;
+					}
+					else {
+						destination = heartBlock.GetExitPoint().transform.position;
+						oxygenated = true;
+						returnToHeart = false;
+					}
+				}
+				foreach (ExitPoint exitPoint in currentBlock.GetExitPoints()) {
+					if( ExitPointLeadsToDestination(exitPoint.gameObject, destBlock, currentBlock) ) {
+						destination = exitPoint.gameObject.transform.position;
+						currentBlock = exitPoint.nextBlock;
+						break;
+					}
 				}
 			}
 			if( destChanged ){
