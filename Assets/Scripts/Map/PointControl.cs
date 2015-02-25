@@ -7,7 +7,7 @@ public class PointControl : MonoBehaviour {
 	public PlayerControl playerControl;
 	public BlockType blockType;
 	public GameObject destMarkPrefab;
-	
+	public bool canMove =false ;
 	private Vector3 mousePos;
 	private Tesselator tesselator;
 
@@ -26,11 +26,13 @@ public class PointControl : MonoBehaviour {
 		
 		
 		gameObject.renderer.material.color = Color.blue;
-		Debug.Log ("Point selected");
+		Debug.Log ("Point selected2");
+		playerControl.playerisSelected = false;
+
 	}
 	public void DeSelect() {
 
-		gameObject.renderer.material.color = Color.white;
+		//gameObject.renderer.material.color = Color.white;
 
 	}
 }

@@ -26,29 +26,34 @@ public class PlayerControl: MonoBehaviour{
 	
 	void Update () {
 		
-		CheckInput();
+		CheckInput ();
 		
-		if(moving) {
+		if (moving) {
 			// pos is changed when there's input from the player
 			transform.position = pos;
 			moving = false;
 		}
-	}
-	public void Select(){
-		if(!playerisSelected){
-
+		if (playerisSelected) {
 			this.renderer.material.color = Color.blue;
+			Debug.Log ("Player selected2");
+		} else {
+			this.renderer.material.color = Color.white;
+			Debug.Log ("Player deselected");
 		}
-		this.playerisSelected = true;
-		Debug.Log ("player selected");
-
 	}
+ 
 	void OnMouseDown() {
 		
 
-		this.renderer.material.color = Color.blue;
+		
 		this.playerisSelected = true;
-		Debug.Log ("Player selected");
+		Debug.Log ("Player selected2");
+	}
+	public void DeSelect() {
+		
+		gameObject.renderer.material.color = Color.white;
+		this.playerisSelected = false;
+		Debug.Log ("Player deselected");
 	}
 	private void CheckInput() {
 		
