@@ -1,12 +1,15 @@
 fileFormatVersion: 2
-guid: 7bbb469543ae03f499cc7be0bd1606d2
+guid: 5e157082b22fb2d4d890283cc7aa57ed
 TextureImporter:
   fileIDToRecycleName:
     21300000: whitebloodcell_moving_0
+    21300002: whitebloodcell_moving_1
+    21300004: whitebloodcell_moving_2
+    21300006: whitebloodcell_moving_3
   serializedVersion: 2
   mipmaps:
     mipMapMode: 0
-    enableMipMap: 0
+    enableMipMap: 1
     linearTexture: 0
     correctGamma: 0
     fadeOut: 0
@@ -26,7 +29,7 @@ TextureImporter:
   maxTextureSize: 1024
   textureSettings:
     filterMode: -1
-    aniso: 1
+    aniso: 16
     mipBias: -1
     wrapMode: 1
   nPOTScale: 0
@@ -51,6 +54,36 @@ TextureImporter:
         y: 14
         width: 47
         height: 43
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: whitebloodcell_moving_1
+      rect:
+        serializedVersion: 2
+        x: 83
+        y: 11
+        width: 50
+        height: 48
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: whitebloodcell_moving_2
+      rect:
+        serializedVersion: 2
+        x: 152
+        y: 8
+        width: 56
+        height: 58
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: whitebloodcell_moving_3
+      rect:
+        serializedVersion: 2
+        x: 227
+        y: 11
+        width: 50
+        height: 48
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
