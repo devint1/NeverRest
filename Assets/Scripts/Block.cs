@@ -30,15 +30,25 @@ public class Block : MonoBehaviour {
 			return;
 		}
 		mousePos = Camera.main.ScreenToWorldPoint (Input.mousePosition);
-		foreach (WhiteBloodCell cell in gameControl.selected) {
-			cell.renderer.material.color = Color.white;
-			cell.isSelected = false;
-			cell.SetDestination (this, mousePos);
-			gameControl.isSelected = true;
+		foreach (GameObject obj in gameControl.selected) {
+			if(obj.tag == "WhiteBloodCell") {
+				WhiteBloodCell cell = obj.GetComponent<WhiteBloodCell> ();
+				//cell.renderer.material.color = Color.white;
+				//cell.isSelected = false;
+				cell.SetDestination (this, mousePos);
+				gameControl.isSelected = true;
+			}
+			else if(obj.tag == "Platelet") {
+				Platelets plate = obj.GetComponent<Platelets> ();
+				//plate.renderer.material.color = Color.yellow;
+				//plate.isSelected = false;
+				plate.SetDestination (this, mousePos);
+				gameControl.isSelected = true;
+			}
 		}
 
 		StartCoroutine(FireMouseClick());
-		gameControl.selected.Clear();
+		//gameControl.selected.Clear();
 	}
 	
 	public Vector3 GetRandomPoint() {
@@ -80,13 +90,16 @@ public class Block : MonoBehaviour {
 				mouseTarget.renderer.material.color = c;
 			}
 			gameControl.isSelected = false;
+			//gameControl.selected.Clear ();
 			Destroy (mouseTarget);
 		}
 	}
 
 	void OnMouseDown() {
+		/*
 		if (gameControl.toggleRBC) {
 			notClotted = !notClotted;
 		}
+		*/
 	}
 }

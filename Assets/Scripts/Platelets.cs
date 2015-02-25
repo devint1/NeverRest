@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class WhiteBloodCell : MonoBehaviour {
+public class Platelets : MonoBehaviour {
 	public Block currentBlock;
 	public GameControl gameControl;
 	public bool isSelected = false;
@@ -9,20 +9,17 @@ public class WhiteBloodCell : MonoBehaviour {
 	public AudioClip spawnSound =  null;
 	public float speed = 0.0075f;
 	public Vector3 destination; //Point, Exitpoint, or disease that WhiteBloodCell is moving towards right now
-	
-	const int MAX_DISEASE_ABSORBED = 8;
-	
-	int diseasesabsorbed = 0;
+	public float spawnTime;
+
 	Block destBlock = null; // Block the cell is moving to
 	bool destChanged = false;
 	Vector2 userDest;
 	bool hasUserDest; //Need to use this since userDest cannot = null
-	ArrayList capture = new ArrayList ();
 
-	public void Start(){
-		AudioSource temp = gameObject.AddComponent<AudioSource> ();
-		temp.clip = spawnSound;
-		temp.Play ();
+
+	// Use this for initialization
+	void Start () {
+		this.gameObject.tag = "Platelet";
 	}
 
 	public void SetDestination(Block dest, Vector2 coords){
@@ -35,7 +32,7 @@ public class WhiteBloodCell : MonoBehaviour {
 	public void Select(){
 		if(!isSelected){
 			gameControl.selected.Add (this.gameObject);
-			gameObject.renderer.material.color = Color.blue;
+			gameObject.renderer.material.color = Color.green;
 		}
 		isSelected = true;
 	}
@@ -56,42 +53,24 @@ public class WhiteBloodCell : MonoBehaviour {
 		}
 	}
 
-	void CheckCollisionOnDisease(){
-		foreach (Disease disease in currentBlock.diseases){
-			if ( disease && Vector3.Distance (disease.transform.position, transform.position) < .2){
-				if (!disease.captured) {
-					disease.captured = true;
-					disease.BeenCapturedBy (this.gameObject);
-					capture.Add (disease);
-					diseasesabsorbed++;
-					--gameControl.numDiseaseCells;
-				}
-			}
-		}
-		foreach (Disease disease in capture) {
-			if(!disease.removedFromCell){
-				disease.removedFromCell = true;
-				disease.currentBlock.diseases.Remove(this);
-			}
-		}
-
-		if (diseasesabsorbed >= MAX_DISEASE_ABSORBED) {
-			destroyMe = true;
-		}
-	}
-
-	// Movement Code
+	// Update is called once per frame
 	void Update () {
 		if( gameControl.CheckIfPaused() ){
 			return;
 		}
-		CheckCollisionOnDisease ();
+
+		if (Time.time - spawnTime > 120) {
+			gameControl.foodLevel += 0.8f * GameControl.PLATELET_FOOD_RATE;
+			Destroy (this.gameObject);
+			gameControl.platelets.Remove (this);
+			return;
+		}
 		
 		if (this.speed != gameControl.rbcSpeed) {
 			this.speed = gameControl.rbcSpeed / 250.0f;
 		}
 		
-		if (!gameControl.toggleWBC)
+		if (!gameControl.togglePT)
 			this.renderer.enabled = false;
 		else
 			this.renderer.enabled = true;
@@ -134,29 +113,12 @@ public class WhiteBloodCell : MonoBehaviour {
 		                                       (directionToDestination.y * speed) + this.transform.position.y,
 		                                       this.transform.position.z);
 	}
-	
-	GameObject FindExitPointToDestination(Block current, Block destination) {
-		foreach (ExitPoint exitPoint in currentBlock.GetExitPoints()) {
-			if(exitPoint.nextBlock == destination) {
-				return exitPoint.gameObject;
-			}
-			else {
-				GameObject exitIntoDestination = FindExitPointToDestination(exitPoint.gameObject.GetComponent<ExitPoint>().nextBlock, destination);
-				
-				if(exitIntoDestination) {
-					return exitPoint.gameObject;
-				}
-			}
-		}
-		
-		return null;
-	}
-	
+
 	bool ExitPointLeadsToDestination(GameObject exit, Block destination, Block curBlock) {
 		if(exit.gameObject.GetComponent<ExitPoint>().nextBlock == destination) {
 			return true;
 		}
-
+		
 		//TODO - We should cache lookups
 		foreach(ExitPoint exitPoint in exit.GetComponent<ExitPoint>().nextBlock.GetExitPoints()) {
 			if( curBlock != exitPoint.gameObject.GetComponent<ExitPoint>().nextBlock ) {

@@ -4,8 +4,11 @@ using System.Collections;
 public class GameControl : MonoBehaviour {
 	public ArrayList selected;
 	public ArrayList whiteBloodCells;
+	public ArrayList platelets;
 	public Block whiteBloodSpawnPoint;
 	public GameObject whiteBloodCellPrefab;
+	public GameObject plateletPrefab;
+	public Block plateletSpawnPoint;
 	public Texture2D foodBarFull;
 	public Texture2D healthBarFull;
 	public Texture2D barEmpty;
@@ -14,20 +17,23 @@ public class GameControl : MonoBehaviour {
 	public AudioClip backGroundMusic = null;
 	public bool toggleRBC = false;
 	public bool toggleWBC = true;
+	public bool togglePT = false;
 	public int numRBCs = 18;
 	public GameObject redBloodCellPrefab;
 	public Block redBloodSpawnPoint;
 	public Body body;
 	public bool isSelected = false;
 	public int rbcSpeed = 1;
+	public float foodLevel = 1f;
 
-		const float WHITE_BLOOD_CELL_FOOD_RATE = 0.05f;
+	public const float WHITE_BLOOD_CELL_FOOD_RATE = 0.05f;
+	public const float PLATELET_FOOD_RATE = 0.025f;
 
 	int whiteBloodProduction = 0;
+	int plateletProduction = 1;
 	// int mousePressStart = -1;
 	Vector3 mousePositionStart;
 	float timeOfLastSpawn;
-	float foodLevel = 1f;
 	bool mouseDown = false;
 	bool drawText = false;
 	Texture2D text;
@@ -48,6 +54,7 @@ public class GameControl : MonoBehaviour {
 		timeOfLastSpawn = Time.time;
 		selected = new ArrayList();
 		whiteBloodCells = new ArrayList();
+		platelets = new ArrayList ();
 		mousePositionStart = new Vector3();
 		SpawnWhiteBloodCell();
 	}
@@ -72,10 +79,21 @@ public class GameControl : MonoBehaviour {
 		if (!mouseDown && Input.GetMouseButton (0)) {
 			mousePositionStart = Event.current.mousePosition;
 			mouseDown = true;
-			if (whiteBloodCells != null) {
+			/*if (whiteBloodCells != null) {
 				foreach(WhiteBloodCell cell in whiteBloodCells) {
 					cell.DeSelect();
 				}
+			}*/
+			if(selected != null) {
+				foreach(GameObject obj in selected) {
+					if(obj.tag == "WhiteBloodCell") {
+						obj.GetComponent<WhiteBloodCell> ().DeSelect();
+					}
+					else if(obj.tag == "Platelet") {
+						obj.GetComponent<Platelets> ().DeSelect();
+					}
+				}
+				selected.Clear();
 			}
 		} else if (mouseDown && Input.GetMouseButton (0)) {
 			// Beginning of box selection
@@ -97,11 +115,22 @@ public class GameControl : MonoBehaviour {
 			               Event.current.mousePosition.x - mousePositionStart.x, 
 			               Event.current.mousePosition.y - mousePositionStart.y);
 			if (whiteBloodCells != null) {
-				foreach(WhiteBloodCell cell in whiteBloodCells){
-					Vector2 pos = Camera.main.WorldToScreenPoint(cell.transform.position);
-					pos.y = Camera.main.pixelHeight - pos.y;
-					if(box.Contains(pos, true)){
-						cell.Select();
+				if(toggleWBC) {
+					foreach(WhiteBloodCell cell in whiteBloodCells){
+						Vector2 pos = Camera.main.WorldToScreenPoint(cell.transform.position);
+						pos.y = Camera.main.pixelHeight - pos.y;
+						if(box.Contains(pos, true)){
+							cell.Select();
+						}
+					}
+				}
+				if(togglePT) {
+					foreach(Platelets cell in platelets){
+						Vector2 pos = Camera.main.WorldToScreenPoint(cell.transform.position);
+						pos.y = Camera.main.pixelHeight - pos.y;
+						if(box.Contains(pos, true)){
+							cell.Select();
+						}
 					}
 				}
 			}
@@ -209,10 +238,18 @@ public class GameControl : MonoBehaviour {
 			toggleWBC = !toggleWBC;
 			wbcChanged = false;
 		}
+		if (Input.GetKeyDown (KeyCode.T)) {
+			togglePT = !togglePT;
+		}
 
 		if (whiteBloodProduction > 0 && (Time.time - timeOfLastSpawn) > 30 / whiteBloodProduction) {
 			SpawnWhiteBloodCell ();
 			foodLevel -= WHITE_BLOOD_CELL_FOOD_RATE;
+		}
+
+		if (plateletProduction > 0 && (Time.time - timeOfLastSpawn) > 30 / plateletProduction) {
+			SpawnPlatelet ();
+			foodLevel -= PLATELET_FOOD_RATE;
 		}
 
 		// Check losing condition
@@ -283,6 +320,21 @@ public class GameControl : MonoBehaviour {
 			newWhiteScript.renderer.enabled = false;
 		
 		whiteBloodCells.Add (newWhite.GetComponent<WhiteBloodCell>());
+		timeOfLastSpawn = Time.time;
+	}
+
+	void SpawnPlatelet() {
+		GameObject newPlate = (GameObject)Instantiate (plateletPrefab, plateletSpawnPoint.GetRandomPoint(), this.transform.rotation);
+		Platelets newPlateletScript = newPlate.GetComponent<Platelets> ();
+		newPlateletScript.currentBlock = plateletSpawnPoint;
+		newPlateletScript.destination = plateletSpawnPoint.GetRandomPoint ();
+		newPlateletScript.gameControl = this;
+		newPlateletScript.spawnTime = Time.time;
+		
+		if (togglePT)
+			newPlateletScript.renderer.enabled = false;
+		
+		platelets.Add (newPlate.GetComponent<Platelets>());
 		timeOfLastSpawn = Time.time;
 	}
 
