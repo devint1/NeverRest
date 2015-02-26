@@ -10,7 +10,7 @@ public class Disease : MonoBehaviour {
 	public float speed = 0.005f;
 	public float heartHealthDamagePerSec = 0.01f;
 	
-	Vector3 destination;
+	public Vector3 destination;
 	
 	const int MAX_DISEASE_RESPAWN_TIME = 10;
 	const int MIN_DISEASE_RESPAWN_TIME = 20;

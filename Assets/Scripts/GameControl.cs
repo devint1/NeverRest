@@ -68,7 +68,7 @@ public class GameControl : MonoBehaviour {
 		return isPaused;
 	}
 
-	void TogglePauseGame(){
+	public void TogglePauseGame(){
 		if (isPaused == false) {
 			Time.timeScale = 0;
 		}
