@@ -25,17 +25,23 @@ public class GameControl : MonoBehaviour {
 	public bool isSelected = false;
 	public int rbcSpeed = 1;
 	public float foodLevel = 1f;
+	public bool changed = true;
+	public bool wbcChanged = true;
+	public int whiteBloodProduction = 0;
+	public int plateletProduction = 0;
+	public UnityEngine.UI.Slider wbcSlider;
+	public UnityEngine.UI.Slider rbcSlider;
+	public UnityEngine.UI.Slider plateSlider;
 
 	public const float WHITE_BLOOD_CELL_FOOD_RATE = 0.05f;
 	public const float PLATELET_FOOD_RATE = 0.025f;
 
 	private const float MAX_LEVEL_PROGRESS_SPEED = 10.0f;
 
-	int whiteBloodProduction = 0;
-	int plateletProduction = 1;
 	// int mousePressStart = -1;
 	Vector3 mousePositionStart;
 	float timeOfLastSpawn;
+	float timeOfLastPlateSpawn;
 	bool mouseDown = false;
 	bool drawText = false;
 	Texture2D text;
@@ -43,8 +49,6 @@ public class GameControl : MonoBehaviour {
 	bool gameOver = false;
 	bool isPaused = false;
 	public bool showMenu = false;
-	bool changed = true;
-	bool wbcChanged = true;
 	float levelProgressSpeed = 1.0f;
 	int levelDistance = 2000;
 	float levelProgress = 0f;
@@ -56,12 +60,35 @@ public class GameControl : MonoBehaviour {
 			temp.Play();
 		}
 
+		if (wbcSlider != null) {
+			wbcSlider.onValueChanged.AddListener(changeWBCSliderVal);
+		}
+		if (plateSlider != null) {
+			plateSlider.onValueChanged.AddListener(changePlateSliderVal);
+		}
+		if (rbcSlider != null) {
+
+		}
+
 		timeOfLastSpawn = Time.time;
+		timeOfLastPlateSpawn = Time.time;
 		selected = new ArrayList();
 		whiteBloodCells = new ArrayList();
 		platelets = new ArrayList ();
 		mousePositionStart = new Vector3();
 		SpawnWhiteBloodCell();
+	}
+
+	void changeWBCSliderVal(float f) {
+		whiteBloodProduction = (int)(f);
+	}
+
+	void changeRBCSliderVal(float f) {
+
+	}
+
+	void changePlateSliderVal(float f) {
+		plateletProduction = (int)(f);
 	}
 
 	public bool CheckIfPaused(){
@@ -163,19 +190,19 @@ public class GameControl : MonoBehaviour {
 			//GUI.Box(new Rect(Screen.width/3, Screen.height/18, Screen.width/4, Screen.height/8), "PAUSED \n Space Bar to Resume");
 
 		}
-		whiteBloodProduction = (int)GUI.HorizontalSlider(new Rect(25, 50, 125, 30), whiteBloodProduction, 0.0F, 10.0F);
-		rbcSpeed = (int)GUI.HorizontalSlider(new Rect(25, 95, 125, 30), rbcSpeed, 1.0F, 10.0F);
+		//whiteBloodProduction = (int)GUI.HorizontalSlider(new Rect(25, 50, 125, 30), whiteBloodProduction, 0.0F, 10.0F);
+		rbcSpeed = (int)GUI.HorizontalSlider(new Rect(25, 50, 125, 30), rbcSpeed, 1.0F, 10.0F);
 		
 		// Display wihte blood cell production status
 		if (whiteBloodProduction > 0) {
-			GUI.TextArea (new Rect (25, 65, 125, 20), "1 per " + 30 / whiteBloodProduction + " seconds");
+			GUI.TextArea (new Rect (25, 133, 125, 20), "1 per " + 30 / whiteBloodProduction + " seconds");
 		} else {
-			GUI.TextArea (new Rect (25, 65, 125, 20), "Production off");
+			GUI.TextArea (new Rect (25, 133, 125, 20), "Production off");
 		}
 		
-		GUI.TextArea (new Rect (25, 110, 125, 20), "Heart Rate");
+		GUI.TextArea (new Rect (25, 65, 125, 20), "Heart Rate");
 
-		GUI.TextArea (new Rect (25, 135, 125, 38), "Level Completion:\n" + (int)levelProgress + "/" + levelDistance + " ft");
+		GUI.TextArea (new Rect (25, 90, 125, 38), "Level Completion:\n" + (int)levelProgress + "/" + levelDistance + " ft");
 
 		// Display food bar
 		GUI.BeginGroup (new Rect (20, 10, 125, 30));
@@ -255,7 +282,7 @@ public class GameControl : MonoBehaviour {
 			foodLevel -= WHITE_BLOOD_CELL_FOOD_RATE;
 		}
 
-		if (plateletProduction > 0 && (Time.time - timeOfLastSpawn) > 30 / plateletProduction) {
+		if (plateletProduction > 0 && (Time.time - timeOfLastPlateSpawn) > 30 / plateletProduction) {
 			SpawnPlatelet ();
 			foodLevel -= PLATELET_FOOD_RATE;
 		}
@@ -348,7 +375,7 @@ public class GameControl : MonoBehaviour {
 			newPlateletScript.renderer.enabled = false;
 		
 		platelets.Add (newPlate.GetComponent<Platelets>());
-		timeOfLastSpawn = Time.time;
+		timeOfLastPlateSpawn = Time.time;
 	}
 
 	IEnumerator Wait(float f) {
