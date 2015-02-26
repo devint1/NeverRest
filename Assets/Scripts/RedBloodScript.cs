@@ -70,12 +70,12 @@ public class RedBloodScript : MonoBehaviour {
 					}
 					else {
 						if(!returnToHeart) {
-							destination = currentBlock.GetRandomPoint();
+							destination = heartBlock.GetExitPoint().transform.position;
 							oxygenated = false;
 							returnToHeart = true;
 						}
 						else {
-							destination = heartBlock.GetExitPoint().transform.position;
+							destination = currentBlock.GetRandomPoint();
 							oxygenated = true;
 							returnToHeart = false;
 						}
@@ -102,12 +102,12 @@ public class RedBloodScript : MonoBehaviour {
 				}
 				else {
 					if(!returnToHeart) {
-						destination = currentBlock.GetRandomPoint();
+						destination = heartBlock.GetExitPoint().transform.position;
 						oxygenated = false;
 						returnToHeart = true;
 					}
 					else {
-						destination = heartBlock.GetExitPoint().transform.position;
+						destination = currentBlock.GetRandomPoint();
 						oxygenated = true;
 						returnToHeart = false;
 					}
@@ -129,12 +129,12 @@ public class RedBloodScript : MonoBehaviour {
 				}
 				else {
 					if(!returnToHeart) {
-						destination = currentBlock.GetRandomPoint();
+						destination = heartBlock.GetExitPoint().transform.position;
 						oxygenated = false;
 						returnToHeart = true;
 					}
 					else {
-						destination = heartBlock.GetExitPoint().transform.position;
+						destination = currentBlock.GetRandomPoint();
 						oxygenated = true;
 						returnToHeart = false;
 					}
