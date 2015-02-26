@@ -62,6 +62,8 @@ public class GameControl : MonoBehaviour {
 
 	int levelDistance = 2000;
 
+	GameObject upgradeMenu;
+
 	void Start() {
 		if (backGroundMusic) {
 			AudioSource temp = gameObject.AddComponent<AudioSource> ();
@@ -270,7 +272,14 @@ public class GameControl : MonoBehaviour {
 			//Just a proof of concept atm
 			TogglePauseGame();
 			showMenu = false;
-			Instantiate(Resources.Load("UpgradeMenu"), Vector3.zero, Quaternion.identity);
+			if (!UpgradeMenuOpen){
+				upgradeMenu = (GameObject) Instantiate(Resources.Load("UpgradeMenu"), Vector3.zero, Quaternion.identity);
+				UpgradeMenuOpen = true;
+			}
+			else{
+				Destroy(upgradeMenu);
+				UpgradeMenuOpen = false;
+			}
 		}
 
 		if (IsPaused()){
