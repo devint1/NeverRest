@@ -84,7 +84,7 @@ public class GameControl : MonoBehaviour {
 		if (!mouseDown && Input.GetMouseButton (0)) {
 			mousePositionStart = Event.current.mousePosition;
 			mouseDown = true;
-			if (whiteBloodCells) {
+			if (whiteBloodCells != null) {
 				foreach(WhiteBloodCell cell in whiteBloodCells) {
 					// FIXME: Find out why nulls are still in whiteBloodCells
 					if(!cell) {
