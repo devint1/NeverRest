@@ -61,8 +61,9 @@ public class Platelets : MonoBehaviour {
 
 		if (Time.time - spawnTime > 120) {
 			gameControl.foodLevel += 0.8f * GameControl.PLATELET_FOOD_RATE;
-			Destroy (this.gameObject);
+			gameControl.selected.Remove (this.gameObject);
 			gameControl.platelets.Remove (this);
+			Destroy (this.gameObject);
 			return;
 		}
 		

@@ -11,6 +11,7 @@ public class RedBloodScript : MonoBehaviour {
 	public bool oxygenated = true;	//set to false upon arrival at destination (room)
 	public float speed = 0.0075f;
 	public Block destBlock = null; // Block the cell is moving to
+	public float spawnTime;
 
 	bool destChanged = false;
 	Vector2 userDest;
@@ -21,6 +22,22 @@ public class RedBloodScript : MonoBehaviour {
 	void Start () {
 		
 	}
+
+	void SpawnRBC() {
+		if (gameControl.liveRBCs < 2 * gameControl.numRBCs) {
+			Vector3 randpt = gameControl.redBloodSpawnPoint.GetRandomPoint ();
+			GameObject newRBC = (GameObject)Instantiate (gameControl.redBloodCellPrefab, new Vector3 (randpt.x, randpt.y, 1.0f), this.transform.rotation);
+			RedBloodScript newRedScript = newRBC.GetComponent<RedBloodScript> ();
+			newRedScript.currentBlock = heartBlock;
+			newRedScript.destination = gameControl.redBloodSpawnPoint.GetRandomPoint ();
+			newRedScript.origBlock = origBlock;
+			newRedScript.destBlock = newRedScript.origBlock;
+			newRedScript.heartBlock = heartBlock;
+			newRedScript.gameControl = gameControl;
+			newRedScript.spawnTime = Time.time;
+			gameControl.liveRBCs++;
+		}
+	}
 	
 	// Update is called once per frame
 	void Update () {
@@ -28,9 +45,19 @@ public class RedBloodScript : MonoBehaviour {
 			return;
 		}
 		
+		if (Time.time - spawnTime > 120) {
+			Destroy (this.gameObject);
+			gameControl.liveRBCs--;
+			SpawnRBC ();
+			return;
+		}
+		
 		if (!gameControl.toggleRBC) {
-			Destroy(this.gameObject);
-			Destroy(this);
+			//Destroy(this.gameObject);
+			//Destroy(this);
+			this.renderer.enabled = false;
+		} else {
+			this.renderer.enabled = true;
 		}
 
 		if (this.speed != gameControl.rbcSpeed) {
@@ -70,7 +97,7 @@ public class RedBloodScript : MonoBehaviour {
 					}
 					else {
 						if(!returnToHeart) {
-							destination = heartBlock.GetExitPoint().transform.position;
+							destination = gameControl.body.heart.transform.position;
 							oxygenated = false;
 							returnToHeart = true;
 						}
@@ -102,7 +129,7 @@ public class RedBloodScript : MonoBehaviour {
 				}
 				else {
 					if(!returnToHeart) {
-						destination = heartBlock.GetExitPoint().transform.position;
+						destination = gameControl.body.heart.transform.position;
 						oxygenated = false;
 						returnToHeart = true;
 					}
@@ -129,7 +156,7 @@ public class RedBloodScript : MonoBehaviour {
 				}
 				else {
 					if(!returnToHeart) {
-						destination = heartBlock.GetExitPoint().transform.position;
+						destination = gameControl.body.heart.transform.position;
 						oxygenated = false;
 						returnToHeart = true;
 					}

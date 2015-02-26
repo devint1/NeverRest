@@ -183,7 +183,7 @@ public class Block : MonoBehaviour {
 	}
 
 	void DestroyAllDiseases() {
-		for (int i = diseases.Count-1; i>=0; i++) {
+		for (int i = diseases.Count-1; i>=0; i--) {
 			Disease toDestroy = (Disease)diseases[i];
 			diseases.Remove(toDestroy);
 			GameObject.Destroy( toDestroy.gameObject );

@@ -17,7 +17,7 @@ public class GameControl : MonoBehaviour {
 	public AudioClip backGroundMusic = null;
 	public bool toggleRBC = false;
 	public bool toggleWBC = true;
-	public int numRBCs = 18;
+	public int numRBCs = 15;
 	public GameObject redBloodCellPrefab;
 	public Block redBloodSpawnPoint;
 	public Body body;
@@ -31,6 +31,7 @@ public class GameControl : MonoBehaviour {
 	public UnityEngine.UI.Slider wbcSlider;
 	public UnityEngine.UI.Slider rbcSlider;
 	public UnityEngine.UI.Slider plateSlider;
+	public int liveRBCs;
 
 	public const float WHITE_BLOOD_CELL_FOOD_RATE = 0.05f;
 	public const float PLATELET_FOOD_RATE = 0.025f;
@@ -66,8 +67,36 @@ public class GameControl : MonoBehaviour {
 			plateSlider.onValueChanged.AddListener(changePlateSliderVal);
 		}
 		if (rbcSlider != null) {
-
+			rbcSlider.onValueChanged.AddListener (changeRBCSliderVal);
 		}
+
+		int i = 0;
+		for(; i < numRBCs; i++) {
+			Vector3 randpt = redBloodSpawnPoint.GetRandomPoint();
+			GameObject newRBC = (GameObject)Instantiate (redBloodCellPrefab, new Vector3(randpt.x, randpt.y, 1.0f) , this.transform.rotation);
+			RedBloodScript newRedScript = newRBC.GetComponent<RedBloodScript> ();
+			newRedScript.currentBlock = redBloodSpawnPoint;
+			newRedScript.destination = redBloodSpawnPoint.GetRandomPoint ();
+			newRedScript.origBlock = body.GetBodyPart((numRBCs - i) / (numRBCs / body.blocks.Count));
+			newRedScript.destBlock = newRedScript.origBlock;
+			newRedScript.heartBlock = body.GetChest ();
+			newRedScript.gameControl = this;
+			newRedScript.spawnTime = Time.time;
+		}
+		for(; i > 0; i--) {
+			Vector3 randpt = body.GetBodyPart((numRBCs - i) / (numRBCs / body.blocks.Count)).GetRandomPoint();
+			GameObject newRBC = (GameObject)Instantiate (redBloodCellPrefab, new Vector3(randpt.x, randpt.y, 1.0f), this.transform.rotation);
+			RedBloodScript newRedScript = newRBC.GetComponent<RedBloodScript> ();
+			newRedScript.currentBlock = body.GetBodyPart((numRBCs - i) / (numRBCs / body.blocks.Count));
+			newRedScript.destination = body.GetBodyPart((numRBCs - i) / (numRBCs / body.blocks.Count)).GetRandomPoint ();
+			newRedScript.origBlock = body.GetBodyPart((numRBCs - i) / (numRBCs / body.blocks.Count));
+			newRedScript.heartBlock = body.GetChest ();
+			newRedScript.destBlock = newRedScript.heartBlock;
+			newRedScript.oxygenated = false;
+			newRedScript.gameControl = this;
+			newRedScript.spawnTime = Time.time;
+		}
+		liveRBCs = 2 * numRBCs;
 
 		timeOfLastSpawn = Time.time;
 		timeOfLastPlateSpawn = Time.time;
@@ -84,7 +113,7 @@ public class GameControl : MonoBehaviour {
 	}
 
 	void changeRBCSliderVal(float f) {
-
+		numRBCs = ((int)f) * body.blocks.Count;
 	}
 
 	void changePlateSliderVal(float f) {
@@ -312,7 +341,7 @@ public class GameControl : MonoBehaviour {
 				if (cell.destroyMe) {
 					Debug.Log ("deleting white blood cell...");
 					//whiteBloodCells.Remove (cell);
-					selected.Remove(cell);
+					selected.Remove(cell.gameObject);
 					Destroy (((WhiteBloodCell)(whiteBloodCells[i])).gameObject, 2);
 					whiteBloodCells.RemoveAt(i);
 					foodLevel += WHITE_BLOOD_CELL_FOOD_RATE * 0.8f;
@@ -322,34 +351,21 @@ public class GameControl : MonoBehaviour {
 			wbcChanged = true;
 		}
 
-		if (toggleRBC && !changed) {
-			changed = true;
-			int i = 0;
-			for(; i < numRBCs; i++) {
+		if (liveRBCs < 2 * numRBCs) {
+			int diff = 2 * numRBCs - liveRBCs;
+			for (int i = 0; i < diff; i++) {
 				Vector3 randpt = redBloodSpawnPoint.GetRandomPoint();
 				GameObject newRBC = (GameObject)Instantiate (redBloodCellPrefab, new Vector3(randpt.x, randpt.y, 1.0f) , this.transform.rotation);
 				RedBloodScript newRedScript = newRBC.GetComponent<RedBloodScript> ();
 				newRedScript.currentBlock = redBloodSpawnPoint;
 				newRedScript.destination = redBloodSpawnPoint.GetRandomPoint ();
-				newRedScript.origBlock = body.GetBodyPart((numRBCs - i) / (numRBCs / body.blocks.Count));
+				newRedScript.origBlock = body.GetBodyPart((diff - i) / (numRBCs / body.blocks.Count));
 				newRedScript.destBlock = newRedScript.origBlock;
 				newRedScript.heartBlock = body.GetChest ();
 				newRedScript.gameControl = this;
+				newRedScript.spawnTime = Time.time;
 			}
-			for(; i > 0; i--) {
-				Vector3 randpt = body.GetBodyPart((numRBCs - i) / (numRBCs / body.blocks.Count)).GetRandomPoint();
-				GameObject newRBC = (GameObject)Instantiate (redBloodCellPrefab, new Vector3(randpt.x, randpt.y, 1.0f), this.transform.rotation);
-				RedBloodScript newRedScript = newRBC.GetComponent<RedBloodScript> ();
-				newRedScript.currentBlock = body.GetBodyPart((numRBCs - i) / (numRBCs / body.blocks.Count));
-				newRedScript.destination = body.GetBodyPart((numRBCs - i) / (numRBCs / body.blocks.Count)).GetRandomPoint ();
-				newRedScript.origBlock = body.GetBodyPart((numRBCs - i) / (numRBCs / body.blocks.Count));
-				newRedScript.heartBlock = body.GetChest ();
-				newRedScript.destBlock = newRedScript.heartBlock;
-				newRedScript.oxygenated = false;
-				newRedScript.gameControl = this;
-			}
-			
-
+			liveRBCs += diff;
 		}
 	}
 
