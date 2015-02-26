@@ -10,11 +10,19 @@ public class RandomEventManager : MonoBehaviour {
 	const float MAX_RANDOM_EVENT_TIME = 30f;
 
 	int numDiseasesSpawn = 3;
+	bool dialogOpen = false;
+	Rect dialogRect = new Rect(750, 80, 250, 150);
 
 	void Start () {
 		SpawnDiseaseInfection ();
 
 		StartCoroutine(RandomEventCycle());
+	}
+	
+	void OnGUI() {
+		if(dialogOpen) {
+			GUI.Window(0, dialogRect, SpawnDiseaseDialog, "Infection Disease!");
+		}
 	}
 
 
@@ -34,8 +42,6 @@ public class RandomEventManager : MonoBehaviour {
 
 
 	void SpawnDiseaseInfection() {
-		//gameControl.TogglePauseGame ();
-
 		int randomBodyPart = Random.Range (0, body.blocks.Count);
 		Vector3 spawnPoint = body.blocks[randomBodyPart].GetRandomPoint();
 
@@ -49,5 +55,15 @@ public class RandomEventManager : MonoBehaviour {
 		}
 
 		numDiseasesSpawn += 3;
+		dialogOpen = true;
+		gameControl.TogglePauseGame();
+	}
+
+	void SpawnDiseaseDialog(int windowID) {
+		GUI.TextArea (new Rect (0, 20, 250, 100), "Ahhhh! An infectious bacteria has managed to get inside your body! Quick! Orchestrate the proper response of bodily functions to stop the infection before it spreads out of control!");
+		if (GUI.Button(new Rect(100, 125, 50, 20), "OK")) {
+			dialogOpen = false;
+			gameControl.TogglePauseGame();
+		}
 	}
 }

@@ -42,7 +42,7 @@ public class GameControl : MonoBehaviour {
 	Rect box;
 	bool gameOver = false;
 	bool isPaused = false;
-	bool showMenu = false;
+	public bool showMenu = false;
 	bool changed = true;
 	bool wbcChanged = true;
 	float levelProgressSpeed = 1.0f;
@@ -160,7 +160,7 @@ public class GameControl : MonoBehaviour {
 			} 
 		}
 		if (isPaused && showMenu == false){
-			GUI.Box(new Rect(Screen.width/3, Screen.height/18, Screen.width/4, Screen.height/8), "PAUSED \n Space Bar to Resume");
+			//GUI.Box(new Rect(Screen.width/3, Screen.height/18, Screen.width/4, Screen.height/8), "PAUSED \n Space Bar to Resume");
 
 		}
 		whiteBloodProduction = (int)GUI.HorizontalSlider(new Rect(25, 50, 125, 30), whiteBloodProduction, 0.0F, 10.0F);
