@@ -85,9 +85,13 @@ public class Disease : MonoBehaviour {
 
 	void OnTriggerEnter2D(Collider2D other) {
 		if (destBlock && other.gameObject.name == destBlock.name) {
-			currentBlock.diseases.Remove (this);
-			currentBlock = destBlock;
-			currentBlock.diseases.Add (this);
+			if(captured) {
+				currentBlock = destBlock;
+			} else {
+				currentBlock.diseases.Remove (this);
+				currentBlock = destBlock;
+				currentBlock.diseases.Add (this);
+			}
 		}
 	}
 	
