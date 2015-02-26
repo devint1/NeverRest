@@ -11,13 +11,15 @@ public class Disease : MonoBehaviour {
 	public float heartHealthDamagePerSec = 0.01f;
 	
 	public Vector3 destination;
-	
+
+	Block destBlock;
 	const int MAX_DISEASE_RESPAWN_TIME = 10;
 	const int MIN_DISEASE_RESPAWN_TIME = 20;
 	
 	void Start() {
 		if (currentBlock) {
-			destination = currentBlock.GetRandomPoint ();
+			destBlock = currentBlock;
+			destination = destBlock.GetRandomPoint ();
 		}
 		
 		StartCoroutine(MoveCycle());
@@ -61,13 +63,13 @@ public class Disease : MonoBehaviour {
 				float dice = Random.value;
 				bool exit = dice >= 0.97f;
 				if(exit) {
-					ExitPoint[] exitPoints = currentBlock.GetExitPoints();
+					ExitPoint[] exitPoints = destBlock.GetExitPoints();
 					ExitPoint exitPoint = exitPoints[(Random.Range( 0, exitPoints.Length ))]; //Not -1 since exclusive
-					currentBlock = exitPoint.nextBlock;
-					destination = currentBlock.GetRandomPoint();
+					destBlock = exitPoint.nextBlock;
+					destination = destBlock.GetRandomPoint();
 				}
 				else {
-					destination = currentBlock.GetRandomPoint();
+					destination = destBlock.GetRandomPoint();
 				}
 			}
 		}
@@ -80,21 +82,19 @@ public class Disease : MonoBehaviour {
                                this.transform.position.z);
 		}
 	}
+
+	void OnTriggerEnter2D(Collider2D other) {
+		if (destBlock && other.gameObject.name == destBlock.name) {
+			currentBlock.diseases.Remove (this);
+			currentBlock = destBlock;
+			currentBlock.diseases.Add (this);
+		}
+	}
 	
 	// Sends to next block every x seconds
 	IEnumerator MoveCycle() {
 		yield return new WaitForSeconds(30);
-		if (!captured 
-		    && currentBlock.GetExitPoint().nextBlock.diseases.Count < Block.MAX_NUM_DISEASE_PER_BLOCK 
-		    && currentBlock.GetExitPoint().isExitToHeart) {
-			
-			currentBlock.diseases.Remove (this);
-			currentBlock = currentBlock.GetExitPoint().nextBlock;
-			currentBlock.diseases.Add (this);
-			StartCoroutine (MoveCycle ());
-		} else if (!captured) {
-			StartCoroutine (MoveCycle ());
-		}
+		StartCoroutine (MoveCycle ());
 	}
 	
 	// Creates new disease every x seconds
@@ -106,7 +106,6 @@ public class Disease : MonoBehaviour {
 			if (!captured && currentBlock.diseases.Count < Block.MAX_NUM_DISEASE_PER_BLOCK) {
 				GameObject newDisease = (GameObject)Instantiate (diseasePrefab, this.transform.position, this.transform.rotation);
 				Disease newDiseaseScript = newDisease.GetComponent<Disease>();
-				newDiseaseScript.currentBlock = currentBlock;
 				newDiseaseScript.gameControl = gameControl;
 				newDiseaseScript.destination = destination;
 				++gameControl.numDiseaseCells;

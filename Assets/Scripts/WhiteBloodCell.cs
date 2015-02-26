@@ -14,12 +14,14 @@ public class WhiteBloodCell : MonoBehaviour {
 	
 	int diseasesabsorbed = 0;
 	Block destBlock = null; // Block the cell is moving to
+	Block nextBlock = null;
 	bool destChanged = false;
 	Vector2 userDest;
 	bool hasUserDest; //Need to use this since userDest cannot = null
 	ArrayList capture = new ArrayList ();
 
 	public void Start(){
+		nextBlock = currentBlock;
 		AudioSource temp = gameObject.AddComponent<AudioSource> ();
 		temp.clip = spawnSound;
 		temp.Play ();
@@ -56,18 +58,7 @@ public class WhiteBloodCell : MonoBehaviour {
 		}
 	}
 
-	void CheckCollisionOnDisease(){
-		foreach (Disease disease in currentBlock.diseases){
-			if ( disease && Vector3.Distance (disease.transform.position, transform.position) < .2){
-				if (!disease.captured) {
-					disease.captured = true;
-					disease.BeenCapturedBy (this.gameObject);
-					capture.Add (disease);
-					diseasesabsorbed++;
-					--gameControl.numDiseaseCells;
-				}
-			}
-		}
+	void HandleCapturedDiseases () {
 		foreach (Disease disease in capture) {
 			if(!disease.removedFromCell){
 				disease.removedFromCell = true;
@@ -85,7 +76,7 @@ public class WhiteBloodCell : MonoBehaviour {
 		if( gameControl.CheckIfPaused() ){
 			return;
 		}
-		CheckCollisionOnDisease ();
+		HandleCapturedDiseases ();
 		
 		if (this.speed != gameControl.rbcSpeed) {
 			this.speed = gameControl.rbcSpeed / 250.0f;
@@ -110,7 +101,7 @@ public class WhiteBloodCell : MonoBehaviour {
 				foreach (ExitPoint exitPoint in currentBlock.GetExitPoints()) {
 					if( ExitPointLeadsToDestination(exitPoint.gameObject, destBlock, currentBlock) ) {
 						destination = exitPoint.gameObject.transform.position;
-						currentBlock = exitPoint.nextBlock;
+						nextBlock = exitPoint.nextBlock;
 						break;
 					}
 				}
@@ -122,7 +113,7 @@ public class WhiteBloodCell : MonoBehaviour {
 			}
 			//Last option is going to a random waypoint
 			else{
-				destination = currentBlock.GetRandomPoint();
+				destination = nextBlock.GetRandomPoint();
 			}
 			if( destChanged ){
 				destChanged = false;
@@ -133,6 +124,23 @@ public class WhiteBloodCell : MonoBehaviour {
 		this.transform.position = new Vector3 ((directionToDestination.x * speed) + this.transform.position.x,
 		                                       (directionToDestination.y * speed) + this.transform.position.y,
 		                                       this.transform.position.z);
+	}
+
+	// Updates currentblock and checks for collisions with diseases
+	void OnTriggerEnter2D(Collider2D other) {
+		if (nextBlock && other.gameObject.name == nextBlock.gameObject.name) {
+			currentBlock = nextBlock;
+		} else if (other.gameObject.tag == "Disease") {
+			Disease disease = other.gameObject.GetComponent<Disease> ();
+			if (!disease.captured) {
+				disease.captured = true;
+				disease.BeenCapturedBy (this.gameObject);
+				capture.Add (disease);
+				diseasesabsorbed++;
+				--gameControl.numDiseaseCells;
+				disease.currentBlock.diseases.Remove(disease);
+			}
+		}
 	}
 	
 	GameObject FindExitPointToDestination(Block current, Block destination) {

@@ -91,6 +91,10 @@ public class GameControl : MonoBehaviour {
 			}*/
 			if(selected != null) {
 				foreach(GameObject obj in selected) {
+					// FIXME: Find out why nulls are still in selected
+					if(!obj) {
+						break;
+					}
 					if(obj.tag == "WhiteBloodCell") {
 						obj.GetComponent<WhiteBloodCell> ().DeSelect();
 					}
@@ -282,6 +286,7 @@ public class GameControl : MonoBehaviour {
 				if (cell.destroyMe) {
 					Debug.Log ("deleting white blood cell...");
 					//whiteBloodCells.Remove (cell);
+					selected.Remove(cell);
 					Destroy (((WhiteBloodCell)(whiteBloodCells[i])).gameObject, 2);
 					whiteBloodCells.RemoveAt(i);
 					foodLevel += WHITE_BLOOD_CELL_FOOD_RATE * 0.8f;
