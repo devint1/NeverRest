@@ -29,6 +29,8 @@ public class GameControl : MonoBehaviour {
 	public const float WHITE_BLOOD_CELL_FOOD_RATE = 0.05f;
 	public const float PLATELET_FOOD_RATE = 0.025f;
 
+	private const float MAX_LEVEL_PROGRESS_SPEED = 10.0f;
+
 	int whiteBloodProduction = 0;
 	int plateletProduction = 1;
 	// int mousePressStart = -1;
@@ -44,6 +46,8 @@ public class GameControl : MonoBehaviour {
 	bool changed = true;
 	bool wbcChanged = true;
 	float levelProgressSpeed = 1.0f;
+	int levelDistance = 2000;
+	float levelProgress = 0f;
 
 	void Start() {
 		if (backGroundMusic) {
@@ -171,6 +175,8 @@ public class GameControl : MonoBehaviour {
 		
 		GUI.TextArea (new Rect (25, 110, 125, 20), "Heart Rate");
 
+		GUI.TextArea (new Rect (25, 135, 125, 38), "Level Completion:\n" + (int)levelProgress + "/" + levelDistance + " ft");
+
 		// Display food bar
 		GUI.BeginGroup (new Rect (20, 10, 125, 30));
 		GUI.Box (new Rect (0,0, 125, 30),barEmpty);
@@ -254,21 +260,18 @@ public class GameControl : MonoBehaviour {
 			foodLevel -= PLATELET_FOOD_RATE;
 		}
 
-		// Check losing condition
-		/*if (foodLevel <= 0f || healthLevel <= 0f) {
-			StartCoroutine (Lose ());
-		}*/
-
-		// Check winning condition
-		/*if (numDiseaseCells <= 0) {
-			StartCoroutine (Win ());
-		}*/
-
+		// Check lose condition
 		if (checkLoseCondition ()) {
 			StartCoroutine (Lose ());
 		}
+
+		// Check win condition
+		if(levelProgress >= levelDistance) {
+			StartCoroutine (Win ());
+		}
 		else {
 			levelProgressSpeed = calcLevelProgressSpeed();
+			levelProgress += levelProgressSpeed * Time.deltaTime;
 		}
 
 		if (whiteBloodCells != null) {
@@ -366,7 +369,7 @@ public class GameControl : MonoBehaviour {
 		winText.alignment = TextAlignment.Center;
 		winText.fontSize = 100;
 		yield return new WaitForSeconds(5);
-		Application.LoadLevel("MenuScene");
+		Application.LoadLevel("MapScene");
 	}
 
 	IEnumerator Lose() {
@@ -382,7 +385,7 @@ public class GameControl : MonoBehaviour {
 		winText.alignment = TextAlignment.Center;
 		winText.fontSize = 100;
 		yield return new WaitForSeconds(5);
-		Application.LoadLevel("MenuScene");
+		Application.LoadLevel("MapScene");
 	}
 
 	// Lose if Chest is at 0 health or if all limbs are at 0 health
@@ -404,6 +407,14 @@ public class GameControl : MonoBehaviour {
 	}
 
 	float calcLevelProgressSpeed() {
-		return 1.0f;
+		float totalBodyPartHealth = 0f;
+
+		foreach (Block b in body.blocks) {
+			totalBodyPartHealth += b.overallHealth;
+		}
+
+		float averageHealth = totalBodyPartHealth / body.blocks.Count;
+
+		return MAX_LEVEL_PROGRESS_SPEED * averageHealth;
 	}
 }
