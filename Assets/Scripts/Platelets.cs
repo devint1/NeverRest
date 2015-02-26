@@ -12,13 +12,13 @@ public class Platelets : MonoBehaviour {
 	public float spawnTime;
 
 	Block destBlock = null; // Block the cell is moving to
+	Block nextBlock = null;
 	bool destChanged = false;
 	Vector2 userDest;
 	bool hasUserDest; //Need to use this since userDest cannot = null
-
-
-	// Use this for initialization
-	void Start () {
+	
+	public void Start(){
+		nextBlock = currentBlock;
 		this.gameObject.tag = "Platelet";
 	}
 
@@ -69,11 +69,6 @@ public class Platelets : MonoBehaviour {
 		if (this.speed != gameControl.rbcSpeed) {
 			this.speed = gameControl.rbcSpeed / 250.0f;
 		}
-		
-		if (!gameControl.togglePT)
-			this.renderer.enabled = false;
-		else
-			this.renderer.enabled = true;
 
 		if (!currentBlock.notClotted)
 			speed = 0.00001f;
@@ -89,7 +84,7 @@ public class Platelets : MonoBehaviour {
 				foreach (ExitPoint exitPoint in currentBlock.GetExitPoints()) {
 					if( ExitPointLeadsToDestination(exitPoint.gameObject, destBlock, currentBlock) ) {
 						destination = exitPoint.gameObject.transform.position;
-						currentBlock = exitPoint.nextBlock;
+						nextBlock = exitPoint.nextBlock;
 						break;
 					}
 				}
@@ -101,7 +96,7 @@ public class Platelets : MonoBehaviour {
 			}
 			//Last option is going to a random waypoint
 			else{
-				destination = currentBlock.GetRandomPoint();
+				destination = nextBlock.GetRandomPoint();
 			}
 			if( destChanged ){
 				destChanged = false;
@@ -112,6 +107,14 @@ public class Platelets : MonoBehaviour {
 		this.transform.position = new Vector3 ((directionToDestination.x * speed) + this.transform.position.x,
 		                                       (directionToDestination.y * speed) + this.transform.position.y,
 		                                       this.transform.position.z);
+	}
+
+	void OnTriggerEnter2D(Collider2D other) {
+		if (nextBlock && other.gameObject.name == nextBlock.gameObject.name) {
+			currentBlock.platelets.Remove (this);
+			currentBlock = nextBlock;
+			currentBlock.platelets.Add (this);
+		}
 	}
 
 	bool ExitPointLeadsToDestination(GameObject exit, Block destination, Block curBlock) {

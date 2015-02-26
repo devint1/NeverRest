@@ -9,6 +9,8 @@ public class Block : MonoBehaviour {
 	public Transform StatsPoint;
 	public BlockType blockType;
 	public ArrayList diseases = new ArrayList();
+	public ArrayList wounds = new ArrayList();
+	public ArrayList platelets = new ArrayList();
 	public GameObject destMarkPrefab;
 	public bool notClotted = true;
 
@@ -21,11 +23,13 @@ public class Block : MonoBehaviour {
 	private Tesselator tesselator;
 	private bool showStats = false;
 
-	public static int MAX_NUM_DISEASE_PER_BLOCK = 200;
-	private float HEALH_REGENERATION = 0.03f;
-	private float DAMAGE_PER_DISEASE = 0.001f;
-	private float COLD_DAMAGE = 0.03f;
-	private float NO_OXYGEN_DAMAGE = 0.03f;
+	public const int MAX_NUM_DISEASE_PER_BLOCK = 200;
+	private const float HEALH_REGENERATION = 0.03f;
+	private const float DAMAGE_PER_DISEASE = 0.001f;
+	private const float COLD_DAMAGE = 0.03f;
+	private const float NO_OXYGEN_DAMAGE = 0.03f;
+	private const float DAMAGE_PER_WOUND = 0.05f;
+	private const float WOUND_HEAL_PER_PLATELET = 0.15f;
 	
 	void Start() {
 		var collider = this.GetComponent<PolygonCollider2D> ();
@@ -44,7 +48,7 @@ public class Block : MonoBehaviour {
 		}
 
 		//If vitals are mostly good, slowly increase health. Else, take damage
-		if(oxygenLevel >= 0.75f && temperaturePercent >= 0.75f && diseases.Count == 0 && overallHealth <= 1.0) {
+		if(oxygenLevel >= 0.75f && temperaturePercent >= 0.75f && diseases.Count == 0 && wounds.Count == 0 && overallHealth <= 1.0) {
 			overallHealth += HEALH_REGENERATION * Time.deltaTime;
 		}
 		else {
@@ -55,6 +59,7 @@ public class Block : MonoBehaviour {
 				overallHealth -= (COLD_DAMAGE*(1.0f-temperaturePercent)) * Time.deltaTime;
 			}
 			overallHealth -= DAMAGE_PER_DISEASE * diseases.Count * Time.deltaTime;
+			overallHealth -= DAMAGE_PER_WOUND * wounds.Count * Time.deltaTime;
 		}
 
 		if(overallHealth <= 0) {
@@ -62,6 +67,10 @@ public class Block : MonoBehaviour {
 			oxygenLevel = 0.0f; 
 			temperaturePercent = 0.0f;
 			dead = true;
+		}
+
+		foreach(Wound wound in wounds) {
+			wound.health -= WOUND_HEAL_PER_PLATELET * platelets.Count * Time.deltaTime;
 		}
 	}
 

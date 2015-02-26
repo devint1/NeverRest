@@ -17,7 +17,6 @@ public class GameControl : MonoBehaviour {
 	public AudioClip backGroundMusic = null;
 	public bool toggleRBC = false;
 	public bool toggleWBC = true;
-	public bool togglePT = false;
 	public int numRBCs = 18;
 	public GameObject redBloodCellPrefab;
 	public Block redBloodSpawnPoint;
@@ -62,6 +61,7 @@ public class GameControl : MonoBehaviour {
 		platelets = new ArrayList ();
 		mousePositionStart = new Vector3();
 		SpawnWhiteBloodCell();
+		SpawnPlatelet ();
 	}
 
 	public bool CheckIfPaused(){
@@ -137,13 +137,11 @@ public class GameControl : MonoBehaviour {
 						}
 					}
 				}
-				if(togglePT) {
-					foreach(Platelets cell in platelets){
-						Vector2 pos = Camera.main.WorldToScreenPoint(cell.transform.position);
-						pos.y = Camera.main.pixelHeight - pos.y;
-						if(box.Contains(pos, true)){
-							cell.Select();
-						}
+				foreach(Platelets cell in platelets){
+					Vector2 pos = Camera.main.WorldToScreenPoint(cell.transform.position);
+					pos.y = Camera.main.pixelHeight - pos.y;
+					if(box.Contains(pos, true)){
+						cell.Select();
 					}
 				}
 			}
@@ -254,9 +252,6 @@ public class GameControl : MonoBehaviour {
 			toggleWBC = !toggleWBC;
 			wbcChanged = false;
 		}
-		if (Input.GetKeyDown (KeyCode.T)) {
-			togglePT = !togglePT;
-		}
 
 		if (whiteBloodProduction > 0 && (Time.time - timeOfLastSpawn) > 30 / whiteBloodProduction) {
 			SpawnWhiteBloodCell ();
@@ -349,13 +344,10 @@ public class GameControl : MonoBehaviour {
 		GameObject newPlate = (GameObject)Instantiate (plateletPrefab, plateletSpawnPoint.GetRandomPoint(), this.transform.rotation);
 		Platelets newPlateletScript = newPlate.GetComponent<Platelets> ();
 		newPlateletScript.currentBlock = plateletSpawnPoint;
+		newPlateletScript.currentBlock.platelets.Add (newPlate);
 		newPlateletScript.destination = plateletSpawnPoint.GetRandomPoint ();
 		newPlateletScript.gameControl = this;
 		newPlateletScript.spawnTime = Time.time;
-		
-		if (togglePT)
-			newPlateletScript.renderer.enabled = false;
-		
 		platelets.Add (newPlate.GetComponent<Platelets>());
 		timeOfLastSpawn = Time.time;
 	}
