@@ -30,16 +30,6 @@ public class UIButtons : UnityEngine.UI.Button {
 	
 	// Update is called once per frame
 	void Update () {
-		if (gameControl != null) {
-			if (gameControl.toggleWBC && change) {
-				//this.renderer.material.color = Color.blue;
-				//this.image.renderer.material.color = Color.blue;
-				GUI.color = Color.blue;
-			}
-			else if (!gameControl.toggleWBC && change) {
-				//this.image.renderer.material.color = Color.gray;
-				GUI.color = Color.gray;
-			}
-		}
+
 	}
 }
