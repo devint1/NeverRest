@@ -55,7 +55,7 @@ public class GameControl : MonoBehaviour {
 			temp.Play();
 		}
 
-		GameObject gameUI = (gameObject) Instantiate(Resources.Load("GameUI"), Vector3.zero, Quaternion.identity);
+		GameObject gameUI = (GameObject) Instantiate(Resources.Load("GameUI"), Vector3.zero, Quaternion.identity);
 		gameUI.GetComponent<GameUI>().gC = this;
 
 		int i = 0;
