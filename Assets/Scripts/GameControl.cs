@@ -3,50 +3,64 @@ using System.Collections;
 
 public class GameControl : MonoBehaviour {
 
+	public const float WHITE_BLOOD_CELL_FOOD_RATE = 0.05f;
+	public const float PLATELET_FOOD_RATE = 0.025f;
+	
+	private const float MAX_LEVEL_PROGRESS_SPEED = 10.0f;
+
 	public ArrayList selected;
 	public ArrayList whiteBloodCells;
 	public ArrayList platelets;
+
 	public Block whiteBloodSpawnPoint;
+	public Block plateletSpawnPoint;
+	public Block redBloodSpawnPoint;
+
 	public GameObject whiteBloodCellPrefab;
 	public GameObject plateletPrefab;
-	public Block plateletSpawnPoint;
+	public GameObject redBloodCellPrefab;
+
 	public Texture2D healthBarFull;
 	public Texture2D barEmpty;
-	public float healthLevel = 1f;
-	public int numDiseaseCells = 2;
+
 	public AudioClip backGroundMusic = null;
-	public bool toggleRBC = false;
-	public bool toggleWBC = true;
+
+	public int numDiseaseCells = 2;
 	public int numRBCs = 15;
-	public GameObject redBloodCellPrefab;
-	public Block redBloodSpawnPoint;
-	public Body body;
-	public bool isSelected = false;
 	public int rbcSpeed = 1;
-	public float foodLevel = 1f;
-	public bool changed = true;
-	public bool wbcChanged = true;
 	public int whiteBloodProduction = 0;
 	public int plateletProduction = 0;
 	public int liveRBCs;
 
-	public const float WHITE_BLOOD_CELL_FOOD_RATE = 0.05f;
-	public const float PLATELET_FOOD_RATE = 0.025f;
+	public Body body;
 
-	private const float MAX_LEVEL_PROGRESS_SPEED = 10.0f;
+	public float healthLevel = 1f;
+	public float foodLevel = 1f;
+
+	public bool toggleRBC = false;
+	public bool toggleWBC = true;
+	public bool changed = true;
+	public bool wbcChanged = true;
+	public bool isSelected = false;
+	public bool showMenu = false;
 
 	// int mousePressStart = -1;
 	Vector3 mousePositionStart;
+
+	Texture2D text;
+
+	Rect box;
+
 	bool mouseDown = false;
 	bool drawText = false;
-	Texture2D text;
-	Rect box;
 	bool gameOver = false;
 	bool isPaused = false;
-	public bool showMenu = false;
+	bool UpgradeMenuOpen = false;
+
 	float levelProgressSpeed = 1.0f;
-	int levelDistance = 2000;
 	float levelProgress = 0f;
+
+	int levelDistance = 2000;
 
 	void Start() {
 		if (backGroundMusic) {
