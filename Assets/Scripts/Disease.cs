@@ -32,7 +32,7 @@ public class Disease : MonoBehaviour {
 	
 	// Movement Code
 	void Update () {
-		if( gameControl.CheckIfPaused() ){
+		if( gameControl.IsPaused() ){
 			return;
 		}
 

@@ -82,7 +82,7 @@ public class WhiteBloodCell : MonoBehaviour {
 
 	// Movement Code
 	void Update () {
-		if( gameControl.CheckIfPaused() ){
+		if( gameControl.IsPaused() ){
 			return;
 		}
 		CheckCollisionOnDisease ();

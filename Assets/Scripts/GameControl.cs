@@ -2,6 +2,7 @@
 using System.Collections;
 
 public class GameControl : MonoBehaviour {
+
 	public ArrayList selected;
 	public ArrayList whiteBloodCells;
 	public ArrayList platelets;
@@ -9,7 +10,6 @@ public class GameControl : MonoBehaviour {
 	public GameObject whiteBloodCellPrefab;
 	public GameObject plateletPrefab;
 	public Block plateletSpawnPoint;
-	public Texture2D foodBarFull;
 	public Texture2D healthBarFull;
 	public Texture2D barEmpty;
 	public float healthLevel = 1f;
@@ -28,9 +28,6 @@ public class GameControl : MonoBehaviour {
 	public bool wbcChanged = true;
 	public int whiteBloodProduction = 0;
 	public int plateletProduction = 0;
-	public UnityEngine.UI.Slider wbcSlider;
-	public UnityEngine.UI.Slider rbcSlider;
-	public UnityEngine.UI.Slider plateSlider;
 	public int liveRBCs;
 
 	public const float WHITE_BLOOD_CELL_FOOD_RATE = 0.05f;
@@ -40,8 +37,6 @@ public class GameControl : MonoBehaviour {
 
 	// int mousePressStart = -1;
 	Vector3 mousePositionStart;
-	float timeOfLastSpawn;
-	float timeOfLastPlateSpawn;
 	bool mouseDown = false;
 	bool drawText = false;
 	Texture2D text;
@@ -60,21 +55,16 @@ public class GameControl : MonoBehaviour {
 			temp.Play();
 		}
 
-		if (wbcSlider != null) {
-			wbcSlider.onValueChanged.AddListener(changeWBCSliderVal);
-		}
-		if (plateSlider != null) {
-			plateSlider.onValueChanged.AddListener(changePlateSliderVal);
-		}
-		if (rbcSlider != null) {
-			rbcSlider.onValueChanged.AddListener (changeRBCSliderVal);
-		}
+		GameObject gameUI = (gameObject) Instantiate(Resources.Load("GameUI"), Vector3.zero, Quaternion.identity);
+		gameUI.GetComponent<GameUI>().gC = this;
 
 		int i = 0;
+		//TODO move all the member assignment stuff into their start functions - I.E. should only be passed game control object and do it itself
 		for(; i < numRBCs; i++) {
 			Vector3 randpt = redBloodSpawnPoint.GetRandomPoint();
 			GameObject newRBC = (GameObject)Instantiate (redBloodCellPrefab, new Vector3(randpt.x, randpt.y, 1.0f) , this.transform.rotation);
 			RedBloodScript newRedScript = newRBC.GetComponent<RedBloodScript> ();
+			newRBC.renderer.transform.localScale = new Vector3(.6f,.6f,.6f);
 			newRedScript.currentBlock = redBloodSpawnPoint;
 			newRedScript.destination = redBloodSpawnPoint.GetRandomPoint ();
 			newRedScript.origBlock = body.GetBodyPart((numRBCs - i) / (numRBCs / body.blocks.Count));
@@ -87,6 +77,7 @@ public class GameControl : MonoBehaviour {
 			Vector3 randpt = body.GetBodyPart((numRBCs - i) / (numRBCs / body.blocks.Count)).GetRandomPoint();
 			GameObject newRBC = (GameObject)Instantiate (redBloodCellPrefab, new Vector3(randpt.x, randpt.y, 1.0f), this.transform.rotation);
 			RedBloodScript newRedScript = newRBC.GetComponent<RedBloodScript> ();
+			newRBC.renderer.transform.localScale = new Vector3(.6f,.6f,.6f);
 			newRedScript.currentBlock = body.GetBodyPart((numRBCs - i) / (numRBCs / body.blocks.Count));
 			newRedScript.destination = body.GetBodyPart((numRBCs - i) / (numRBCs / body.blocks.Count)).GetRandomPoint ();
 			newRedScript.origBlock = body.GetBodyPart((numRBCs - i) / (numRBCs / body.blocks.Count));
@@ -98,8 +89,6 @@ public class GameControl : MonoBehaviour {
 		}
 		liveRBCs = 2 * numRBCs;
 
-		timeOfLastSpawn = Time.time;
-		timeOfLastPlateSpawn = Time.time;
 		selected = new ArrayList();
 		whiteBloodCells = new ArrayList();
 		platelets = new ArrayList ();
@@ -120,7 +109,7 @@ public class GameControl : MonoBehaviour {
 		plateletProduction = (int)(f);
 	}
 
-	public bool CheckIfPaused(){
+	public bool IsPaused(){
 		return isPaused;
 	}
 
@@ -221,11 +210,6 @@ public class GameControl : MonoBehaviour {
 
 			} 
 		}
-		if (isPaused && showMenu == false){
-			//GUI.Box(new Rect(Screen.width/3, Screen.height/18, Screen.width/4, Screen.height/8), "PAUSED \n Space Bar to Resume");
-
-		}
-		//whiteBloodProduction = (int)GUI.HorizontalSlider(new Rect(25, 50, 125, 30), whiteBloodProduction, 0.0F, 10.0F);
 		rbcSpeed = (int)GUI.HorizontalSlider(new Rect(25, 50, 125, 30), rbcSpeed, 1.0F, 10.0F);
 		
 		// Display wihte blood cell production status
@@ -239,24 +223,7 @@ public class GameControl : MonoBehaviour {
 
 		GUI.TextArea (new Rect (25, 90, 125, 38), "Level Completion:\n" + (int)levelProgress + "/" + levelDistance + " ft");
 
-		// Display food bar
-		GUI.BeginGroup (new Rect (20, 10, 125, 30));
-		GUI.Box (new Rect (0,0, 125, 30),barEmpty);
-		// draw the filled-in part:
-		GUI.BeginGroup (new Rect (0, 0, 125 * foodLevel, 30));
-		GUI.Box (new Rect (0,0, 125, 30),foodBarFull);
-		GUI.EndGroup ();
-		GUI.EndGroup ();
-
 		// Display health bar
-		/*GUI.BeginGroup (new Rect (20, 50, 125, 30));
-		GUI.Box (new Rect (0, 0, 125, 30), barEmpty);
-		// draw the filled-in part:
-		GUI.BeginGroup (new Rect (0, 0, 125 * healthLevel, 30));
-		GUI.Box (new Rect (0,0, 125, 30), healthBarFull);
-		GUI.EndGroup ();
-		GUI.EndGroup ();*/
-
 		// Draw text if enabled
 		if (drawText) {
 			GUI.DrawTexture (box, text);
@@ -264,11 +231,8 @@ public class GameControl : MonoBehaviour {
 		}
 
 		// Handle selection
-		if (!CheckIfPaused()){
+		if (!IsPaused()){
 			MouseSelection ();
-		}
-		else{
-			//Call function to handle pause menu here
 		}
 	}
 
@@ -295,7 +259,7 @@ public class GameControl : MonoBehaviour {
 			Instantiate(Resources.Load("UpgradeMenu"), Vector3.zero, Quaternion.identity);
 		}
 
-		if (CheckIfPaused()){
+		if (IsPaused()){
 			return;
 		}
 		
@@ -304,19 +268,9 @@ public class GameControl : MonoBehaviour {
 			Debug.Log("KeyDown!");
 			changed = false;
 		}
-		if (Input.GetKeyDown (KeyCode.W)) {
+		if (Input.GetKeyDown (KeyCode.V)) {
 			toggleWBC = !toggleWBC;
 			wbcChanged = false;
-		}
-
-		if (whiteBloodProduction > 0 && (Time.time - timeOfLastSpawn) > 30 / whiteBloodProduction) {
-			SpawnWhiteBloodCell ();
-			foodLevel -= WHITE_BLOOD_CELL_FOOD_RATE;
-		}
-
-		if (plateletProduction > 0 && (Time.time - timeOfLastPlateSpawn) > 30 / plateletProduction) {
-			SpawnPlatelet ();
-			foodLevel -= PLATELET_FOOD_RATE;
 		}
 
 		// Check lose condition
@@ -357,6 +311,7 @@ public class GameControl : MonoBehaviour {
 				Vector3 randpt = redBloodSpawnPoint.GetRandomPoint();
 				GameObject newRBC = (GameObject)Instantiate (redBloodCellPrefab, new Vector3(randpt.x, randpt.y, 1.0f) , this.transform.rotation);
 				RedBloodScript newRedScript = newRBC.GetComponent<RedBloodScript> ();
+				newRBC.renderer.transform.localScale = new Vector3(.1f,.1f,.1f);
 				newRedScript.currentBlock = redBloodSpawnPoint;
 				newRedScript.destination = redBloodSpawnPoint.GetRandomPoint ();
 				newRedScript.origBlock = body.GetBodyPart((diff - i) / (numRBCs / body.blocks.Count));
@@ -369,7 +324,7 @@ public class GameControl : MonoBehaviour {
 		}
 	}
 
-	void SpawnWhiteBloodCell() {
+	public void SpawnWhiteBloodCell() {
 		GameObject newWhite = (GameObject)Instantiate (whiteBloodCellPrefab, whiteBloodSpawnPoint.GetRandomPoint(), this.transform.rotation);
 		WhiteBloodCell newWhiteScript = newWhite.GetComponent<WhiteBloodCell> ();
 		newWhiteScript.currentBlock = whiteBloodSpawnPoint;
@@ -380,10 +335,9 @@ public class GameControl : MonoBehaviour {
 			newWhiteScript.renderer.enabled = false;
 		
 		whiteBloodCells.Add (newWhite.GetComponent<WhiteBloodCell>());
-		timeOfLastSpawn = Time.time;
 	}
 
-	void SpawnPlatelet() {
+	public void SpawnPlatelet() {
 		GameObject newPlate = (GameObject)Instantiate (plateletPrefab, plateletSpawnPoint.GetRandomPoint(), this.transform.rotation);
 		Platelets newPlateletScript = newPlate.GetComponent<Platelets> ();
 		newPlateletScript.currentBlock = plateletSpawnPoint;
@@ -392,7 +346,6 @@ public class GameControl : MonoBehaviour {
 		newPlateletScript.gameControl = this;
 		newPlateletScript.spawnTime = Time.time;
 		platelets.Add (newPlate.GetComponent<Platelets>());
-		timeOfLastPlateSpawn = Time.time;
 	}
 
 	IEnumerator Wait(float f) {

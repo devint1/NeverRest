@@ -27,6 +27,7 @@ public class RedBloodScript : MonoBehaviour {
 		if (gameControl.liveRBCs < 2 * gameControl.numRBCs) {
 			Vector3 randpt = gameControl.redBloodSpawnPoint.GetRandomPoint ();
 			GameObject newRBC = (GameObject)Instantiate (gameControl.redBloodCellPrefab, new Vector3 (randpt.x, randpt.y, 1.0f), this.transform.rotation);
+			newRBC.renderer.transform.localScale = new Vector3(.1f,.1f,.1f);
 			RedBloodScript newRedScript = newRBC.GetComponent<RedBloodScript> ();
 			newRedScript.currentBlock = heartBlock;
 			newRedScript.destination = gameControl.redBloodSpawnPoint.GetRandomPoint ();
@@ -41,7 +42,7 @@ public class RedBloodScript : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		if( gameControl.CheckIfPaused() ){
+		if( gameControl.IsPaused() ){
 			return;
 		}
 		

@@ -55,7 +55,7 @@ public class Platelets : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update () {
-		if( gameControl.CheckIfPaused() ){
+		if( gameControl.IsPaused() ){
 			return;
 		}
 

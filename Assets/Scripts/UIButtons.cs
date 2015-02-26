@@ -7,25 +7,20 @@ public class UIButtons : UnityEngine.UI.Button {
 	public string cellType;
 	public UnityEngine.UI.Button button;
 
-	bool change = false;
-
 	// Use this for initialization
-	void Start () {
-		//if (button != null) {
-			this.onClick.AddListener(() => {
-				if (gameControl != null) {
-					if (cellType == "RBC") {
-						gameControl.toggleRBC = !gameControl.toggleRBC;
-						gameControl.changed = false;
-					}
-					else if (cellType == "WBC") {
-						gameControl.toggleWBC = !gameControl.toggleWBC;
-						gameControl.wbcChanged = false;
-					}
+	new void Start () {
+		this.onClick.AddListener(() => {
+			if (gameControl != null) {
+				if (cellType == "RBC") {
+					gameControl.toggleRBC = !gameControl.toggleRBC;
+					gameControl.changed = false;
 				}
-				change = true;
-			});
-		//}
+				else if (cellType == "WBC") {
+					gameControl.toggleWBC = !gameControl.toggleWBC;
+					gameControl.wbcChanged = false;
+				}
+			}
+		});
 	}
 	
 	// Update is called once per frame

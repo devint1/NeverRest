@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 
 public class HealthBarCript : MonoBehaviour {
@@ -8,7 +8,7 @@ public class HealthBarCript : MonoBehaviour {
 	
 	void Update ()
 	{
-		if( gameControl.CheckIfPaused() ){
+		if( gameControl.IsPaused() ){
 			return;
 		}
 		Vector3 wantedPos = Camera.main.WorldToViewportPoint (target.position);
