@@ -19,9 +19,15 @@ public class PointControl : MonoBehaviour {
 		if (visited) {
 			gameObject.renderer.material.color = Color.red;
 			 
-		} else {
-			this.gameObject.renderer.material.color = Color.white;
+		} 
+		else if (Vector2.Distance (map.player.transform.position, gameObject.transform.position )< 3.2){
+			gameObject.renderer.material.color = Color.green;
 		}
+		else {
+			this.gameObject.renderer.material.color = Color.white;
+
+		}
+
 
 	}
 
@@ -40,6 +46,8 @@ public class PointControl : MonoBehaviour {
 	{
 		 
 		visited = true;
+		//map.vistedpoints.Add(gameObject);
+
 
 	}
 
