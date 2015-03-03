@@ -12,24 +12,25 @@ public class Map : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 	
-		ArrayList points; 
+	
 
 	}
 	
 	// Update is called once per frame
 	void Update () {
-		//Raycasting (); 
+		 
 		MouseSelection ();
 	}
-	void Raycasting(){
-		//Debug.DrawLine (playerStart.position, playerEnd.position, Color.red);
+	void doMovement(){
+		// get mouse movement
 		mousePos = Camera.main.ScreenToWorldPoint (Input.mousePosition);
 		mousePos.z = player.transform.position.z;
 		
-
+		// if a point was clicked
 		if (isPointSelected) {
+			//if
 			while (Vector2.Distance (player.transform.position,mousePos ) >.03) {
-				player.transform.position = Vector2.MoveTowards (new Vector2 (player.transform.position.x, player.transform.position.y), mousePos, 3 * Time.deltaTime);
+				player.transform.position = Vector2.MoveTowards (new Vector2 (player.transform.position.x, player.transform.position.y), mousePos,  Time.deltaTime);
 			}
 		}
 		isPointSelected= false;
@@ -47,8 +48,8 @@ public class Map : MonoBehaviour {
 			//Debug.Log (Input.mousePosition);
 
 		} else if (Input.GetMouseButton (1) && isPlayerSelected) {
-			//Raycasting (); 
-			Raycasting ();
+			 
+			doMovement();
 
 			//Debug.Log ("do ray"+isPlayerSelected);
 		}
