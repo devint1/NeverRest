@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
-
+using System.Collections.Generic;
 public class Map : MonoBehaviour {
 	public bool isPlayerSelected = false;
 	public bool isPointSelected = false;
@@ -8,11 +8,11 @@ public class Map : MonoBehaviour {
 	private Vector3 mousePos;
 	public PlayerControl player;
 	public Transform playerStart, playerEnd;
+	public ArrayList vistedpoints;
 	// Use this for initialization
 	void Start () {
 	
-		ArrayList points;
-		ArrayList vistedpoints;
+		ArrayList points; 
 
 	}
 	
@@ -23,20 +23,33 @@ public class Map : MonoBehaviour {
 	}
 	void Raycasting(){
 		//Debug.DrawLine (playerStart.position, playerEnd.position, Color.red);
-		isPointSelected = Physics2D.Linecast (Input.mousePosition, Input.mousePosition, 1 << LayerMask.NameToLayer ("point"));
-		Debug.Log (isPointSelected+ " ray result");
-		if (isPointSelected) {
-			Debug.Log("Moving to point");
-		}
+		mousePos = Camera.main.ScreenToWorldPoint (Input.mousePosition);
+		mousePos.z = player.transform.position.z;
+		
 
+		if (isPointSelected) {
+			while (Vector2.Distance (player.transform.position,mousePos ) >.03) {
+				player.transform.position = Vector2.MoveTowards (new Vector2 (player.transform.position.x, player.transform.position.y), mousePos, 3 * Time.deltaTime);
+			}
+		}
+		isPointSelected= false;
+
+
+
+
+		//Debug.Log (" player : " + player.transform.position);
+		//Debug.Log (" mouse : " + mousePos);
 	}
 
 	void MouseSelection(){
+
 		if (Input.GetMouseButton (0)) {
 			//Debug.Log (Input.mousePosition);
-			Debug.Log ("gaME obj" + gameObject.tag +" "+gameObject.name);
+
 		} else if (Input.GetMouseButton (1) && isPlayerSelected) {
-			Raycasting (); 
+			//Raycasting (); 
+			Raycasting ();
+
 			//Debug.Log ("do ray"+isPlayerSelected);
 		}
 	}

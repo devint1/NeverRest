@@ -3,7 +3,7 @@ using System.Collections;
 
 public class PointControl : MonoBehaviour {
 	public int x,y;
-	public bool visted = false;
+	public bool visited = false;
 	public EventControl pointEvent;
 	public bool isSelected = false;
 	public PlayerControl player;
@@ -15,8 +15,9 @@ public class PointControl : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		if (isSelected) {
-			gameObject.renderer.material.color = Color.blue;
+
+		if (visited) {
+			gameObject.renderer.material.color = Color.red;
 			 
 		} else {
 			this.gameObject.renderer.material.color = Color.white;
@@ -28,11 +29,18 @@ public class PointControl : MonoBehaviour {
 		//this.isSelected = true;
 		 
 		if (Input.GetMouseButtonDown (1)) {
-			Debug.Log (" point is selected ");
+			//Debug.Log (" point is selected ");
+			map.isPointSelected =true;
+
+			//Debug.Log ("gaME obj " + gameObject.name);
 		}
+	
+	} 
+	void OnTriggerEnter2D( Collider2D other )
+	{
+		 
+		visited = true;
 
-
-
-		
 	}
+
 }

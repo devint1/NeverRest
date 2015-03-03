@@ -41,7 +41,7 @@ public class PlayerControl : MonoBehaviour {
 		isSelected = true;
 		map.isPlayerSelected = true;
 		//Debug.Log (map.isPlayerSelected);
-		Debug.Log (" PLayer is selected ");
+		//Debug.Log (" PLayer is selected ");
 
 
 	}
