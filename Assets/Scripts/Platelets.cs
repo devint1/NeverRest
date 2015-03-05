@@ -78,12 +78,18 @@ public class Platelets : MonoBehaviour {
 
 		//If we are at current way point or the destination has been changed
 		if (Vector2.Distance (destination, this.transform.position) < .03 || destChanged) {
+			// Need to replace old destination with new one by setting nextBlock = currentBlock,
+			// otherwise the cells will try to move to old block's exitPoint first
+			if (destChanged) {
+				nextBlock = currentBlock;
+				destChanged = false;
+			}
 			//If we have arrived at our exit node, our next node should be the next cells entrance node
 			//Dest change is to check if it was a destchange request or we reach current node
 			//Otherwise if we are not in the correct block we need to find the next exit
-			if (destBlock && destBlock != currentBlock) {
-				foreach (ExitPoint exitPoint in currentBlock.GetExitPoints()) {
-					if( ExitPointLeadsToDestination(exitPoint.gameObject, destBlock, currentBlock) ) {
+			if (destBlock && destBlock != nextBlock) {
+				foreach (ExitPoint exitPoint in nextBlock.GetExitPoints()) {
+					if( ExitPointLeadsToDestination(exitPoint.gameObject, destBlock, nextBlock) ) {
 						destination = exitPoint.gameObject.transform.position;
 						nextBlock = exitPoint.nextBlock;
 						break;
@@ -98,9 +104,6 @@ public class Platelets : MonoBehaviour {
 			//Last option is going to a random waypoint
 			else{
 				destination = nextBlock.GetRandomPoint();
-			}
-			if( destChanged ){
-				destChanged = false;
 			}
 		}
 
