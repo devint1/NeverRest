@@ -4,11 +4,19 @@ using System.Collections;
 public class Wound : MonoBehaviour {
 	public float health = 1f;
 	public Block block;
+	public float spawnTime;
+	public int plateletsCount;
+	public float plateletArrivalTime;
+
+	public const int NUM_PLATELETS_CONSUMED = 3;
+	public const int NUM_PLATELETS_PER_5S = 1;
+	public const float PLATELETE_INEFFECTIVENES_TIME = 5.0f;
+
 	bool closed = false;
 
 	// Use this for initialization
 	void Start () {
-	
+		spawnTime = Time.time;
 	}
 	
 	// Update is called once per frame

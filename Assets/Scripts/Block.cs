@@ -28,7 +28,7 @@ public class Block : MonoBehaviour {
 	private const float DAMAGE_PER_DISEASE = 0.001f;
 	private const float COLD_DAMAGE = 0.03f;
 	private const float NO_OXYGEN_DAMAGE = 0.03f;
-	private const float DAMAGE_PER_WOUND = 0.05f;
+	private const float DAMAGE_PER_WOUND = 0.01f;
 	private const float WOUND_HEAL_PER_PLATELET = 0.15f;
 	
 	void Start() {
@@ -70,7 +70,35 @@ public class Block : MonoBehaviour {
 		}
 
 		foreach(Wound wound in wounds) {
-			wound.health -= WOUND_HEAL_PER_PLATELET * platelets.Count * Time.deltaTime;
+			wound.health -= WOUND_HEAL_PER_PLATELET * wound.plateletsCount * Time.deltaTime;
+			/*
+			if (Time.time - wound.plateletArrivalTime > Wound.PLATELETE_INEFFECTIVENES_TIME) {
+				wound.plateletsCount = wound.plateletsCount > 0 ? wound.plateletsCount - 1 : 0;
+			}
+			for(int i = 0; i < platelets.Count; i++) {
+				wound.plateletsCount++;
+				wound.plateletArrivalTime = Time.time;
+				/*
+				Platelets plate = (Platelets)(platelets[i]);
+				gameControl.foodLevel += 0.8f * GameControl.PLATELET_FOOD_RATE;
+				gameControl.selected.Remove (plate.gameObject);
+				gameControl.platelets.Remove (plate);
+				platelets.Remove(plate);
+				Destroy (plate.gameObject);
+				/
+			}
+
+			if(wound.health <= 0) {
+				for(int i = 0; i < Mathf.Min(Wound.NUM_PLATELETS_CONSUMED, platelets.Count); i++) {
+					Platelets plate = (Platelets)(platelets[i]);
+					gameControl.foodLevel += 0.8f * GameControl.PLATELET_FOOD_RATE;
+					gameControl.selected.Remove (plate.gameObject);
+					gameControl.platelets.Remove (plate);
+					platelets.Remove(plate);
+					Destroy (plate.gameObject);
+				}
+			}
+			*/
 		}
 	}
 

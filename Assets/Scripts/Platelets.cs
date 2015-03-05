@@ -10,6 +10,8 @@ public class Platelets : MonoBehaviour {
 	public float speed = 0.0075f;
 	public Vector3 destination; //Point, Exitpoint, or disease that WhiteBloodCell is moving towards right now
 	public float spawnTime;
+	public bool attackingWound = false;
+	public Wound woundToAttack;
 
 	Block destBlock = null; // Block the cell is moving to
 	Block nextBlock = null;
@@ -63,6 +65,7 @@ public class Platelets : MonoBehaviour {
 			gameControl.foodLevel += 0.8f * GameControl.PLATELET_FOOD_RATE;
 			gameControl.selected.Remove (this.gameObject);
 			gameControl.platelets.Remove (this);
+			currentBlock.platelets.Remove(this);
 			Destroy (this.gameObject);
 			return;
 		}
@@ -76,8 +79,27 @@ public class Platelets : MonoBehaviour {
 		else
 			speed = gameControl.rbcSpeed / 250.0f;
 
+		if (currentBlock.wounds.Count > 0 && !attackingWound) {
+			woundToAttack = (Wound)(currentBlock.wounds[0]); 
+			destination = woundToAttack.transform.position;
+			attackingWound = true;
+		}
+
 		//If we are at current way point or the destination has been changed
 		if (Vector2.Distance (destination, this.transform.position) < .03 || destChanged) {
+			if(attackingWound) {
+				if(woundToAttack != null) {
+					woundToAttack.plateletsCount++;
+					woundToAttack.plateletArrivalTime = Time.time;
+				}
+				gameControl.foodLevel += 0.8f * GameControl.PLATELET_FOOD_RATE;
+				gameControl.selected.Remove (this.gameObject);
+				gameControl.platelets.Remove (this);
+				currentBlock.platelets.Remove(this);
+				Destroy (this.gameObject);
+				return;
+			}
+
 			//If we have arrived at our exit node, our next node should be the next cells entrance node
 			//Dest change is to check if it was a destchange request or we reach current node
 			//Otherwise if we are not in the correct block we need to find the next exit

@@ -88,6 +88,7 @@ public class GameControl : MonoBehaviour {
 			newRedScript.heartBlock = body.GetChest ();
 			newRedScript.gameControl = this;
 			newRedScript.spawnTime = Time.time;
+			newRedScript.renderer.enabled = false;
 		}
 		for(; i > 0; i--) {
 			Vector3 randpt = body.GetBodyPart((numRBCs - i) / (numRBCs / body.blocks.Count)).GetRandomPoint();
@@ -102,6 +103,7 @@ public class GameControl : MonoBehaviour {
 			newRedScript.oxygenated = false;
 			newRedScript.gameControl = this;
 			newRedScript.spawnTime = Time.time;
+			newRedScript.renderer.enabled = false;
 		}
 		liveRBCs = 2 * numRBCs;
 
