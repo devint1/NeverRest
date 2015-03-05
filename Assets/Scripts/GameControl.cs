@@ -74,6 +74,9 @@ public class GameControl : MonoBehaviour {
 		GameObject gameUI = (GameObject) Instantiate(Resources.Load("GameUI"), Vector3.zero, Quaternion.identity);
 		gameUI.GetComponent<GameUI>().gC = this;
 
+		upgradeMenu = (GameObject) Instantiate(Resources.Load("UpgradeMenu"), Vector3.zero, Quaternion.identity);
+		upgradeMenu.SetActive(false);
+
 		int i = 0;
 		//TODO move all the member assignment stuff into their start functions - I.E. should only be passed game control object and do it itself
 		for(; i < numRBCs; i++) {
@@ -275,11 +278,11 @@ public class GameControl : MonoBehaviour {
 			TogglePauseGame();
 			showMenu = false;
 			if (!UpgradeMenuOpen){
-				upgradeMenu = (GameObject) Instantiate(Resources.Load("UpgradeMenu"), Vector3.zero, Quaternion.identity);
+				upgradeMenu.SetActive(true);
 				UpgradeMenuOpen = true;
 			}
 			else{
-				Destroy(upgradeMenu);
+				upgradeMenu.SetActive(false);
 				UpgradeMenuOpen = false;
 			}
 		}
@@ -438,5 +441,9 @@ public class GameControl : MonoBehaviour {
 		float averageHealth = totalBodyPartHealth / body.blocks.Count;
 
 		return MAX_LEVEL_PROGRESS_SPEED * averageHealth;
+	}
+
+	public GameObject GetUpgradeMenu(){
+		return upgradeMenu;
 	}
 }

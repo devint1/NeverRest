@@ -7,13 +7,13 @@ namespace UpgradeTypes
 {
 	public enum CellType{ Red, White, Platelet };
 	
-	public enum UpgradeType{ FoodPerUnit, Capacity, Speed };
+	public enum UpgradeType{ EneryPerUnit, BuildSpeed, MoveSpeed };
 
 	public struct CellUpgrades
 	{
-		public int FoodPerUnit;
-		public int MaxCapacity;
-		public int Speed;
+		public int EneryPerUnit;
+		public int BuildSpeed;
+		public int MoveSpeed;
 	}
 	
 	public struct Cells
@@ -27,20 +27,21 @@ namespace UpgradeTypes
 public class UpgradeMenu : MonoBehaviour {
 
 	public Cells upgradeValues;
+	public GameControl gc;
 
 	// Use this for initialization
 	void Start () {
-		upgradeValues.RedBloodCell.FoodPerUnit = 0;
-		upgradeValues.RedBloodCell.MaxCapacity = 0;
-		upgradeValues.RedBloodCell.Speed = 0;
+		upgradeValues.RedBloodCell.EneryPerUnit = 0;
+		upgradeValues.RedBloodCell.BuildSpeed = 0;
+		upgradeValues.RedBloodCell.MoveSpeed = 0;
 
-		upgradeValues.WhiteCells.FoodPerUnit = 0;
-		upgradeValues.WhiteCells.MaxCapacity = 0;
-		upgradeValues.WhiteCells.Speed = 0;
+		upgradeValues.WhiteCells.EneryPerUnit = 0;
+		upgradeValues.WhiteCells.BuildSpeed = 0;
+		upgradeValues.WhiteCells.MoveSpeed = 0;
 
-		upgradeValues.PlateletCells.FoodPerUnit = 0;
-		upgradeValues.PlateletCells.MaxCapacity = 0;
-		upgradeValues.PlateletCells.Speed = 0;
+		upgradeValues.PlateletCells.EneryPerUnit = 0;
+		upgradeValues.PlateletCells.BuildSpeed = 0;
+		upgradeValues.PlateletCells.MoveSpeed = 0;
 	}
 	
 	// Update is called once per frame
