@@ -10,6 +10,9 @@ public class GameUI : MonoBehaviour {
 	public GameObject PCImage;
 	public GameControl gC;
 
+	static float WBC_DEFAULT_BUILDTIME = 5.0f;
+	static float PLAT_DEFAULT_BUILDTIME = 5.0f;
+
 	float currentEnergy;
 	GameControl control;
 
@@ -49,9 +52,10 @@ public class GameUI : MonoBehaviour {
 	}
 
 	IEnumerator GenerateWBC(){
-		float cost = numWBCBuilding * 2;
+		float cost;
 		double progress = 0;
 		int ndx;
+		float buildTime = WBC_DEFAULT_BUILDTIME;
 		for (ndx = 0; ndx <= WBCSlots.Count; ndx++) {
 			if (ndx == WBCSlots.Count){
 				WBCSlots.Add(1);
@@ -68,6 +72,9 @@ public class GameUI : MonoBehaviour {
 		Vector3 pos = pic.transform.position;
 		pos.y += Screen.height * ( .175f * (ndx + 1) );
 		pic.transform.position = pos;
+
+		cost = 100f - gC.GetUpgradeMenu ().GetComponent<UpgradeMenu> ().upgradeValues.WhiteCells.EneryPerUnit;
+		buildTime = buildTime - .25f * gC.GetUpgradeMenu ().GetComponent<UpgradeMenu> ().upgradeValues.WhiteCells.BuildSpeed;
 
 		while (progress != 100) {
 			Color c = pic.GetComponent<Image>().color;

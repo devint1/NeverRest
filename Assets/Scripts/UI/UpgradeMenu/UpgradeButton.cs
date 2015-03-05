@@ -24,40 +24,40 @@ public class UpgradeButton : MonoBehaviour {
 		switch (cellType) {
 		case CellType.Platelet:
 			switch (upgradeType) {
-			case UpgradeType.Capacity:
-				menu.upgradeValues.PlateletCells.MaxCapacity += Incrementer ? 1 : -1;
+			case UpgradeType.EneryPerUnit:
+				menu.upgradeValues.PlateletCells.EneryPerUnit += Incrementer ? 1 : -1;
 				break;
-			case UpgradeType.FoodPerUnit:
-			menu.upgradeValues.PlateletCells.FoodPerUnit += Incrementer ? 1 : -1;
+			case UpgradeType.BuildSpeed:
+				menu.upgradeValues.PlateletCells.BuildSpeed += Incrementer ? 1 : -1;
 				break;
-			case UpgradeType.Speed:
-			menu.upgradeValues.PlateletCells.Speed += Incrementer ? 1 : -1;
+			case UpgradeType.MoveSpeed:
+				menu.upgradeValues.PlateletCells.MoveSpeed += Incrementer ? 1 : -1;
 				break;
 			}
 			break;
 		case CellType.Red:
 			switch (upgradeType) {
-			case UpgradeType.Capacity:
-				menu.upgradeValues.RedBloodCell.MaxCapacity += Incrementer ? 1 : -1;
+			case UpgradeType.EneryPerUnit:
+				menu.upgradeValues.RedBloodCell.EneryPerUnit += Incrementer ? 1 : -1;
 				break;
-			case UpgradeType.FoodPerUnit:
-				menu.upgradeValues.RedBloodCell.FoodPerUnit += Incrementer ? 1 : -1;
+			case UpgradeType.BuildSpeed:
+				menu.upgradeValues.RedBloodCell.BuildSpeed += Incrementer ? 1 : -1;
 				break;
-			case UpgradeType.Speed:
-				menu.upgradeValues.RedBloodCell.Speed += Incrementer ? 1 : -1;
+			case UpgradeType.MoveSpeed:
+				menu.upgradeValues.RedBloodCell.MoveSpeed += Incrementer ? 1 : -1;
 				break;
 			}
 			break;
 		case CellType.White:
 			switch (upgradeType) {
-			case UpgradeType.Capacity:
-				menu.upgradeValues.WhiteCells.MaxCapacity += Incrementer ? 1 : -1;
+			case UpgradeType.EneryPerUnit:
+				menu.upgradeValues.WhiteCells.EneryPerUnit += Incrementer ? 1 : -1;
 				break;
-			case UpgradeType.FoodPerUnit:
-				menu.upgradeValues.WhiteCells.FoodPerUnit += Incrementer ? 1 : -1;
+			case UpgradeType.BuildSpeed:
+				menu.upgradeValues.WhiteCells.BuildSpeed += Incrementer ? 1 : -1;
 				break;
-			case UpgradeType.Speed:
-				menu.upgradeValues.WhiteCells.Speed += Incrementer ? 1 : -1;
+			case UpgradeType.MoveSpeed:
+				menu.upgradeValues.WhiteCells.MoveSpeed += Incrementer ? 1 : -1;
 				break;
 			}
 			break;

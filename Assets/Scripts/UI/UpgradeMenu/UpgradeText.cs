@@ -23,40 +23,40 @@ public class UpgradeText : MonoBehaviour {
 		switch (cellType) {
 		case CellType.Platelet:
 			switch (upgradeType) {
-			case UpgradeType.Capacity:
-				value = menu.upgradeValues.PlateletCells.MaxCapacity;
+			case UpgradeType.EneryPerUnit:
+				value = menu.upgradeValues.PlateletCells.EneryPerUnit;
 				break;
-			case UpgradeType.FoodPerUnit:
-				value = menu.upgradeValues.PlateletCells.FoodPerUnit;
+			case UpgradeType.BuildSpeed:
+				value = menu.upgradeValues.PlateletCells.BuildSpeed;
 				break;
-			case UpgradeType.Speed:
-				value = menu.upgradeValues.PlateletCells.Speed;
+			case UpgradeType.MoveSpeed:
+				value = menu.upgradeValues.PlateletCells.MoveSpeed;
 				break;
 			}
 			break;
 		case CellType.Red:
 			switch (upgradeType) {
-			case UpgradeType.Capacity:
-				value = menu.upgradeValues.RedBloodCell.MaxCapacity;
+			case UpgradeType.EneryPerUnit:
+				value = menu.upgradeValues.RedBloodCell.EneryPerUnit;
 				break;
-			case UpgradeType.FoodPerUnit:
-				value = menu.upgradeValues.RedBloodCell.FoodPerUnit;
+			case UpgradeType.BuildSpeed:
+				value = menu.upgradeValues.RedBloodCell.BuildSpeed;
 				break;
-			case UpgradeType.Speed:
-				value = menu.upgradeValues.RedBloodCell.Speed;
+			case UpgradeType.MoveSpeed:
+				value = menu.upgradeValues.RedBloodCell.MoveSpeed;
 				break;
 			}
 			break;
 		case CellType.White:
 			switch (upgradeType) {
-			case UpgradeType.Capacity:
-				value = menu.upgradeValues.WhiteCells.MaxCapacity;
+			case UpgradeType.EneryPerUnit:
+				value = menu.upgradeValues.WhiteCells.EneryPerUnit;
 				break;
-			case UpgradeType.FoodPerUnit:
-				value = menu.upgradeValues.WhiteCells.FoodPerUnit;
+			case UpgradeType.BuildSpeed:
+				value = menu.upgradeValues.WhiteCells.BuildSpeed;
 				break;
-			case UpgradeType.Speed:
-				value = menu.upgradeValues.WhiteCells.Speed;
+			case UpgradeType.MoveSpeed:
+				value = menu.upgradeValues.WhiteCells.MoveSpeed;
 				break;
 			}
 			break;
