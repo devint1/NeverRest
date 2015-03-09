@@ -8,6 +8,7 @@ public class GameUI : MonoBehaviour {
 	public GameObject WBCImage;
 	public GameObject PCImage;
 	public GameControl gC;
+	public GameObject PauseImage;
 
 	static float WBC_DEFAULT_BUILDTIME = 5.0f;
 	static float PLAT_DEFAULT_BUILDTIME = 5.0f;
@@ -32,10 +33,17 @@ public class GameUI : MonoBehaviour {
 		currentEnergy = 100;
 		WBCSlots = new ArrayList ();
 		PCSlots = new ArrayList ();
+
 	}
 	
 	// Update is called once per frame
 	void Update () {
+		if (gC.IsPaused ()){
+			PauseImage.SetActive (true);
+		}
+		else{
+			PauseImage.SetActive (false);
+		}
 		energyStatus.text = (int)currentEnergy + "/" + DEFAULT_MAX_ENERGY;
 		if (Input.GetKeyDown (KeyCode.Q)) {
 			numWBCBuilding += 1;
@@ -153,5 +161,13 @@ public class GameUI : MonoBehaviour {
 		numPCBuilding -= 1;
 		PCSlots [ndx] = 0;
 		gC.SpawnPlatelet();
+	}
+
+	public void SetPauseAlphaHigh (Image i){
+		i.CrossFadeAlpha (.5f, .5f, true);
+	}
+
+	public void SetPauseAlphaLow (Image i){
+		i.CrossFadeAlpha (.05f, .5f, true);
 	}
 }

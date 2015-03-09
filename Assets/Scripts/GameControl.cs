@@ -44,6 +44,9 @@ public class GameControl : MonoBehaviour {
 	public bool isSelected = false;
 	public bool showMenu = false;
 
+	public Tutorial tutorial;
+	public RandomEventManager rngManager;
+
 	// int mousePressStart = -1;
 	Vector3 mousePositionStart;
 
@@ -55,7 +58,7 @@ public class GameControl : MonoBehaviour {
 	bool drawText = false;
 	bool gameOver = false;
 	bool isPaused = false;
-	bool UpgradeMenuOpen = false;
+	bool upgradeMenuOpen = false;
 
 	float levelProgressSpeed = 1.0f;
 	float levelProgress = 0f;
@@ -76,6 +79,8 @@ public class GameControl : MonoBehaviour {
 
 		upgradeMenu = (GameObject) Instantiate(Resources.Load("UpgradeMenu"), Vector3.zero, Quaternion.identity);
 		upgradeMenu.SetActive(false);
+
+		tutorial = gameObject.AddComponent<Tutorial> ();
 
 		int i = 0;
 		//TODO move all the member assignment stuff into their start functions - I.E. should only be passed game control object and do it itself
@@ -240,12 +245,23 @@ public class GameControl : MonoBehaviour {
 		}
 
 		// Handle selection
-		if (!IsPaused()){
+		if (!showMenu && !upgradeMenuOpen){
 			MouseSelection ();
 		}
 	}
 
 	void Update() {
+		if (IsPaused() || showMenu || upgradeMenuOpen || tutorial.StopGameLogic()){
+			rngManager.isDisabled = true;
+		}
+		else{
+			rngManager.isDisabled = false;
+		}
+
+		if( tutorial.StopGameLogic() ){
+			return;
+		}
+
 		if (Input.GetKeyDown(KeyCode.Escape)){
 			TogglePauseGame(); 
 			if (isPaused){
@@ -262,19 +278,17 @@ public class GameControl : MonoBehaviour {
 		}
 
 		if (Input.GetKeyDown(KeyCode.Z)){
-			//Just a proof of concept atm
 			TogglePauseGame();
 			showMenu = false;
-			if (!UpgradeMenuOpen){
+			if (!upgradeMenuOpen){
 				upgradeMenu.SetActive(true);
-				UpgradeMenuOpen = true;
+				upgradeMenuOpen = true;
 			}
 			else{
 				upgradeMenu.SetActive(false);
-				UpgradeMenuOpen = false;
+				upgradeMenuOpen = false;
 			}
 		}
-
 		if (IsPaused()){
 			return;
 		}

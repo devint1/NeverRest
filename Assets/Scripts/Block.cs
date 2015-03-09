@@ -187,10 +187,12 @@ public class Block : MonoBehaviour {
 		}
 		if (gameControl.isSelected) {
 			GameObject mouseTarget = (GameObject)Instantiate (destMarkPrefab, (Vector2)mousePos, Quaternion.identity);
+			mouseTarget.transform.localScale += new Vector3 (1f, 1f, 1f);
 			Color c = Color.green;
+			c.a = 1f;
 			while (c.a > 0) {
 				yield return new WaitForSeconds (.1f);
-				c.a -= .05f;
+				c.a -= .1f;
 				mouseTarget.renderer.material.color = c;
 			}
 			gameControl.isSelected = false;
