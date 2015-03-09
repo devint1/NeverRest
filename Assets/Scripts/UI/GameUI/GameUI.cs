@@ -5,13 +5,17 @@ using System.Collections;
 public class GameUI : MonoBehaviour {
 	
 	public Text energyStatus;
-	public float maxEnergy;
 	public GameObject WBCImage;
 	public GameObject PCImage;
 	public GameControl gC;
 
 	static float WBC_DEFAULT_BUILDTIME = 5.0f;
 	static float PLAT_DEFAULT_BUILDTIME = 5.0f;
+	static float WBC_DEFAULT_COST = 100f;
+	static float PLAT_DEFAULT_COST = 100f;
+	static float DEFAULT_ENERGY_GAINED_PER_TICK = 2;
+	static float DEFAULT_MAX_ENERGY = 2000f;
+	static float TIME_SLICE = .125f;
 
 	float currentEnergy;
 	GameControl control;
@@ -32,7 +36,7 @@ public class GameUI : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		energyStatus.text = (int)currentEnergy + "/" + maxEnergy;
+		energyStatus.text = (int)currentEnergy + "/" + DEFAULT_MAX_ENERGY;
 		if (Input.GetKeyDown (KeyCode.Q)) {
 			numWBCBuilding += 1;
 			StartCoroutine(GenerateWBC());
@@ -45,17 +49,23 @@ public class GameUI : MonoBehaviour {
 
 	IEnumerator IncrementEnergy() {
 		yield return new WaitForSeconds (.05f);
-		if (currentEnergy < maxEnergy) {
-			currentEnergy += 1;
+		if (currentEnergy < DEFAULT_MAX_ENERGY) {
+			currentEnergy += DEFAULT_ENERGY_GAINED_PER_TICK;
 		}
 		StartCoroutine (IncrementEnergy ());
 	}
 
 	IEnumerator GenerateWBC(){
-		float cost;
+		float cost,
+		      costPerTick,
+			  payed;
+
 		double progress = 0;
+
 		int ndx;
+
 		float buildTime = WBC_DEFAULT_BUILDTIME;
+
 		for (ndx = 0; ndx <= WBCSlots.Count; ndx++) {
 			if (ndx == WBCSlots.Count){
 				WBCSlots.Add(1);
@@ -68,23 +78,26 @@ public class GameUI : MonoBehaviour {
 		}
 
 		GameObject pic = (GameObject) Instantiate (WBCImage);
-		pic.transform.parent = transform;
+		pic.transform.SetParent (transform, false);
 		Vector3 pos = pic.transform.position;
 		pos.y += Screen.height * ( .175f * (ndx + 1) );
 		pic.transform.position = pos;
 
-		cost = 100f - gC.GetUpgradeMenu ().GetComponent<UpgradeMenu> ().upgradeValues.WhiteCells.EneryPerUnit;
+		cost = WBC_DEFAULT_COST - gC.GetUpgradeMenu ().GetComponent<UpgradeMenu> ().upgradeValues.WhiteCells.EneryPerUnit;
 		buildTime = buildTime - .25f * gC.GetUpgradeMenu ().GetComponent<UpgradeMenu> ().upgradeValues.WhiteCells.BuildSpeed;
+		costPerTick = cost / (buildTime / TIME_SLICE);
+		payed = 0;
 
 		while (progress != 100) {
 			Color c = pic.GetComponent<Image>().color;
 			c.a = (float) progress * .01f;
 			pic.GetComponent<Image>().color = c;
-			if (currentEnergy > cost){
-				currentEnergy -= cost;
-				progress+=2.5;
+			if( currentEnergy > costPerTick ){
+				currentEnergy -= costPerTick;
+				payed += costPerTick;
+				progress = Mathf.CeilToInt(payed/cost * 100);
 			}
-			yield return new WaitForSeconds (.125f);
+			yield return new WaitForSeconds (TIME_SLICE);
 		}
 		Destroy (pic);
 		numWBCBuilding -= 1;
@@ -93,9 +106,16 @@ public class GameUI : MonoBehaviour {
 	}
 
 	IEnumerator GeneratePC(){
-		float cost = numPCBuilding * 2;
+		float cost,
+				costPerTick,
+				payed;
+		
 		double progress = 0;
+		
 		int ndx;
+		
+		float buildTime = PLAT_DEFAULT_BUILDTIME;
+
 		for (ndx = 0; ndx <= PCSlots.Count; ndx++) {
 			if (ndx == PCSlots.Count){
 				PCSlots.Add(1);
@@ -106,22 +126,28 @@ public class GameUI : MonoBehaviour {
 				break;
 			}
 		}
-
+		
 		GameObject pic = (GameObject) Instantiate (PCImage);
-		pic.transform.parent = transform;
+		pic.transform.SetParent (transform, false);
 		Vector3 pos = pic.transform.position;
 		pos.y += Screen.height * ( .175f * (ndx + 1) );
 		pic.transform.position = pos;
-
+		
+		cost = PLAT_DEFAULT_COST - gC.GetUpgradeMenu ().GetComponent<UpgradeMenu> ().upgradeValues.PlateletCells.EneryPerUnit;
+		buildTime = buildTime - .25f * gC.GetUpgradeMenu ().GetComponent<UpgradeMenu> ().upgradeValues.PlateletCells.BuildSpeed;
+		costPerTick = cost / (buildTime / TIME_SLICE);
+		payed = 0;
+		
 		while (progress != 100) {
 			Color c = pic.GetComponent<Image>().color;
 			c.a = (float) progress * .01f;
 			pic.GetComponent<Image>().color = c;
-			if (currentEnergy > cost){
-				currentEnergy -= cost;
-				progress+=2.5;
+			if( currentEnergy > costPerTick ){
+				currentEnergy -= costPerTick;
+				payed += costPerTick;
+				progress = Mathf.CeilToInt(payed/cost *100);
 			}
-			yield return new WaitForSeconds (.125f);
+			yield return new WaitForSeconds (TIME_SLICE);
 		}
 		Destroy (pic);
 		numPCBuilding -= 1;

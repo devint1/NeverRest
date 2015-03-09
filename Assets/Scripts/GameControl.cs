@@ -118,18 +118,6 @@ public class GameControl : MonoBehaviour {
 		SpawnPlatelet ();
 	}
 
-	void changeWBCSliderVal(float f) {
-		whiteBloodProduction = (int)(f);
-	}
-
-	void changeRBCSliderVal(float f) {
-		numRBCs = ((int)f) * body.blocks.Count;
-	}
-
-	void changePlateSliderVal(float f) {
-		plateletProduction = (int)(f);
-	}
-
 	public bool IsPaused(){
 		return isPaused;
 	}
