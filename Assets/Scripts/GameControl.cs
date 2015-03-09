@@ -81,6 +81,7 @@ public class GameControl : MonoBehaviour {
 		upgradeMenu.SetActive(false);
 
 		tutorial = gameObject.AddComponent<Tutorial> ();
+		tutorial.gC = this;
 
 		int i = 0;
 		//TODO move all the member assignment stuff into their start functions - I.E. should only be passed game control object and do it itself
@@ -129,10 +130,10 @@ public class GameControl : MonoBehaviour {
 
 	public void TogglePauseGame(){
 		if (isPaused == false) {
-			Time.timeScale = 0;
+			//Time.timeScale = 0;
 		}
 		else{
-			Time.timeScale = 1;
+			//Time.timeScale = 1;
 		}
 		isPaused = !isPaused;
 
@@ -258,6 +259,12 @@ public class GameControl : MonoBehaviour {
 			rngManager.isDisabled = false;
 		}
 
+
+		if (Input.GetKeyDown(KeyCode.Space)){
+			TogglePauseGame();
+			showMenu = false;
+		}
+
 		if( tutorial.StopGameLogic() ){
 			return;
 		}
@@ -270,11 +277,6 @@ public class GameControl : MonoBehaviour {
 			else{
 				showMenu = false;
 			}
-		}
-
-		if (Input.GetKeyDown(KeyCode.Space)){
-			TogglePauseGame();
-			showMenu = false;
 		}
 
 		if (Input.GetKeyDown(KeyCode.Z)){
