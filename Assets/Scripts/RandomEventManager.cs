@@ -8,6 +8,7 @@ public class RandomEventManager : MonoBehaviour {
 	public Body body;
 	public GameObject diseasePrefab;
 	public GameObject woundPrefab;
+	public bool isDisabled = true; //Needs to be enabled from start to prevent race conditions
 
 	const float MIN_RANDOM_EVENT_TIME = 10f;
 	const float MAX_RANDOM_EVENT_TIME = 30f;
@@ -17,6 +18,7 @@ public class RandomEventManager : MonoBehaviour {
 	Rect dialogRect = new Rect(750, 80, 250, 150);
 
 	void Start () {
+		isDisabled = true;
 		StartCoroutine(RandomEventCycle());
 	}
 	
@@ -36,19 +38,23 @@ public class RandomEventManager : MonoBehaviour {
 		float waitFor = Random.Range (MIN_RANDOM_EVENT_TIME, MAX_RANDOM_EVENT_TIME);
 		EventType eventType = (EventType) Mathf.RoundToInt(Random.Range(1, 3));
 
-		switch(eventType) {
-		case EventType.EVENT_TYPE_DISEASE:
-			SpawnDiseaseInfection();
-			break;
-		case EventType.EVENT_TYPE_WOUND:
-			SpawnWound();
-			break;
+		if (!isDisabled) {
+			switch(eventType) {
+			case EventType.EVENT_TYPE_DISEASE:
+				SpawnDiseaseInfection();
+				break;
+			case EventType.EVENT_TYPE_WOUND:
+				SpawnWound();
+				break;
+			}
+			// SpawnVirus();
+			// RacoonAttack();
+			// FindSupplies();
+			// BreakLeg();
 		}
-		// SpawnVirus();
-		// RacoonAttack();
-		// FindSupplies();
-		// BreakLeg();
-		
+		else{
+			waitFor = 0f;
+		}
 		yield return new WaitForSeconds(waitFor);
 		StartCoroutine(RandomEventCycle());
 	}
