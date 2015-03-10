@@ -9,6 +9,7 @@ public class EventControl : MonoBehaviour {
 	Rect dialogRect = new Rect(750, 80, 250, 150);
 	public PointType dialogOpen = PointType.POINT_TYPE_NONE;
 
+
 	// Use this for initialization
 	void Start () {
 	
@@ -57,6 +58,7 @@ public class EventControl : MonoBehaviour {
 		//GUI.TextArea (new Rect (0, 20, 250, 100), "Buy Buy Buy");
 
 		//GUI.Box(new Rect(10, 20, 100, 90), "Inventory");
+
 		if (GUI.Button(new Rect(100, 125, 50, 20), "OK")) {
 			dialogOpen = PointType.POINT_TYPE_NONE; 
 		}
