@@ -21,6 +21,7 @@ public class Block : MonoBehaviour {
 
 	private Vector3 mousePos;
 	private Tesselator tesselator;
+	private Animator animator;
 	private bool showStats = false;
 
 	public const int MAX_NUM_DISEASE_PER_BLOCK = 200;
@@ -36,6 +37,7 @@ public class Block : MonoBehaviour {
 		if (collider) {
 			tesselator = new Tesselator (collider.points);
 		}
+		animator = GetComponent<Animator>();
 	}
 
 	void Update() {
@@ -45,6 +47,15 @@ public class Block : MonoBehaviour {
 		if(dead) {
 			DestroyAllDiseases();
 			return;
+		}
+
+		// Handle animation states
+		if (animator != null) {
+			if(diseases.Count == 0 && wounds.Count == 0) {
+				animator.Play("Still");
+			} else {
+				animator.Play("Flashing");
+			}
 		}
 
 		//If vitals are mostly good, slowly increase health. Else, take damage
