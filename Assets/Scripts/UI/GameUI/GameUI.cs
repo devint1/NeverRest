@@ -31,6 +31,7 @@ public class GameUI : MonoBehaviour {
 	void Start () {
 		StartCoroutine(IncrementEnergy());
 		currentEnergy = 100;
+		energyStatus.color = Color.black;
 		WBCSlots = new ArrayList ();
 		PCSlots = new ArrayList ();
 
@@ -57,7 +58,7 @@ public class GameUI : MonoBehaviour {
 
 	IEnumerator IncrementEnergy() {
 		yield return new WaitForSeconds (.05f);
-		if (currentEnergy < DEFAULT_MAX_ENERGY) {
+		if (currentEnergy < DEFAULT_MAX_ENERGY && !gC.IsPaused()) {
 			currentEnergy += DEFAULT_ENERGY_GAINED_PER_TICK;
 		}
 		StartCoroutine (IncrementEnergy ());
