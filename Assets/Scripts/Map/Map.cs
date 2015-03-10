@@ -4,8 +4,10 @@ using System.Collections.Generic;
 public class Map : MonoBehaviour {
 	public bool isPlayerSelected = false;
 	public bool isPointSelected = false;
-	public PointControl point;
-	private Vector3 mousePos;
+	//public bool onExit = false;
+	public Vector2 pointPos;
+	private Vector2 mousePos;
+
 	public PlayerControl player;
 	public Transform playerStart, playerEnd;
 	public ArrayList vistedpoints;
@@ -23,23 +25,17 @@ public class Map : MonoBehaviour {
 	}
 	void doMovement(){
 		// get mouse movement
-		mousePos = Camera.main.ScreenToWorldPoint (Input.mousePosition);
-		mousePos.z = player.transform.position.z;
+		mousePos = Camera.main.ScreenToWorldPoint (Input.mousePosition); 
 		
 		// if a point was clicked
-		if (isPointSelected) {
-			//if
-			while (Vector2.Distance (player.transform.position,mousePos ) >.03) {
-				player.transform.position = Vector2.MoveTowards (new Vector2 (player.transform.position.x, player.transform.position.y), mousePos,  Time.deltaTime);
+		if(isPointSelected && Vector2.Distance (player.transform.position,pointPos )< 3.2){
+			while (Vector2.Distance (player.transform.position,pointPos ) >.03) {
+			//Debug.Log (" point : " + player.transform.position);
+				player.transform.position = Vector2.MoveTowards (new Vector2 (player.transform.position.x, player.transform.position.y), pointPos,  Time.deltaTime);
 			}
 		}
 		isPointSelected= false;
 
-
-
-
-		//Debug.Log (" player : " + player.transform.position);
-		//Debug.Log (" mouse : " + mousePos);
 	}
 
 	void MouseSelection(){
@@ -47,7 +43,7 @@ public class Map : MonoBehaviour {
 		if (Input.GetMouseButton (0)) {
 			//Debug.Log (Input.mousePosition);
 
-		} else if (Input.GetMouseButton (1) && isPlayerSelected) {
+		} else if (Input.GetMouseButton (1) ) {
 			 
 			doMovement();
 

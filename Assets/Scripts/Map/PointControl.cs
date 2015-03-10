@@ -4,10 +4,13 @@ using System.Collections;
 public class PointControl : MonoBehaviour {
 	public int x,y;
 	public bool visited = false;
-	public EventControl pointEvent;
 	public bool isSelected = false;
 	public PlayerControl player;
 	public Map map;
+	public bool isExit = false;
+	public bool isShop = false;
+	public bool isPlayerOn = false;
+	private LineRenderer line; 
 	// Use this for initialization
 	void Start () {
 	
@@ -20,8 +23,11 @@ public class PointControl : MonoBehaviour {
 			gameObject.renderer.material.color = Color.red;
 			 
 		} 
-		else if (Vector2.Distance (map.player.transform.position, gameObject.transform.position )< 3.2){
+		else if (Vector2.Distance (map.player.transform.position, gameObject.transform.position )< 3.2 && !isPlayerOn){
 			gameObject.renderer.material.color = Color.green;
+
+
+
 		}
 		else {
 			this.gameObject.renderer.material.color = Color.white;
@@ -36,7 +42,15 @@ public class PointControl : MonoBehaviour {
 		 
 		if (Input.GetMouseButtonDown (1)) {
 			//Debug.Log (" point is selected ");
+			map.pointPos = this.transform.position;
 			map.isPointSelected =true;
+			if (isExit){
+
+				// call win condiction if they get to exit
+				EventControl.WinCon();
+
+
+			}
 
 			//Debug.Log ("gaME obj " + gameObject.name);
 		}
@@ -44,11 +58,20 @@ public class PointControl : MonoBehaviour {
 	} 
 	void OnTriggerEnter2D( Collider2D other )
 	{
-		 
-		visited = true;
-		//map.vistedpoints.Add(gameObject);
+		if (other.gameObject.tag == "Player") {
+			visited = true;
+			isPlayerOn = true;
+		}
 
 
+	}
+	void OnTriggerExit2D( Collider2D other )
+	{
+
+		isPlayerOn = false;
+
+		
+		
 	}
 
 }
