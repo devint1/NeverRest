@@ -5,7 +5,6 @@ public class GameControl : MonoBehaviour {
 
 	public const float WHITE_BLOOD_CELL_FOOD_RATE = 0.05f;
 	public const float PLATELET_FOOD_RATE = 0.025f;
-	
 	private const float MAX_LEVEL_PROGRESS_SPEED = 10.0f;
 
 	public ArrayList selected;
@@ -34,9 +33,6 @@ public class GameControl : MonoBehaviour {
 
 	public Body body;
 
-	public float healthLevel = 1f;
-	public float foodLevel = 1f;
-
 	public bool toggleRBC = false;
 	public bool toggleWBC = true;
 	public bool changed = true;
@@ -61,9 +57,8 @@ public class GameControl : MonoBehaviour {
 	bool upgradeMenuOpen = false;
 
 	float levelProgressSpeed = 1.0f;
-	float levelProgress = 0f;
-
-	int levelDistance = 2000;
+	public float levelProgress = 0f;
+	public int levelDistance = 2000;
 
 	GameObject upgradeMenu;
 
@@ -236,8 +231,6 @@ public class GameControl : MonoBehaviour {
 		
 		GUI.TextArea (new Rect (25, 65, 125, 20), "Heart Rate");
 
-		GUI.TextArea (new Rect (25, 90, 125, 38), "Level Completion:\n" + (int)levelProgress + "/" + levelDistance + " ft");
-
 		// Display health bar
 		// Draw text if enabled
 		if (drawText) {
@@ -330,7 +323,7 @@ public class GameControl : MonoBehaviour {
 					selected.Remove(cell.gameObject);
 					Destroy (((WhiteBloodCell)(whiteBloodCells[i])).gameObject, 2);
 					whiteBloodCells.RemoveAt(i);
-					foodLevel += WHITE_BLOOD_CELL_FOOD_RATE * 0.8f;
+					//foodLevel += WHITE_BLOOD_CELL_FOOD_RATE * 0.8f;
 					i--;
 				}
 			}

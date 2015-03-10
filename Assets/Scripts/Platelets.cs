@@ -62,7 +62,6 @@ public class Platelets : MonoBehaviour {
 		}
 
 		if (Time.time - spawnTime > 120) {
-			gameControl.foodLevel += 0.8f * GameControl.PLATELET_FOOD_RATE;
 			gameControl.selected.Remove (this.gameObject);
 			gameControl.platelets.Remove (this);
 			currentBlock.platelets.Remove(this);
@@ -92,7 +91,6 @@ public class Platelets : MonoBehaviour {
 					woundToAttack.plateletsCount++;
 					woundToAttack.plateletArrivalTime = Time.time;
 				}
-				gameControl.foodLevel += 0.8f * GameControl.PLATELET_FOOD_RATE;
 				gameControl.selected.Remove (this.gameObject);
 				gameControl.platelets.Remove (this);
 				currentBlock.platelets.Remove(this);

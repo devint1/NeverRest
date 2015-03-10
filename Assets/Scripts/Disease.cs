@@ -24,7 +24,6 @@ public class Disease : MonoBehaviour {
 		
 		StartCoroutine(MoveCycle());
 		StartCoroutine(DuplicateCycle());
-		StartCoroutine(DamageHeart());
 		
 		if(currentBlock != null)
 			currentBlock.diseases.Add (this);
@@ -116,15 +115,6 @@ public class Disease : MonoBehaviour {
 			}
 		}
 		
-	}
-	
-	IEnumerator DamageHeart() {
-		yield return new WaitForSeconds(1);
-		
-		if (!captured && currentBlock.blockType == BlockType.CHEST) {
-			gameControl.healthLevel -= heartHealthDamagePerSec;
-		}
-		StartCoroutine(DamageHeart());
 	}
 	
 	public void BeenCapturedBy(GameObject whiteBloodCell) {
