@@ -245,12 +245,10 @@ public class GameControl : MonoBehaviour {
 	}
 
 	void Update() {
-		if (rngManager != null) {
-			if (IsPaused () || showMenu || upgradeMenuOpen || tutorial.StopGameLogic ()) {
-					rngManager.isDisabled = true;
-			} else {
-					rngManager.isDisabled = false;
-			}
+		if (IsPaused () || showMenu || upgradeMenuOpen || tutorial.StopGameLogic ()) {
+				rngManager.isDisabled = true;
+		} else {
+				rngManager.isDisabled = false;
 		}
 
 		if (Input.GetKeyDown(KeyCode.Space)){
