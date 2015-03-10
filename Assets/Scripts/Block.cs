@@ -144,7 +144,7 @@ public class Block : MonoBehaviour {
 		if (showStats) {
 			Vector3 position = Camera.main.WorldToScreenPoint (StatsPoint.position);
 
-			GUI.TextArea(new Rect(position.x,Screen.height-position.y,98,55), "Health:    " +(int)(overallHealth*100) + "\nOxygen:  " + oxygenLevel*100 + "%" + "\nDiseases:" + diseases.Count);
+			GUI.TextArea(new Rect(position.x,Screen.height-position.y,98,75), "Health:    " +(int)(overallHealth*100) + "\nOxygen:  " + oxygenLevel*100 + "%" + "\nDiseases:" + diseases.Count + "\nClotted: " + !notClotted);
 		}
 	}
 	
@@ -179,7 +179,7 @@ public class Block : MonoBehaviour {
 	IEnumerator FireMouseClick()
 	{
 		if(dead) {
-			return false;
+			//return false;
 		}
 
 		if (!destMarkPrefab.activeSelf) {
