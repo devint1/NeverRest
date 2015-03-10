@@ -16,6 +16,8 @@ public class RandomEventManager : MonoBehaviour {
 	int numDiseasesSpawn = 3;
 	EventType dialogOpen = EventType.EVENT_TYPE_NONE;
 	Rect dialogRect = new Rect(750, 80, 250, 150);
+	bool diseaseWindowActivated = false;
+	bool woundedWindowActivated = false;
 
 	void Start () {
 		isDisabled = true;
@@ -25,10 +27,14 @@ public class RandomEventManager : MonoBehaviour {
 	void OnGUI() {
 		switch(dialogOpen) {
 		case EventType.EVENT_TYPE_DISEASE:
-			GUI.Window(0, dialogRect, SpawnDiseaseDialog, "Infection Disease!");
+			if(!diseaseWindowActivated) {
+				GUI.Window(0, dialogRect, SpawnDiseaseDialog, "Infectious Disease!");
+			}
 			break;
 		case EventType.EVENT_TYPE_WOUND:
-			GUI.Window(0, dialogRect, SpawnWoundDialog, "Wounded!");
+			if(!woundedWindowActivated) {
+				GUI.Window(0, dialogRect, SpawnWoundDialog, "Wounded!");
+			}
 			break;
 		}
 	}
@@ -68,7 +74,8 @@ public class RandomEventManager : MonoBehaviour {
 		newWoundScript.block = randomBodyPart;
 		randomBodyPart.wounds.Add (newWound.GetComponent<Wound>());
 		dialogOpen = EventType.EVENT_TYPE_WOUND;
-		gameControl.TogglePauseGame ();
+		if(!woundedWindowActivated)
+			gameControl.TogglePauseGame ();
 	}
 
 	void SpawnDiseaseInfection() {
@@ -86,7 +93,8 @@ public class RandomEventManager : MonoBehaviour {
 
 		numDiseasesSpawn += 3;
 		dialogOpen = EventType.EVENT_TYPE_DISEASE;
-		gameControl.TogglePauseGame();
+		if(!diseaseWindowActivated)
+			gameControl.TogglePauseGame();
 	}
 
 	void SpawnDiseaseDialog(int windowID) {
@@ -94,6 +102,7 @@ public class RandomEventManager : MonoBehaviour {
 		if (GUI.Button(new Rect(100, 125, 50, 20), "OK")) {
 			dialogOpen = EventType.EVENT_TYPE_NONE;
 			gameControl.TogglePauseGame();
+			diseaseWindowActivated = true;
 		}
 	}
 
@@ -102,6 +111,7 @@ public class RandomEventManager : MonoBehaviour {
 		if (GUI.Button(new Rect(100, 125, 50, 20), "OK")) {
 			dialogOpen = EventType.EVENT_TYPE_NONE;
 			gameControl.TogglePauseGame();
+			woundedWindowActivated = true;
 		}
 	}
 }
