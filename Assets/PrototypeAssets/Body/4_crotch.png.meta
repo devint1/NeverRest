@@ -1,0 +1,168 @@
+fileFormatVersion: 2
+guid: 4d5504c76e6e481479d46493b80f1535
+TextureImporter:
+  fileIDToRecycleName:
+    21300000: 4_crotch_0
+    21300002: 4_crotch_1
+    21300004: 4_crotch_2
+    21300006: 4_crotch_3
+    21300008: 4_crotch_4
+    21300010: 4_crotch_5
+    21300012: 4_crotch_6
+    21300014: 4_crotch_7
+    21300016: 4_crotch_8
+    21300018: 4_crotch_9
+    21300020: 4_crotch_10
+  serializedVersion: 2
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 1
+    linearTexture: 0
+    correctGamma: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: .25
+    normalMapFilter: 0
+  isReadable: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 0
+  seamlessCubemap: 0
+  textureFormat: -1
+  maxTextureSize: 1024
+  textureSettings:
+    filterMode: -1
+    aniso: 16
+    mipBias: -1
+    wrapMode: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: .5, y: .5}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spritePixelsToUnits: 100
+  alphaIsTransparency: 1
+  textureType: 8
+  buildTargetSettings: []
+  spriteSheet:
+    sprites:
+    - name: 4_crotch_0
+      rect:
+        serializedVersion: 2
+        x: 16
+        y: 610
+        width: 397
+        height: 214
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: 4_crotch_1
+      rect:
+        serializedVersion: 2
+        x: 451
+        y: 610
+        width: 397
+        height: 214
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: 4_crotch_2
+      rect:
+        serializedVersion: 2
+        x: 880
+        y: 610
+        width: 397
+        height: 214
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: 4_crotch_3
+      rect:
+        serializedVersion: 2
+        x: 1312
+        y: 610
+        width: 397
+        height: 214
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: 4_crotch_4
+      rect:
+        serializedVersion: 2
+        x: 19
+        y: 328
+        width: 397
+        height: 213
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: 4_crotch_5
+      rect:
+        serializedVersion: 2
+        x: 451
+        y: 328
+        width: 397
+        height: 213
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: 4_crotch_6
+      rect:
+        serializedVersion: 2
+        x: 880
+        y: 328
+        width: 397
+        height: 213
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: 4_crotch_7
+      rect:
+        serializedVersion: 2
+        x: 1312
+        y: 328
+        width: 397
+        height: 213
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: 4_crotch_8
+      rect:
+        serializedVersion: 2
+        x: 19
+        y: 36
+        width: 397
+        height: 215
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: 4_crotch_9
+      rect:
+        serializedVersion: 2
+        x: 451
+        y: 36
+        width: 397
+        height: 215
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: 4_crotch_10
+      rect:
+        serializedVersion: 2
+        x: 880
+        y: 36
+        width: 397
+        height: 215
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+  spritePackingTag: 
+  userData: 

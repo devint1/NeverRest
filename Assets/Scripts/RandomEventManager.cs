@@ -58,9 +58,7 @@ public class RandomEventManager : MonoBehaviour {
 			// FindSupplies();
 			// BreakLeg();
 		}
-		else{
-			waitFor = 0f;
-		}
+
 		yield return new WaitForSeconds(waitFor);
 		StartCoroutine(RandomEventCycle());
 	}
