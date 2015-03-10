@@ -2,11 +2,13 @@
 using System.Collections;
 
 public class EventControl : MonoBehaviour {
-	public PointControl point;
+	public Vector2 pointPos;
+	public Map map;
 	//public class WinCon{};
-	enum EventType { EVENT_TYPE_NONE, EVENT_TYPE_SHOP, EVENT_TYPE_DISEASE, EVENT_TYPE_PEACE }
+	public enum PointType { POINT_TYPE_NONE, POINT_TYPE_EXIT, POINT_TYPE_SHOP, POINT_TYPE_DISEASE, POINT_TYPE_PEACE }
 	Rect dialogRect = new Rect(750, 80, 250, 150);
-	EventType dialogOpen = EventType.EVENT_TYPE_NONE;
+	public PointType dialogOpen = PointType.POINT_TYPE_NONE;
+
 	// Use this for initialization
 	void Start () {
 	
@@ -30,34 +32,46 @@ public class EventControl : MonoBehaviour {
 	}
 	void OnGUI() {
 		switch(dialogOpen) {
-		case EventType.EVENT_TYPE_DISEASE:
-			GUI.Window(0, dialogRect, SpawnDiseaseDialog, "Infection Disease!");
+		case PointType.POINT_TYPE_EXIT:
+
 			break;
-		case EventType.EVENT_TYPE_PEACE:
-			GUI.Window(0, dialogRect, SpawnPeaceDialog, "All is Calm!");
+
+		case PointType.POINT_TYPE_DISEASE:
+
+			//GUI.Window(0, dialogRect, SpawnDiseaseDialog, "Infection Disease!");
 			break;
-		case EventType.EVENT_TYPE_SHOP:
-			GUI.Window(0, dialogRect, SpawnShopDialog, "Shop!");
+		case PointType.POINT_TYPE_PEACE:
+			//GUI.Window(0, dialogRect, SpawnPeaceDialog, "All is Calm!");
+
+				;
+			break;
+		case PointType.POINT_TYPE_SHOP:
+
+				GUI.Window(0, dialogRect, SpawnShopDialog, "Shop!");
+				//Debug.Log("Open Shop");
 			break;
 		}
 	}
-	public static	void SpawnShopDialog(int windowID){
-		GUI.TextArea (new Rect (0, 20, 250, 100), "You visit a shop");
+	void SpawnShopDialog(int windowID){
+		dialogRect =new Rect(750, 80, 400, 400);
+		//GUI.TextArea (new Rect (0, 20, 250, 100), "Buy Buy Buy");
+
+		//GUI.Box(new Rect(10, 20, 100, 90), "Inventory");
 		if (GUI.Button(new Rect(100, 125, 50, 20), "OK")) {
-			dialogOpen = EventType.EVENT_TYPE_NONE;
-			}
+			dialogOpen = PointType.POINT_TYPE_NONE; 
+		}
 	}
 
-	public static void SpawnDiseaseDialog(int windowID) {
+	void SpawnDiseaseDialog(int windowID) {
 		GUI.TextArea (new Rect (0, 20, 250, 100), "Ahhhh! An infectious bacteria has managed to get inside your body! Quick! Orchestrate the proper response of bodily functions to stop the infection before it spreads out of control!");
 		if (GUI.Button(new Rect(100, 125, 50, 20), "OK")) {
-			dialogOpen = EventType.EVENT_TYPE_NONE; 
+			//dialogOpen = PointType.POINT_TYPE_NONE; 
 		}
 	}
-	public static void SpawnPeaceDialog(int windowID) {
+	void SpawnPeaceDialog(int windowID) {
 		GUI.TextArea (new Rect (0, 20, 250, 100), "Peaceful nothing happens");
 		if (GUI.Button(new Rect(100, 125, 50, 20), "OK")) {
-			dialogOpen = EventType.EVENT_TYPE_NONE; 
+			//dialogOpen = PointType.POINT_TYPE_NONE; 
 		}
 	}
 }

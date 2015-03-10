@@ -5,11 +5,11 @@ public class PointControl : MonoBehaviour {
 	public int x,y;
 	public bool visited = false;
 	public bool isSelected = false;
-	public PlayerControl player;
 	public Map map;
 	public bool isExit = false;
 	public bool isShop = false;
 	public bool isPlayerOn = false;
+	public EventControl events; 
 	private LineRenderer line; 
 	// Use this for initialization
 	void Start () {
@@ -41,26 +41,25 @@ public class PointControl : MonoBehaviour {
 		//this.isSelected = true;
 		 
 		if (Input.GetMouseButtonDown (1)) {
-			//Debug.Log (" point is selected ");
+			//move player
 			map.pointPos = this.transform.position;
-			map.isPointSelected =true;
-			if (isExit){
-
-				// call win condiction if they get to exit
-				EventControl.WinCon();
-
-
-			}
-
-			//Debug.Log ("gaME obj " + gameObject.name);
-		}
-	
+			map.isPointSelected = true;
+		}	
 	} 
 	void OnTriggerEnter2D( Collider2D other )
 	{
 		if (other.gameObject.tag == "Player") {
 			visited = true;
 			isPlayerOn = true;
+			if (isShop){
+				events.pointPos = gameObject.transform.position;
+				events.dialogOpen = EventControl.PointType.POINT_TYPE_SHOP;
+			}
+			else if (isExit){
+				EventControl.WinCon();
+			}
+
+
 		}
 
 
