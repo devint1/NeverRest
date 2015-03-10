@@ -49,7 +49,7 @@ public class Tutorial : MonoBehaviour {
 			text.SetPixel (1, 1, col);
 			text.Apply ();
 			GUI.DrawTexture (box, text);
-			GUI.TextArea (new Rect (Screen.width/2 - 125, Screen.height/2 -50, 250, 100), "Multiple cells can be selected at a time by clicking and dragging around them. \nSelect both of the cells in the chest now.");
+			GUI.TextArea (new Rect (Screen.width/2 - 125, Screen.height/2 -50, 250, 100), "Multiple cells can be selected at a time by clicking and dragging around them.\nOnce selected, cells can be ordered to move by right clicking the desired location. \nSelect both of the cells in the chest now.");
 			if (gC.selected.Count >= 2){
 				currentState = TutorialStates.State.Done;
 			}

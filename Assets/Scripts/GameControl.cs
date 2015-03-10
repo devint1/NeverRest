@@ -223,11 +223,11 @@ public class GameControl : MonoBehaviour {
 		rbcSpeed = (int)GUI.HorizontalSlider(new Rect(25, 50, 125, 30), rbcSpeed, 1.0F, 10.0F);
 		
 		// Display wihte blood cell production status
-		if (whiteBloodProduction > 0) {
+		/*if (whiteBloodProduction > 0) {
 			GUI.TextArea (new Rect (25, 133, 125, 20), "1 per " + 30 / whiteBloodProduction + " seconds");
 		} else {
 			GUI.TextArea (new Rect (25, 133, 125, 20), "Production off");
-		}
+		}*/
 		
 		GUI.TextArea (new Rect (25, 65, 125, 20), "Heart Rate");
 
