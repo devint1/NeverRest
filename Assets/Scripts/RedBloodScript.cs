@@ -4,6 +4,7 @@ using System.Collections;
 public class RedBloodScript : MonoBehaviour {
 	public Block currentBlock;		//block cell is currently in
 	public Block origBlock;			//block the red blood cell originates from, aka target block
+	public Block prevBlock;			//block the cell was in
 	public Block heartBlock;		//pointer to the heart
 	public GameControl gameControl;
 	public bool returnToHeart;		//set to true if on path back to heart, false otherwise
@@ -20,7 +21,7 @@ public class RedBloodScript : MonoBehaviour {
 	
 	// Use this for initialization
 	void Start () {
-		
+		prevBlock = currentBlock;
 	}
 
 	void SpawnRBC() {
@@ -30,6 +31,7 @@ public class RedBloodScript : MonoBehaviour {
 			newRBC.renderer.transform.localScale = new Vector3(.1f,.1f,.1f);
 			RedBloodScript newRedScript = newRBC.GetComponent<RedBloodScript> ();
 			newRedScript.currentBlock = heartBlock;
+			newRedScript.prevBlock = newRedScript.currentBlock;
 			newRedScript.destination = gameControl.redBloodSpawnPoint.GetRandomPoint ();
 			newRedScript.origBlock = origBlock;
 			newRedScript.destBlock = newRedScript.origBlock;
@@ -70,7 +72,7 @@ public class RedBloodScript : MonoBehaviour {
 		else
 			this.renderer.material.SetColor("_Color", new Color(255.0f / 255.0f,0.0f,0.0f));
 
-		if (!currentBlock.notClotted)
+		if (!(prevBlock.notClotted))
 			speed = gameControl.rbcSpeed / 1000.0f;
 		else
 			speed = gameControl.rbcSpeed / 250.0f;
@@ -83,6 +85,8 @@ public class RedBloodScript : MonoBehaviour {
 				foreach (ExitPoint exitPoint in currentBlock.GetExitPoints()) {
 					if( ExitPointLeadsToDestination(exitPoint.gameObject, destBlock, currentBlock) ) {
 						destination = exitPoint.gameObject.transform.position;
+						if (currentBlock)
+							prevBlock = currentBlock;
 						currentBlock = exitPoint.nextBlock;
 						break;
 					}
