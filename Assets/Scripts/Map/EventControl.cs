@@ -6,7 +6,7 @@ public class EventControl : MonoBehaviour {
 	//public class WinCon{};
 	enum EventType { EVENT_TYPE_NONE, EVENT_TYPE_SHOP, EVENT_TYPE_DISEASE, EVENT_TYPE_PEACE }
 	Rect dialogRect = new Rect(750, 80, 250, 150);
-	EventType dialogOpen = EventType.EVENT_TYPE_NONE;
+	static EventType dialogOpen = EventType.EVENT_TYPE_NONE;
 	// Use this for initialization
 	void Start () {
 	
@@ -41,7 +41,7 @@ public class EventControl : MonoBehaviour {
 			break;
 		}
 	}
-	public static	void SpawnShopDialog(int windowID){
+	public static void SpawnShopDialog(int windowID){
 		GUI.TextArea (new Rect (0, 20, 250, 100), "You visit a shop");
 		if (GUI.Button(new Rect(100, 125, 50, 20), "OK")) {
 			dialogOpen = EventType.EVENT_TYPE_NONE;
