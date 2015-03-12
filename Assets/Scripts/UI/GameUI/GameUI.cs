@@ -9,12 +9,15 @@ public class GameUI : MonoBehaviour {
 	public GameObject PCImage;
 	public GameControl gC;
 	public GameObject PauseImage;
+	public Text WBCQueue;
+	public Text PCQueue;
+	public int maxQueueSize;
 
 	static float WBC_DEFAULT_BUILDTIME = 5.0f;
 	static float PLAT_DEFAULT_BUILDTIME = 5.0f;
 	static float WBC_DEFAULT_COST = 100f;
 	static float PLAT_DEFAULT_COST = 100f;
-	static float DEFAULT_ENERGY_GAINED_PER_TICK = 2;
+	static float DEFAULT_ENERGY_GAINED_PER_TICK = 1;
 	static float DEFAULT_MAX_ENERGY = 2000f;
 	static float TIME_SLICE = .125f;
 
@@ -23,6 +26,8 @@ public class GameUI : MonoBehaviour {
 
 	int numWBCBuilding;
 	int numPCBuilding;
+	int numWBCQueue;
+	int numPCQueue;
 
 	ArrayList WBCSlots;
 	ArrayList PCSlots;
@@ -45,14 +50,37 @@ public class GameUI : MonoBehaviour {
 		else{
 			PauseImage.SetActive (false);
 		}
-		energyStatus.text = (int)currentEnergy + "/" + DEFAULT_MAX_ENERGY;
-		if (Input.GetKeyDown (KeyCode.Q)) {
-			numWBCBuilding += 1;
+
+		if (numWBCBuilding < maxQueueSize && numWBCQueue > 0) {
+			numWBCBuilding++;
+			WBCQueue.text = "" + (--numWBCQueue);
 			StartCoroutine(GenerateWBC());
 		}
-		else if (Input.GetKeyDown (KeyCode.W)) {
-			numPCBuilding += 1;
+		
+		if (numPCBuilding < maxQueueSize && numPCQueue > 0) {
+			numPCBuilding++;
+			PCQueue.text = "" + (--numPCQueue);
 			StartCoroutine(GeneratePC());
+		}
+
+		energyStatus.text = (int)currentEnergy + "/" + DEFAULT_MAX_ENERGY;
+		if (Input.GetKeyDown (KeyCode.Q)) {
+			if(numWBCBuilding < maxQueueSize) {
+				numWBCBuilding += 1;
+				StartCoroutine(GenerateWBC());
+			}
+			else {
+				WBCQueue.text = "" + (++numWBCQueue);
+			}
+		}
+		else if (Input.GetKeyDown (KeyCode.W)) {
+			if(numPCBuilding < maxQueueSize) {
+				numPCBuilding += 1;
+				StartCoroutine(GeneratePC());
+			}
+			else {
+				PCQueue.text = "" + (++numPCQueue);
+			}
 		}
 	}
 
@@ -170,5 +198,21 @@ public class GameUI : MonoBehaviour {
 
 	public void SetPauseAlphaLow (Image i){
 		i.CrossFadeAlpha (.05f, .5f, true);
+	}
+
+	public void incrWBCQueue() {
+		WBCQueue.text = "" + (++numWBCQueue);
+	}
+	public void decrWBCQueue() {
+		if(numWBCQueue > 0)
+			WBCQueue.text = "" + (--numWBCQueue);
+	}
+
+	public void incrPCQueue() {
+		PCQueue.text = "" + (++numPCQueue);
+	}
+	public void decrPCQueue() {
+		if(numPCQueue > 0)
+			PCQueue.text = "" + (--numPCQueue);
 	}
 }
