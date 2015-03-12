@@ -88,6 +88,7 @@ public class GameControl : MonoBehaviour {
 			RedBloodScript newRedScript = newRBC.GetComponent<RedBloodScript> ();
 			newRBC.renderer.transform.localScale = new Vector3(.6f,.6f,.6f);
 			newRedScript.currentBlock = redBloodSpawnPoint;
+			newRedScript.prevBlock = redBloodSpawnPoint;
 			newRedScript.destination = redBloodSpawnPoint.GetRandomPoint ();
 			newRedScript.origBlock = body.GetBodyPart((numRBCs - i) / (numRBCs / body.blocks.Count));
 			newRedScript.destBlock = newRedScript.origBlock;
@@ -101,6 +102,7 @@ public class GameControl : MonoBehaviour {
 			GameObject newRBC = (GameObject)Instantiate (redBloodCellPrefab, new Vector3(randpt.x, randpt.y, 1.0f), this.transform.rotation);
 			RedBloodScript newRedScript = newRBC.GetComponent<RedBloodScript> ();
 			newRBC.renderer.transform.localScale = new Vector3(.6f,.6f,.6f);
+			newRedScript.prevBlock = newRedScript.currentBlock;
 			newRedScript.currentBlock = body.GetBodyPart((numRBCs - i) / (numRBCs / body.blocks.Count));
 			newRedScript.destination = body.GetBodyPart((numRBCs - i) / (numRBCs / body.blocks.Count)).GetRandomPoint ();
 			newRedScript.origBlock = body.GetBodyPart((numRBCs - i) / (numRBCs / body.blocks.Count));
@@ -258,13 +260,11 @@ public class GameControl : MonoBehaviour {
 	}
 
 	void Update() {
-		if (IsPaused() || showMenu || upgradeMenuOpen || tutorial.StopGameLogic()){
-			rngManager.isDisabled = true;
+		if (IsPaused () || showMenu || upgradeMenuOpen || tutorial.StopGameLogic ()) {
+				rngManager.isDisabled = true;
+		} else {
+				rngManager.isDisabled = false;
 		}
-		else{
-			rngManager.isDisabled = false;
-		}
-
 
 		if (Input.GetKeyDown(KeyCode.Space)){
 			TogglePauseGame();

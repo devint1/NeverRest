@@ -11,6 +11,7 @@ public class Map : MonoBehaviour {
 	public PlayerControl player;
 	public Transform playerStart, playerEnd;
 	public ArrayList vistedpoints;
+	public bool finishedEvent = true;
 	// Use this for initialization
 	void Start () {
 	
@@ -27,8 +28,10 @@ public class Map : MonoBehaviour {
 		// get mouse movement
 		mousePos = Camera.main.ScreenToWorldPoint (Input.mousePosition); 
 		
-		// if a point was clicked
-		if(isPointSelected && Vector2.Distance (player.transform.position,pointPos )< 3.2){
+		// if a point was clicked and point is moveable
+		//if(isPointSelected && Vector2.Distance (player.transform.position,pointPos )< 3.2){
+		//allowed to move any point for testing purposes
+ 		if(isPointSelected ){
 			while (Vector2.Distance (player.transform.position,pointPos ) >.03) {
 			//Debug.Log (" point : " + player.transform.position);
 				player.transform.position = Vector2.MoveTowards (new Vector2 (player.transform.position.x, player.transform.position.y), pointPos,  Time.deltaTime);
@@ -43,7 +46,7 @@ public class Map : MonoBehaviour {
 		if (Input.GetMouseButton (0)) {
 			//Debug.Log (Input.mousePosition);
 
-		} else if (Input.GetMouseButton (1) ) {
+		} else if (Input.GetMouseButton (1) && finishedEvent ) {
 			 
 			doMovement();
 

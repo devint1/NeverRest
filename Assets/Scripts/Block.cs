@@ -21,6 +21,7 @@ public class Block : MonoBehaviour {
 
 	private Vector3 mousePos;
 	private Tesselator tesselator;
+	private Animator animator;
 	private bool showStats = false;
 
 	public const int MAX_NUM_DISEASE_PER_BLOCK = 200;
@@ -36,6 +37,7 @@ public class Block : MonoBehaviour {
 		if (collider) {
 			tesselator = new Tesselator (collider.points);
 		}
+		animator = GetComponent<Animator>();
 	}
 
 	void Update() {
@@ -45,6 +47,15 @@ public class Block : MonoBehaviour {
 		if(dead) {
 			DestroyAllDiseases();
 			return;
+		}
+
+		// Handle animation states
+		if (animator != null) {
+			if(diseases.Count == 0 && wounds.Count == 0) {
+				animator.Play("Still");
+			} else {
+				animator.Play("Flashing");
+			}
 		}
 
 		//If vitals are mostly good, slowly increase health. Else, take damage
@@ -143,8 +154,11 @@ public class Block : MonoBehaviour {
 	void OnGUI(){
 		if (showStats) {
 			Vector3 position = Camera.main.WorldToScreenPoint (StatsPoint.position);
-
-			GUI.TextArea(new Rect(position.x,Screen.height-position.y,98,55), "Health:    " +(int)(overallHealth*100) + "\nOxygen:  " + oxygenLevel*100 + "%" + "\nDiseases:" + diseases.Count);
+			if (gameControl.toggleRBC) {
+				GUI.TextArea(new Rect(position.x,Screen.height-position.y,98,65), "Health:    " +(int)(overallHealth*100) + "\nOxygen:  " + oxygenLevel*100 + "%" + "\nDiseases:" + diseases.Count + "\nClotted: " + !notClotted);
+			} else {
+				GUI.TextArea(new Rect(position.x,Screen.height-position.y,98,55), "Health:    " +(int)(overallHealth*100) + "\nOxygen:  " + oxygenLevel*100 + "%" + "\nDiseases:" + diseases.Count);
+			}
 		}
 	}
 	
@@ -179,7 +193,7 @@ public class Block : MonoBehaviour {
 	IEnumerator FireMouseClick()
 	{
 		if(dead) {
-			return false;
+			//return false;
 		}
 
 		if (!destMarkPrefab.activeSelf) {
