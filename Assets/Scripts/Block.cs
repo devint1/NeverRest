@@ -154,8 +154,11 @@ public class Block : MonoBehaviour {
 	void OnGUI(){
 		if (showStats) {
 			Vector3 position = Camera.main.WorldToScreenPoint (StatsPoint.position);
-
-			GUI.TextArea(new Rect(position.x,Screen.height-position.y,98,75), "Health:    " +(int)(overallHealth*100) + "\nOxygen:  " + oxygenLevel*100 + "%" + "\nDiseases:" + diseases.Count + "\nClotted: " + !notClotted);
+			if (gameControl.toggleRBC) {
+				GUI.TextArea(new Rect(position.x,Screen.height-position.y,98,65), "Health:    " +(int)(overallHealth*100) + "\nOxygen:  " + oxygenLevel*100 + "%" + "\nDiseases:" + diseases.Count + "\nClotted: " + !notClotted);
+			} else {
+				GUI.TextArea(new Rect(position.x,Screen.height-position.y,98,55), "Health:    " +(int)(overallHealth*100) + "\nOxygen:  " + oxygenLevel*100 + "%" + "\nDiseases:" + diseases.Count);
+			}
 		}
 	}
 	
