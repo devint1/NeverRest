@@ -19,7 +19,6 @@ public class GameUI : MonoBehaviour {
 	static float TIME_SLICE = .125f;
 
 	float currentEnergy;
-	GameControl control;
 
 	int numWBCBuilding;
 	int numPCBuilding;

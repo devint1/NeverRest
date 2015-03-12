@@ -6,6 +6,7 @@ public class GameControl : MonoBehaviour {
 	public const float WHITE_BLOOD_CELL_FOOD_RATE = 0.05f;
 	public const float PLATELET_FOOD_RATE = 0.025f;
 	private const float MAX_LEVEL_PROGRESS_SPEED = 10.0f;
+	private const float MAX_ENERGY = 100.0f;
 
 	public ArrayList selected;
 	public ArrayList whiteBloodCells;
@@ -19,7 +20,7 @@ public class GameControl : MonoBehaviour {
 	public GameObject plateletPrefab;
 	public GameObject redBloodCellPrefab;
 
-	public Texture2D healthBarFull;
+	public Texture2D energyBarFull;
 	public Texture2D barEmpty;
 
 	public AudioClip backGroundMusic = null;
@@ -30,6 +31,7 @@ public class GameControl : MonoBehaviour {
 	public int whiteBloodProduction = 0;
 	public int plateletProduction = 0;
 	public int liveRBCs;
+	public float energy = 50f;
 
 	public Body body;
 
@@ -220,7 +222,7 @@ public class GameControl : MonoBehaviour {
 
 			} 
 		}
-		rbcSpeed = (int)GUI.HorizontalSlider(new Rect(25, 50, 125, 30), rbcSpeed, 1.0F, 10.0F);
+		rbcSpeed = (int)GUI.HorizontalSlider(new Rect(25, 55, 125, 30), rbcSpeed, 1.0F, 10.0F);
 		
 		// Display wihte blood cell production status
 		/*if (whiteBloodProduction > 0) {
@@ -229,9 +231,20 @@ public class GameControl : MonoBehaviour {
 			GUI.TextArea (new Rect (25, 133, 125, 20), "Production off");
 		}*/
 		
-		GUI.TextArea (new Rect (25, 65, 125, 20), "Heart Rate");
+		GUI.TextArea (new Rect (25, 70, 125, 20), "Heart Rate");
 
-		// Display health bar
+		// Display energy bar
+		// draw the background:
+		GUI.BeginGroup (new Rect (20, 10, 200, 40));
+		GUI.Box (new Rect (0,0, 200, 40), barEmpty);
+		
+		// draw the filled-in part:
+		GUI.BeginGroup (new Rect (0, 0, 200 * energy/100f, 40));
+		GUI.Box (new Rect (0,0, 200, 40),energyBarFull);
+		GUI.EndGroup ();
+		
+		GUI.EndGroup ();
+
 		// Draw text if enabled
 		if (drawText) {
 			GUI.DrawTexture (box, text);
