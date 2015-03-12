@@ -7,6 +7,7 @@ public class GameControl : MonoBehaviour {
 	public const float PLATELET_FOOD_RATE = 0.025f;
 	private const float MAX_LEVEL_PROGRESS_SPEED = 10.0f;
 	private const float MAX_ENERGY = 100.0f;
+	private const float ENERGY_RESTORE_PER_SECOND = 3.0f;
 
 	public ArrayList selected;
 	public ArrayList whiteBloodCells;
@@ -71,8 +72,8 @@ public class GameControl : MonoBehaviour {
 			temp.Play();
 		}
 
-		GameObject gameUI = (GameObject) Instantiate(Resources.Load("GameUI"), Vector3.zero, Quaternion.identity);
-		gameUI.GetComponent<GameUI>().gC = this;
+		//GameObject gameUI = (GameObject) Instantiate(Resources.Load("GameUI"), Vector3.zero, Quaternion.identity);
+		//gameUI.GetComponent<GameUI>().gC = this;
 
 		upgradeMenu = (GameObject) Instantiate(Resources.Load("UpgradeMenu"), Vector3.zero, Quaternion.identity);
 		upgradeMenu.SetActive(false);
@@ -241,10 +242,13 @@ public class GameControl : MonoBehaviour {
 		GUI.Box (new Rect (0,0, 200, 40), barEmpty);
 		
 		// draw the filled-in part:
-		GUI.BeginGroup (new Rect (0, 0, 200 * energy/100f, 40));
+		GUI.BeginGroup (new Rect (0, 0, 200f * energy/MAX_ENERGY, 40));
 		GUI.Box (new Rect (0,0, 200, 40),energyBarFull);
 		GUI.EndGroup ();
-		
+
+		// Energ level text
+		GUI.Label(new Rect(70, 10, 100, 20), "Energy: " + (int)energy);
+
 		GUI.EndGroup ();
 
 		// Draw text if enabled
@@ -309,6 +313,11 @@ public class GameControl : MonoBehaviour {
 		if (Input.GetKeyDown (KeyCode.V)) {
 			toggleWBC = !toggleWBC;
 			wbcChanged = false;
+		}
+
+		// Restore Energy
+		if (energy < MAX_ENERGY) {
+			energy += ENERGY_RESTORE_PER_SECOND * Time.deltaTime;
 		}
 
 		// Check lose condition
