@@ -96,32 +96,35 @@ public class Block : MonoBehaviour {
 				animator.Play("Flashing");
 			}
 		}
-
-		//If vitals are mostly good, slowly increase health. Else, take damage
-		if(oxygenLevel >= 0.75f && temperaturePercent >= 0.75f && diseases.Count == 0 && wounds.Count == 0 && overallHealth <= 1.0) {
-			overallHealth += HEALH_REGENERATION * Time.deltaTime;
-		}
-		else {
-			if(oxygenLevel < 0.75f){
-				overallHealth -= (NO_OXYGEN_DAMAGE*(1.0f-oxygenLevel)) * Time.deltaTime;
+		if (!gameControl.isPause) {
+			//If vitals are mostly good, slowly increase health. Else, take damage
+			if (oxygenLevel >= 0.75f && temperaturePercent >= 0.75f && diseases.Count == 0 && wounds.Count == 0 && overallHealth <= 1.0) {
+				overallHealth += HEALH_REGENERATION * Time.deltaTime;
+			} else {
+				if (oxygenLevel < 0.75f) {
+					overallHealth -= (NO_OXYGEN_DAMAGE * (1.0f - oxygenLevel)) * Time.deltaTime;
+				}
+				if (temperaturePercent < 0.75f) {
+					overallHealth -= (COLD_DAMAGE * (1.0f - temperaturePercent)) * Time.deltaTime;
+				}
+				overallHealth -= DAMAGE_PER_DISEASE * diseases.Count * Time.deltaTime;
+				overallHealth -= DAMAGE_PER_WOUND * wounds.Count * Time.deltaTime;
 			}
-			if(temperaturePercent < 0.75f){
-				overallHealth -= (COLD_DAMAGE*(1.0f-temperaturePercent)) * Time.deltaTime;
+
+			if (overallHealth <= 0) {
+				overallHealth = 0.0f;
+				oxygenLevel = 0.0f; 
+				temperaturePercent = 0.0f;
+				dead = true;
 			}
-			overallHealth -= DAMAGE_PER_DISEASE * diseases.Count * Time.deltaTime;
-			overallHealth -= DAMAGE_PER_WOUND * wounds.Count * Time.deltaTime;
-		}
 
-		if(overallHealth <= 0) {
-			overallHealth = 0.0f;
-			oxygenLevel = 0.0f; 
-			temperaturePercent = 0.0f;
-			dead = true;
-		}
+			foreach (Wound wound in wounds) {
+				 
+					wound.health -= WOUND_HEAL_PER_PLATELET * wound.plateletsCount * Time.deltaTime;
+					//Debug.Log(wound.health);
+			 
 
-		foreach(Wound wound in wounds) {
-			wound.health -= WOUND_HEAL_PER_PLATELET * wound.plateletsCount * Time.deltaTime;
-			/*
+				/*
 			if (Time.time - wound.plateletArrivalTime > Wound.PLATELETE_INEFFECTIVENES_TIME) {
 				wound.plateletsCount = wound.plateletsCount > 0 ? wound.plateletsCount - 1 : 0;
 			}
@@ -149,6 +152,7 @@ public class Block : MonoBehaviour {
 				}
 			}
 			*/
+			}
 		}
 	}
 

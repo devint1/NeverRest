@@ -42,7 +42,7 @@ public class GameControl : MonoBehaviour {
 	public bool wbcChanged = true;
 	public bool isSelected = false;
 	public bool showMenu = false;
-
+	public bool isPause = false;
 	public Tutorial tutorial;
 	public RandomEventManager rngManager;
 
@@ -276,6 +276,7 @@ public class GameControl : MonoBehaviour {
 		if (Input.GetKeyDown(KeyCode.Space)){
 			TogglePauseGame();
 			showMenu = false;
+			isPause = !isPause;
 		}
 
 		if( tutorial.StopGameLogic() ){
