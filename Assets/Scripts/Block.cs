@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using ClipperLib;
 
 public enum BlockType { CHEST, LIMB, OTHER }
 
@@ -31,11 +32,49 @@ public class Block : MonoBehaviour {
 	private const float NO_OXYGEN_DAMAGE = 0.03f;
 	private const float DAMAGE_PER_WOUND = 0.01f;
 	private const float WOUND_HEAL_PER_PLATELET = 0.15f;
-	
+
+
+	void ShrinkPolygon(double scale, ref PolygonCollider2D poly){
+		List<IntPoint> subj;
+		List<List<IntPoint>> solution = new List<List<IntPoint>>();
+		ClipperOffset co = new ClipperOffset();
+		Vector2[] path;
+		Vector2 tempPoint;
+		int pathNdx = 0;
+		int pointNdx = 0;
+
+		for (int ndx = 0; ndx < poly.pathCount; ndx++) {
+			subj = new List<IntPoint>();
+			foreach (Vector2 point in poly.GetPath(0)){
+				subj.Add( new IntPoint( point.x * 1000, point.y * 1000 ));
+			}
+			co.AddPath (subj, JoinType.jtMiter, EndType.etClosedPolygon);
+		}
+		co.Execute (ref solution, scale);
+
+		foreach (List<IntPoint> list in solution) {
+			path = new Vector2[solution[pathNdx].Count];
+			pointNdx = 0;
+			foreach (IntPoint point in list){
+				tempPoint = new Vector2();
+				tempPoint.x = (float) point.X / 1000;
+				tempPoint.y = (float) point.Y / 1000;
+				path.SetValue( tempPoint, pointNdx );
+				pointNdx++;
+			}
+			poly.SetPath( pathNdx, path );
+			pathNdx++;
+		}
+	}
+
 	void Start() {
+		Vector2[] points;
 		var collider = this.GetComponent<PolygonCollider2D> ();
 		if (collider) {
+			points = collider.points;
+			ShrinkPolygon (-200, ref collider);
 			tesselator = new Tesselator (collider.points);
+			collider.points = points;
 		}
 		animator = GetComponent<Animator>();
 	}

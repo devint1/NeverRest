@@ -76,7 +76,7 @@ public class RandomEventManager : MonoBehaviour {
 			gameControl.TogglePauseGame ();
 	}
 
-	void SpawnDiseaseInfection() {
+	public void SpawnDiseaseInfection() {
 		int randomBodyPart = Random.Range (0, body.blocks.Count);
 		Vector3 spawnPoint = body.blocks[randomBodyPart].GetRandomPoint();
 

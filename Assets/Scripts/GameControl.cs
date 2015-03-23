@@ -264,6 +264,9 @@ public class GameControl : MonoBehaviour {
 	}
 
 	void Update() {
+		if( Input.GetKeyDown( KeyCode.F8 )){
+			rngManager.SpawnDiseaseInfection();
+		}
 		if (IsPaused () || showMenu || upgradeMenuOpen || tutorial.StopGameLogic ()) {
 				rngManager.isDisabled = true;
 		} else {
