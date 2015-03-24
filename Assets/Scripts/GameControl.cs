@@ -43,6 +43,7 @@ public class GameControl : MonoBehaviour {
 	public bool isSelected = false;
 	public bool showMenu = false;
 	public bool isPause = false;
+	public bool firstMouse = false;
 	public Tutorial tutorial;
 	public RandomEventManager rngManager;
 
@@ -208,6 +209,10 @@ public class GameControl : MonoBehaviour {
 			mouseDown = false;
 			mousePositionStart.x = 0;
 			mousePositionStart.y = 0;
+		}
+
+		if (Input.GetMouseButton (1) && !firstMouse) {
+			firstMouse = true;
 		}
 	}
 
