@@ -6,24 +6,37 @@ public class WhiteBloodCell : MonoBehaviour {
 	public GameControl gameControl;
 	public bool isSelected = false;
 	public bool destroyMe = false;
-	public Block destBlock = null; // Block the cell is moving to
 	public AudioClip spawnSound =  null;
+	public float speed = 0.0075f;
+	public Vector3 destination; //Point, Exitpoint, or disease that WhiteBloodCell is moving towards right now
 	
-	const float SPEED = 0.005f;
 	const int MAX_DISEASE_ABSORBED = 8;
 	
 	int diseasesabsorbed = 0;
-	public GameObject headingToward; //Point, Exitpoint, or disease that WhiteBloodCell is moving towards right now
+	Block destBlock = null; // Block the cell is moving to
+	Block nextBlock = null;
+	bool destChanged = false;
+	Vector2 userDest;
+	bool hasUserDest; //Need to use this since userDest cannot = null
+	ArrayList capture = new ArrayList ();
 
 	public void Start(){
+		nextBlock = currentBlock;
 		AudioSource temp = gameObject.AddComponent<AudioSource> ();
 		temp.clip = spawnSound;
 		temp.Play ();
 	}
 
+	public void SetDestination(Block dest, Vector2 coords){
+		destBlock = dest;
+		destChanged = true;
+		userDest = coords;
+		hasUserDest = true;
+	}
+
 	public void Select(){
 		if(!isSelected){
-			gameControl.selected.Add (this);
+			gameControl.selected.Add (this.gameObject);
 			gameObject.renderer.material.color = Color.blue;
 		}
 		isSelected = true;
@@ -32,7 +45,6 @@ public class WhiteBloodCell : MonoBehaviour {
 	public void DeSelect() {
 		if(isSelected) {
 			gameObject.renderer.material.color = Color.white;
-			//game_Control.selected.Remove (this);
 		}
 		isSelected = false;
 	}
@@ -45,70 +57,98 @@ public class WhiteBloodCell : MonoBehaviour {
 			DeSelect();
 		}
 	}
-	
-	// Running into a disease: Initiate the process of sucking it in
-	void OnTriggerEnter2D(Collider2D collidable) {
-		if (collidable.gameObject.tag != "Disease")
-			return;
-		
-		var diseaseScript = collidable.gameObject.GetComponent<Disease>();
-		if (!diseaseScript.captured) {
-			diseaseScript.BeenCapturedBy(this.gameObject);
-			diseasesabsorbed++;
-			--gameControl.numDiseaseCells;
-			if (diseasesabsorbed >= MAX_DISEASE_ABSORBED) {
-				//Destroy (this.gameObject, 2.0f);
-				destroyMe = true;
+
+	void HandleCapturedDiseases () {
+		foreach (Disease disease in capture) {
+			if(!disease.removedFromCell){
+				disease.removedFromCell = true;
+				disease.currentBlock.diseases.Remove(this);
 			}
-		} else {
-			return;
+		}
+
+		if (diseasesabsorbed >= MAX_DISEASE_ABSORBED) {
+			destroyMe = true;
 		}
 	}
-	
+
 	// Movement Code
 	void Update () {
-		//If we are not in our desination block and not on the way to ExitPoint then get to proper exit point
-		if (destBlock && destBlock != currentBlock && headingToward.tag != "ExitPoint") {
-			foreach(Transform exitPoint in currentBlock.exitPoints) {
-				if( ExitPointLeadsToDestination(exitPoint.gameObject, destBlock, currentBlock) ) {
-					headingToward = exitPoint.gameObject;
-					break;
+		if( gameControl.IsPaused() ){
+			return;
+		}
+		HandleCapturedDiseases ();
+		
+		if (this.speed != gameControl.rbcSpeed) {
+			this.speed = gameControl.rbcSpeed / 250.0f;
+		}
+		
+		if (!gameControl.toggleWBC)
+			this.renderer.enabled = false;
+		else
+			this.renderer.enabled = true;
+
+		if (!currentBlock.notClotted)
+			speed = gameControl.rbcSpeed / 1000.0f;
+		else
+			speed = gameControl.rbcSpeed / 250.0f;
+
+		//If we are at current way point or the destination has been changed
+		if (Vector2.Distance (destination, this.transform.position) < .03 || destChanged) {
+			// Need to replace old destination with new one by setting nextBlock = currentBlock,
+			// otherwise the cells will try to move to old block's exitPoint first
+			if (destChanged) {
+				nextBlock = currentBlock;
+				destChanged = false;
+			}
+			//If we have arrived at our exit node, our next node should be the next cells entrance node
+			//Dest change is to check if it was a destchange request or we reach current node
+			//Otherwise if we are not in the correct block we need to find the next exit
+			if (destBlock && destBlock != nextBlock) {
+				foreach (ExitPoint exitPoint in nextBlock.GetExitPoints()) {
+					if( ExitPointLeadsToDestination(exitPoint.gameObject, destBlock, nextBlock) ) {
+						destination = exitPoint.gameObject.transform.position;
+						nextBlock = exitPoint.nextBlock;
+						break;
+					}
 				}
 			}
-		}
-		
-		//If cell has reached is destination
-		if ( (headingToward.transform.position - this.transform.position).magnitude < 0.07) {
-			
-			//We just reached a waypoint. Choose next destination.
-			if(headingToward.tag == "ExitPoint") {
-				ExitPoint exitPoint = headingToward.GetComponent<ExitPoint>();
-				currentBlock = exitPoint.nextBlock;
-				headingToward = exitPoint.entrancePoint;
+			//If we are in the correct block we need to go to users click
+			else if (hasUserDest){
+				destination = (Vector3)userDest;
+				hasUserDest = false;
 			}
-			else {
-				headingToward = currentBlock.GetRandomPoint();
+			//Last option is going to a random waypoint
+			else{
+				destination = nextBlock.GetRandomPoint();
 			}
 		}
-		
-		Vector3 directionToDestination = (headingToward.transform.position - this.transform.position).normalized;
-		
-		this.transform.position = new Vector3 ((directionToDestination.x * SPEED) + this.transform.position.x,
-		                                       (directionToDestination.y * SPEED) + this.transform.position.y,
+
+		Vector2 directionToDestination = ((Vector2)destination - (Vector2)this.transform.position).normalized;			
+		this.transform.position = new Vector3 ((directionToDestination.x * speed) + this.transform.position.x,
+		                                       (directionToDestination.y * speed) + this.transform.position.y,
 		                                       this.transform.position.z);
-		
-		// Check to see if cell is at destination block
-		if (destBlock) {
-			if (destBlock == currentBlock) {
-				destBlock.decreaseWBCsTargeting();
-				destBlock = null;
+	}
+
+	// Updates currentblock and checks for collisions with diseases
+	void OnTriggerEnter2D(Collider2D other) {
+		if (nextBlock && other.gameObject.name == nextBlock.gameObject.name) {
+			currentBlock = nextBlock;
+		} else if (other.gameObject.tag == "Disease") {
+			Disease disease = other.gameObject.GetComponent<Disease> ();
+			if (!disease.captured) {
+				disease.captured = true;
+				disease.BeenCapturedBy (this.gameObject);
+				capture.Add (disease);
+				diseasesabsorbed++;
+				--gameControl.numDiseaseCells;
+				disease.currentBlock.diseases.Remove(disease);
 			}
 		}
 	}
 	
 	GameObject FindExitPointToDestination(Block current, Block destination) {
-		foreach (Transform exitPoint in currentBlock.exitPoints) {
-			if(exitPoint.gameObject.GetComponent<ExitPoint>().nextBlock == destination) {
+		foreach (ExitPoint exitPoint in currentBlock.GetExitPoints()) {
+			if(exitPoint.nextBlock == destination) {
 				return exitPoint.gameObject;
 			}
 			else {
@@ -127,8 +167,9 @@ public class WhiteBloodCell : MonoBehaviour {
 		if(exit.gameObject.GetComponent<ExitPoint>().nextBlock == destination) {
 			return true;
 		}
-		
-		foreach(Transform exitPoint in exit.GetComponent<ExitPoint>().nextBlock.exitPoints) {
+
+		//TODO - We should cache lookups
+		foreach(ExitPoint exitPoint in exit.GetComponent<ExitPoint>().nextBlock.GetExitPoints()) {
 			if( curBlock != exitPoint.gameObject.GetComponent<ExitPoint>().nextBlock ) {
 				if( ExitPointLeadsToDestination(exitPoint.gameObject, destination, exit.GetComponent<ExitPoint>().nextBlock) ) {
 					return true;
@@ -138,5 +179,4 @@ public class WhiteBloodCell : MonoBehaviour {
 		
 		return false;
 	}
-	
 }

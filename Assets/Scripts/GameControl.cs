@@ -2,30 +2,69 @@
 using System.Collections;
 
 public class GameControl : MonoBehaviour {
+
+	public const float WHITE_BLOOD_CELL_FOOD_RATE = 0.05f;
+	public const float PLATELET_FOOD_RATE = 0.025f;
+	private const float MAX_LEVEL_PROGRESS_SPEED = 10.0f;
+	private const float MAX_ENERGY = 100.0f;
+	private const float ENERGY_RESTORE_PER_SECOND = 3.0f;
+
 	public ArrayList selected;
 	public ArrayList whiteBloodCells;
-	public Block whiteBloodSpawnPoint;
-	public GameObject whiteBloodCellPrefab;
-	public GameObject destMarkPrefab;
-	public Texture2D foodBarFull;
-	public Texture2D healthBarFull;
-	public Texture2D barEmpty;
-	public float healthLevel = 1f;
-	public int numDiseaseCells = 2;
-	public AudioClip backGroundMusic = null;
-	
-	const float WHITE_BLOOD_CELL_FOOD_RATE = 0.05f;
+	public ArrayList platelets;
 
-	int whiteBloodProduction = 0;
+	public Block whiteBloodSpawnPoint;
+	public Block plateletSpawnPoint;
+	public Block redBloodSpawnPoint;
+
+	public GameObject whiteBloodCellPrefab;
+	public GameObject plateletPrefab;
+	public GameObject redBloodCellPrefab;
+
+	public Texture2D energyBarFull;
+	public Texture2D barEmpty;
+
+	public AudioClip backGroundMusic = null;
+
+	public int numDiseaseCells = 2;
+	public int numRBCs = 15;
+	public int rbcSpeed = 1;
+	public int whiteBloodProduction = 0;
+	public int plateletProduction = 0;
+	public int liveRBCs;
+	public float energy = 50f;
+
+	public Body body;
+
+	public bool toggleRBC = false;
+	public bool toggleWBC = true;
+	public bool changed = true;
+	public bool wbcChanged = true;
+	public bool isSelected = false;
+	public bool showMenu = false;
+	public bool isPause = false;
+	public bool firstMouse = false;
+	public Tutorial tutorial;
+	public RandomEventManager rngManager;
+
 	// int mousePressStart = -1;
 	Vector3 mousePositionStart;
-	float timeOfLastSpawn;
-	float foodLevel = 1f;
+
+	Texture2D text;
+
+	Rect box;
+
 	bool mouseDown = false;
 	bool drawText = false;
-	Texture2D text;
-	Rect box;
-	bool won = false;
+	bool gameOver = false;
+	bool isPaused = false;
+	bool upgradeMenuOpen = false;
+
+	float levelProgressSpeed = 1.0f;
+	public float levelProgress = 0f;
+	public int levelDistance = 2000;
+
+	GameObject upgradeMenu;
 
 	void Start() {
 		if (backGroundMusic) {
@@ -34,56 +73,101 @@ public class GameControl : MonoBehaviour {
 			temp.Play();
 		}
 
-		timeOfLastSpawn = Time.time;
+		//GameObject gameUI = (GameObject) Instantiate(Resources.Load("GameUI"), Vector3.zero, Quaternion.identity);
+		//gameUI.GetComponent<GameUI>().gC = this;
+
+		upgradeMenu = (GameObject) Instantiate(Resources.Load("UpgradeMenu"), Vector3.zero, Quaternion.identity);
+		upgradeMenu.SetActive(false);
+
+		tutorial = gameObject.AddComponent<Tutorial> ();
+		tutorial.gC = this;
+
+		int i = 0;
+		//TODO move all the member assignment stuff into their start functions - I.E. should only be passed game control object and do it itself
+		for(; i < numRBCs; i++) {
+			Vector3 randpt = redBloodSpawnPoint.GetRandomPoint();
+			GameObject newRBC = (GameObject)Instantiate (redBloodCellPrefab, new Vector3(randpt.x, randpt.y, 1.0f) , this.transform.rotation);
+			RedBloodScript newRedScript = newRBC.GetComponent<RedBloodScript> ();
+			newRBC.renderer.transform.localScale = new Vector3(.6f,.6f,.6f);
+			newRedScript.currentBlock = redBloodSpawnPoint;
+			newRedScript.prevBlock = redBloodSpawnPoint;
+			newRedScript.destination = redBloodSpawnPoint.GetRandomPoint ();
+			newRedScript.origBlock = body.GetBodyPart((numRBCs - i) / (numRBCs / body.blocks.Count));
+			newRedScript.destBlock = newRedScript.origBlock;
+			newRedScript.heartBlock = body.GetChest ();
+			newRedScript.gameControl = this;
+			newRedScript.spawnTime = Time.time;
+			newRedScript.renderer.enabled = false;
+		}
+		for(; i > 0; i--) {
+			Vector3 randpt = body.GetBodyPart((numRBCs - i) / (numRBCs / body.blocks.Count)).GetRandomPoint();
+			GameObject newRBC = (GameObject)Instantiate (redBloodCellPrefab, new Vector3(randpt.x, randpt.y, 1.0f), this.transform.rotation);
+			RedBloodScript newRedScript = newRBC.GetComponent<RedBloodScript> ();
+			newRBC.renderer.transform.localScale = new Vector3(.6f,.6f,.6f);
+			newRedScript.prevBlock = newRedScript.currentBlock;
+			newRedScript.currentBlock = body.GetBodyPart((numRBCs - i) / (numRBCs / body.blocks.Count));
+			newRedScript.destination = body.GetBodyPart((numRBCs - i) / (numRBCs / body.blocks.Count)).GetRandomPoint ();
+			newRedScript.origBlock = body.GetBodyPart((numRBCs - i) / (numRBCs / body.blocks.Count));
+			newRedScript.heartBlock = body.GetChest ();
+			newRedScript.destBlock = newRedScript.heartBlock;
+			newRedScript.oxygenated = false;
+			newRedScript.gameControl = this;
+			newRedScript.spawnTime = Time.time;
+			newRedScript.renderer.enabled = false;
+		}
+		liveRBCs = 2 * numRBCs;
+
 		selected = new ArrayList();
 		whiteBloodCells = new ArrayList();
+		platelets = new ArrayList ();
 		mousePositionStart = new Vector3();
 		SpawnWhiteBloodCell();
+		SpawnPlatelet ();
 	}
 
-	void OnGUI() {
-		// Get white blood cell production from slider
-		whiteBloodProduction = (int)GUI.HorizontalSlider(new Rect(25, 90, 125, 30), whiteBloodProduction, 0.0F, 10.0F);
-		
-		// Display wihte blood cell production status
-		if (whiteBloodProduction > 0) {
-			GUI.TextArea (new Rect (25, 105, 125, 20), "1 per " + 30 / whiteBloodProduction + " seconds");
-		} else {
-			GUI.TextArea (new Rect (25, 105, 125, 20), "Production off");
+	public bool IsPaused(){
+		return isPaused;
+	}
+
+	public void TogglePauseGame(){
+		if (isPaused == false) {
+			//Time.timeScale = 0;
 		}
-
-		// Display food bar
-		GUI.BeginGroup (new Rect (20, 10, 125, 30));
-		GUI.Box (new Rect (0,0, 125, 30),barEmpty);
-		// draw the filled-in part:
-		GUI.BeginGroup (new Rect (0, 0, 125 * foodLevel, 30));
-		GUI.Box (new Rect (0,0, 125, 30),foodBarFull);
-		GUI.EndGroup ();
-		GUI.EndGroup ();
-
-		// Display health bar
-		GUI.BeginGroup (new Rect (20, 50, 125, 30));
-		GUI.Box (new Rect (0, 0, 125, 30), barEmpty);
-		// draw the filled-in part:
-		GUI.BeginGroup (new Rect (0, 0, 125 * healthLevel, 30));
-		GUI.Box (new Rect (0,0, 125, 30), healthBarFull);
-		GUI.EndGroup ();
-		GUI.EndGroup ();
-
-		// Draw text if enabled
-		if (drawText) {
-			GUI.DrawTexture (box, text);
-			drawText = false;
+		else{
+			//Time.timeScale = 1;
 		}
+		isPaused = !isPaused;
 
-		// Handle selection
+	}
+
+	//Only call this function from on GUI
+	void MouseSelection(){
 		if (!mouseDown && Input.GetMouseButton (0)) {
 			mousePositionStart = Event.current.mousePosition;
 			mouseDown = true;
 			if (whiteBloodCells != null) {
 				foreach(WhiteBloodCell cell in whiteBloodCells) {
+					// FIXME: Find out why nulls are still in whiteBloodCells
+					if(!cell) {
+						continue;
+					}
 					cell.DeSelect();
 				}
+			}
+			if(selected != null) {
+				foreach(GameObject obj in selected) {
+					// FIXME: Find out why nulls are still in selected
+					if(!obj) {
+						continue;
+					}
+					if(obj.tag == "WhiteBloodCell") {
+						obj.GetComponent<WhiteBloodCell> ().DeSelect();
+					}
+					else if(obj.tag == "Platelet") {
+						obj.GetComponent<Platelets> ().DeSelect();
+					}
+				}
+				selected.Clear();
 			}
 		} else if (mouseDown && Input.GetMouseButton (0)) {
 			// Beginning of box selection
@@ -94,8 +178,8 @@ public class GameControl : MonoBehaviour {
 			text.SetPixel (1, 1, col);
 			text.Apply ();
 			box = new Rect(mousePositionStart.x, mousePositionStart.y,
-			                Event.current.mousePosition.x - mousePositionStart.x, 
-			                Event.current.mousePosition.y - mousePositionStart.y);
+			               Event.current.mousePosition.x - mousePositionStart.x, 
+			               Event.current.mousePosition.y - mousePositionStart.y);
 			GUI.DrawTexture (box, text);
 			drawText = true;
 		} else if(mouseDown && !(Input.GetMouseButton (0))) {
@@ -105,69 +189,231 @@ public class GameControl : MonoBehaviour {
 			               Event.current.mousePosition.x - mousePositionStart.x, 
 			               Event.current.mousePosition.y - mousePositionStart.y);
 			if (whiteBloodCells != null) {
-				foreach(WhiteBloodCell cell in whiteBloodCells){
+				if(toggleWBC) {
+					foreach(WhiteBloodCell cell in whiteBloodCells){
+						Vector2 pos = Camera.main.WorldToScreenPoint(cell.transform.position);
+						pos.y = Camera.main.pixelHeight - pos.y;
+						if(box.Contains(pos, true)){
+							cell.Select();
+						}
+					}
+				}
+				foreach(Platelets cell in platelets){
 					Vector2 pos = Camera.main.WorldToScreenPoint(cell.transform.position);
 					pos.y = Camera.main.pixelHeight - pos.y;
 					if(box.Contains(pos, true)){
 						cell.Select();
 					}
-					
 				}
 			}
 			mouseDown = false;
 			mousePositionStart.x = 0;
 			mousePositionStart.y = 0;
 		}
+
+		if (Input.GetMouseButton (1) && !firstMouse) {
+			firstMouse = true;
+		}
+	}
+
+	void OnGUI() {
+		// Get white blood cell production from slider
+		if (isPaused && showMenu){
+			GUI.Box(new Rect(Screen.width/4, Screen.height/4, Screen.width/2, Screen.height/2), "PAUSED");
+
+			if (GUI.Button(new Rect(Screen.width/4+10, Screen.height/4+Screen.height/10+10, Screen.width/2-20, Screen.height/10), "RESUME")){
+				isPaused = false;
+				showMenu = false;
+			}
+			if (GUI.Button(new Rect(Screen.width/4+10, Screen.height/4+3*Screen.height/10+10, Screen.width/2-20, Screen.height/10), "MAIN MENU")){
+				Application.LoadLevel("MenuScene");
+
+			} 
+		}
+		rbcSpeed = (int)GUI.HorizontalSlider(new Rect(25, 55, 125, 30), rbcSpeed, 1.0F, 10.0F);
+		
+		// Display wihte blood cell production status
+		/*if (whiteBloodProduction > 0) {
+			GUI.TextArea (new Rect (25, 133, 125, 20), "1 per " + 30 / whiteBloodProduction + " seconds");
+		} else {
+			GUI.TextArea (new Rect (25, 133, 125, 20), "Production off");
+		}*/
+		
+		GUI.TextArea (new Rect (25, 70, 125, 20), "Heart Rate");
+
+		// Display energy bar
+		// draw the background:
+		GUI.BeginGroup (new Rect (20, 10, 200, 40));
+		GUI.Box (new Rect (0,0, 200, 40), barEmpty);
+		
+		// draw the filled-in part:
+		GUI.BeginGroup (new Rect (0, 0, 200f * energy/MAX_ENERGY, 40));
+		GUI.Box (new Rect (0,0, 200, 40),energyBarFull);
+		GUI.EndGroup ();
+
+		// Energ level text
+		GUI.Label(new Rect(70, 10, 100, 20), "Energy: " + (int)energy);
+
+		GUI.EndGroup ();
+
+		// Draw text if enabled
+		if (drawText) {
+			GUI.DrawTexture (box, text);
+			drawText = false;
+		}
+
+		// Handle selection
+		if (!showMenu && !upgradeMenuOpen){
+			MouseSelection ();
+		}
 	}
 
 	void Update() {
-		if (whiteBloodProduction > 0 && (Time.time - timeOfLastSpawn) > 30 / whiteBloodProduction) {
-			SpawnWhiteBloodCell ();
-			foodLevel -= WHITE_BLOOD_CELL_FOOD_RATE;
+		if( Input.GetKeyDown( KeyCode.F8 )){
+			rngManager.SpawnDiseaseInfection();
+		}
+		if (IsPaused () || showMenu || upgradeMenuOpen || tutorial.StopGameLogic ()) {
+				rngManager.isDisabled = true;
+		} else {
+				rngManager.isDisabled = false;
 		}
 
-		// Check losing condition
-		if (foodLevel <= 0f || healthLevel <= 0f) {
-			Application.LoadLevel("MenuScene");
+		if (Input.GetKeyDown(KeyCode.Space)){
+			TogglePauseGame();
+			showMenu = false;
+			isPause = !isPause;
 		}
 
-		// Check winning condition
-		if (numDiseaseCells <= 0) {
-			StartCoroutine (win ());
+		if( tutorial.StopGameLogic() ){
+			return;
+		}
+
+		if (Input.GetKeyDown(KeyCode.Escape)){
+			TogglePauseGame(); 
+			if (isPaused){
+				showMenu = true;
+			}
+			else{
+				showMenu = false;
+			}
+		}
+
+		if (Input.GetKeyDown(KeyCode.Z)){
+			TogglePauseGame();
+			showMenu = false;
+			if (!upgradeMenuOpen){
+				upgradeMenu.SetActive(true);
+				upgradeMenuOpen = true;
+			}
+			else{
+				upgradeMenu.SetActive(false);
+				upgradeMenuOpen = false;
+			}
+		}
+		if (IsPaused()){
+			return;
+		}
+		
+		if (Input.GetKeyDown (KeyCode.B)) {
+			toggleRBC = !toggleRBC;
+			Debug.Log("KeyDown!");
+			changed = false;
+		}
+		if (Input.GetKeyDown (KeyCode.V)) {
+			toggleWBC = !toggleWBC;
+			wbcChanged = false;
+		}
+
+		// Restore Energy
+		if (energy < MAX_ENERGY) {
+			energy += ENERGY_RESTORE_PER_SECOND * Time.deltaTime;
+		}
+
+		// Check lose condition
+		if (checkLoseCondition ()) {
+			StartCoroutine (Lose ());
+		}
+
+		// Check win condition
+		if(levelProgress >= levelDistance) {
+			StartCoroutine (Win ());
+		}
+		else {
+			levelProgressSpeed = calcLevelProgressSpeed();
+			levelProgress += levelProgressSpeed * Time.deltaTime;
 		}
 
 		if (whiteBloodCells != null) {
 			//foreach (WhiteBloodCell cell in whiteBloodCells) {
 			for(int i = 0; i < whiteBloodCells.Count; i++) {
 				WhiteBloodCell cell = (WhiteBloodCell)(whiteBloodCells[i]);
+				
 				if (cell.destroyMe) {
 					Debug.Log ("deleting white blood cell...");
 					//whiteBloodCells.Remove (cell);
+					selected.Remove(cell.gameObject);
 					Destroy (((WhiteBloodCell)(whiteBloodCells[i])).gameObject, 2);
 					whiteBloodCells.RemoveAt(i);
-					foodLevel += WHITE_BLOOD_CELL_FOOD_RATE * 0.8f;
+					//foodLevel += WHITE_BLOOD_CELL_FOOD_RATE * 0.8f;
 					i--;
 				}
 			}
+			wbcChanged = true;
+		}
+
+		if (liveRBCs < 2 * numRBCs) {
+			int diff = 2 * numRBCs - liveRBCs;
+			for (int i = 0; i < diff; i++) {
+				Vector3 randpt = redBloodSpawnPoint.GetRandomPoint();
+				GameObject newRBC = (GameObject)Instantiate (redBloodCellPrefab, new Vector3(randpt.x, randpt.y, 1.0f) , this.transform.rotation);
+				RedBloodScript newRedScript = newRBC.GetComponent<RedBloodScript> ();
+				newRBC.renderer.transform.localScale = new Vector3(.1f,.1f,.1f);
+				newRedScript.currentBlock = redBloodSpawnPoint;
+				newRedScript.destination = redBloodSpawnPoint.GetRandomPoint ();
+				newRedScript.origBlock = body.GetBodyPart((diff - i) / (numRBCs / body.blocks.Count));
+				newRedScript.destBlock = newRedScript.origBlock;
+				newRedScript.heartBlock = body.GetChest ();
+				newRedScript.gameControl = this;
+				newRedScript.spawnTime = Time.time;
+			}
+			liveRBCs += diff;
 		}
 	}
 
-	void SpawnWhiteBloodCell() {
-		GameObject newWhite = (GameObject)Instantiate (whiteBloodCellPrefab, whiteBloodSpawnPoint.GetRandomPoint().transform.position, this.transform.rotation);
+	public void SpawnWhiteBloodCell() {
+		GameObject newWhite = (GameObject)Instantiate (whiteBloodCellPrefab, whiteBloodSpawnPoint.GetRandomPoint(), this.transform.rotation);
 		WhiteBloodCell newWhiteScript = newWhite.GetComponent<WhiteBloodCell> ();
 		newWhiteScript.currentBlock = whiteBloodSpawnPoint;
-		newWhiteScript.headingToward = whiteBloodSpawnPoint.GetRandomPoint ();
+		newWhiteScript.destination = whiteBloodSpawnPoint.GetRandomPoint ();
 		newWhiteScript.gameControl = this;
+		
+		if (toggleWBC)
+			newWhiteScript.renderer.enabled = false;
+		
 		whiteBloodCells.Add (newWhite.GetComponent<WhiteBloodCell>());
-		timeOfLastSpawn = Time.time;
+	}
+
+	public void SpawnPlatelet() {
+		GameObject newPlate = (GameObject)Instantiate (plateletPrefab, plateletSpawnPoint.GetRandomPoint(), this.transform.rotation);
+		Platelets newPlateletScript = newPlate.GetComponent<Platelets> ();
+		newPlateletScript.currentBlock = plateletSpawnPoint;
+		newPlateletScript.currentBlock.platelets.Add (newPlate);
+		newPlateletScript.destination = plateletSpawnPoint.GetRandomPoint ();
+		newPlateletScript.gameControl = this;
+		newPlateletScript.spawnTime = Time.time;
+		platelets.Add (newPlate.GetComponent<Platelets>());
+	}
+
+	IEnumerator Wait(float f) {
+		yield return new WaitForSeconds (f);
 	}
 
 	// Wins the game!
-	IEnumerator win() {
-		if (won) {
+	IEnumerator Win() {
+		if (gameOver) {
 			yield break;
 		}
-		won = true;
+		gameOver = true;
 		GameObject winTextObj = new GameObject("WinText");
 		winTextObj.transform.position = new Vector3(0.465f, 0.561f, 1f);
 		GUIText winText = (GUIText)winTextObj.AddComponent(typeof(GUIText));
@@ -176,6 +422,56 @@ public class GameControl : MonoBehaviour {
 		winText.alignment = TextAlignment.Center;
 		winText.fontSize = 100;
 		yield return new WaitForSeconds(5);
-		Application.LoadLevel("MenuScene");
+		Application.LoadLevel("MapScene");
+	}
+
+	IEnumerator Lose() {
+		if (gameOver) {
+			yield break;
+		}
+		gameOver = true;
+		GameObject winTextObj = new GameObject("WinText");
+		winTextObj.transform.position = new Vector3(0.465f, 0.561f, 1f);
+		GUIText winText = (GUIText)winTextObj.AddComponent(typeof(GUIText));
+		winText.text = "YOU LOSE!!!";
+		winText.anchor = TextAnchor.MiddleCenter;
+		winText.alignment = TextAlignment.Center;
+		winText.fontSize = 100;
+		yield return new WaitForSeconds(5);
+		Application.LoadLevel("MapScene");
+	}
+
+	// Lose if Chest is at 0 health or if all limbs are at 0 health
+	bool checkLoseCondition(){
+		int deadLimbs = 0;
+		foreach (Block b in body.blocks) {
+			if(b.blockType == BlockType.CHEST && b.overallHealth <= 0) {
+				return true;
+			}
+			if(b.blockType == BlockType.LIMB && b.overallHealth <= 0){
+				deadLimbs++;
+			}
+		}
+
+		if (deadLimbs >= 4)
+			return true;
+		else
+			return false;
+	}
+
+	float calcLevelProgressSpeed() {
+		float totalBodyPartHealth = 0f;
+
+		foreach (Block b in body.blocks) {
+			totalBodyPartHealth += b.overallHealth;
+		}
+
+		float averageHealth = totalBodyPartHealth / body.blocks.Count;
+
+		return MAX_LEVEL_PROGRESS_SPEED * averageHealth;
+	}
+
+	public GameObject GetUpgradeMenu(){
+		return upgradeMenu;
 	}
 }

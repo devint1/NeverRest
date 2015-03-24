@@ -1,0 +1,12 @@
+fileFormatVersion: 2
+guid: 00235a3d05291ee45aa54508cc12ea80
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences:
+  - energyStatus: {instanceID: 0}
+  - WBCImage: {fileID: 177362, guid: 2b5d3e238886536489dfeeb0e4b69b54, type: 2}
+  - PCImage: {fileID: 159890, guid: 4ac48eb5b4723ae48a70b91e2207cdfa, type: 2}
+  - gC: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 

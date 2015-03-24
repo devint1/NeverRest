@@ -3,7 +3,6 @@
 # =============== #
 [Tt]emp/
 [Oo]bj/
-[Bb]uild
 [Mm]etadata
 [Ll]ibrary/*
 *[Dd]ata/*
@@ -36,3 +35,4 @@ ehthumbs.db
 # Other
 Assets/placeholderforgit.meta
 *.exe
+ProjectSettings/TagManager.asset

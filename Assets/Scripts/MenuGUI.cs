@@ -11,7 +11,7 @@ public class MenuGUI : MonoBehaviour {
 	void OnGUI() {
 		if(GUILayout.Button("Start Game"))
 		{
-			Application.LoadLevel ("GameScene"); 
+			Application.LoadLevel ("MapScene"); 
 		}
 		if(GUILayout.Button("How To Play"))
 		{

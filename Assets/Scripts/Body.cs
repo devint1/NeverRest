@@ -3,20 +3,31 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class Body : MonoBehaviour {
-	public GameControl gameControl;
-
-	List<GameObject> blocks = new List<GameObject> ();
-
-	void Start() {
-		//Find all blocks
-		foreach (Transform child in transform) //Iterate through all children
-		{
-			blocks.Add(child.gameObject);
-		}
+	public List<Block> blocks = new List<Block>();
+	public GameObject heart;
+	
+	// Use this for initialization
+	void Start () {
+		
 	}
-
-	// Block clicked. Find which one, then send selected WhiteBloodCell here
-	void OnMouseDown() {
-		Debug.Log ("MouseDown!");
+	
+	// Update is called once per frame
+	void Update () {
+		
+	}
+	
+	public Block GetBodyPart(int i) {
+		if(i < blocks.Count)
+			return blocks[i];
+		return null;
+	}
+	
+	public Block GetChest() {
+		for (int i = 0; i < blocks.Count; i++) {
+			if(blocks[i].blockType == BlockType.CHEST) {
+				return blocks[i];
+			}
+		}
+		return null;
 	}
 }
