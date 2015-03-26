@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
-
+using Random = UnityEngine.Random;
 public class EventControl : MonoBehaviour {
 	public Vector2 pointPos;
 	public Map map;
@@ -27,6 +27,15 @@ public class EventControl : MonoBehaviour {
 		winTextObj.transform.position = new Vector3(0.465f, 0.561f, 1f);
 		GUIText winText = (GUIText)winTextObj.AddComponent(typeof(GUIText));
 		winText.text = "You finished this part of the mountain!!!";
+		winText.anchor = TextAnchor.MiddleCenter;
+		winText.alignment = TextAlignment.Center;
+		winText.fontSize = 100;
+	}
+	public static void LoseCon(){
+		GameObject winTextObj = new GameObject("LoseText");
+		winTextObj.transform.position = new Vector3(0.465f, 0.561f, 1f);
+		GUIText winText = (GUIText)winTextObj.AddComponent(typeof(GUIText));
+		winText.text = "You Died!!!";
 		winText.anchor = TextAnchor.MiddleCenter;
 		winText.alignment = TextAlignment.Center;
 		winText.fontSize = 100;

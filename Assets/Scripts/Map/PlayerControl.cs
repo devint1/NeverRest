@@ -7,10 +7,13 @@ public class PlayerControl : MonoBehaviour {
 	bool mouseDown = false;
 	public Map map; 
 	Vector2 userDest;
+	public int playerFood = 10;
+	public int playerMoney = 50; 
+	public int playerHealth = 100;
 
 	// Use this for initialization
 	void Start () {
-	
+		Debug.Log ( this.transform.position);
 	}
 	 
 	// Update is called once per frame
@@ -24,7 +27,7 @@ public class PlayerControl : MonoBehaviour {
 		}
 		if ( (Input.GetMouseButton (1))) {
 			this.isSelected = false;
-			map.isPlayerSelected = false;
+			//map.isPlayerSelected = false;
 
 			//Debug.Log("right click");
 
@@ -40,8 +43,8 @@ public class PlayerControl : MonoBehaviour {
 	void OnMouseDown(){
 		isSelected = true;
 		map.isPlayerSelected = true;
-		//Debug.Log (map.isPlayerSelected);
-		//Debug.Log (" PLayer is selected ");
+		 
+		//
 
 
 	}
