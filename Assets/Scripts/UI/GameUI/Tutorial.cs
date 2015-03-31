@@ -18,6 +18,8 @@ public class Tutorial : MonoBehaviour {
 
 	Rect box;
 
+	GUIStyle tutorialMessageStyle;
+
 	EventType dialogOpen = EventType.EVENT_TYPE_NONE;
 	Rect dialogRect = new Rect(750, 80, 250, 150);
 	bool dialogWindowActivated = false;
@@ -34,6 +36,28 @@ public class Tutorial : MonoBehaviour {
 		bStartedDragCoroutine = false;
 		dragPercent = 0;
 		StartCoroutine (DragBox());
+		tutorialMessageStyle = GUIStyle.none;
+		Texture2D text = new Texture2D(100,100);
+		for (int x = 0; x < 100; x++) {
+			for (int y = 0; y < 100; y++) {
+				if( x == 0 || x == 99 || y == 0 || y == 99 ){
+					text.SetPixel( x,y, Color.white );
+				}
+				else
+				{
+					text.SetPixel( x,y, Color.blue );
+				}
+			}
+		}
+		text.Apply ();
+		tutorialMessageStyle.normal.background = text;
+		tutorialMessageStyle.normal.textColor = Color.yellow;
+		tutorialMessageStyle.wordWrap = true;
+		tutorialMessageStyle.alignment = TextAnchor.MiddleCenter;
+		tutorialMessageStyle.border = new RectOffset( 0, 1, 0, 1);
+		Font arialFont = (Font)Resources.GetBuiltinResource (typeof(Font), "Arial.ttf");
+		tutorialMessageStyle.font = arialFont;
+		tutorialMessageStyle.fontSize = 14;
 	}
 
 	void Update(){
@@ -105,7 +129,7 @@ public class Tutorial : MonoBehaviour {
 		if (Input.GetKeyDown (KeyCode.Space)) {
 			currentState = TutorialStates.State.Selection;
 		}
-		GUI.TextArea (new Rect (Screen.width/2 - 125, Screen.height/2 -50, 250, 100), "The game can be paused at any time by pressing space.\nThis will alow you more time to make decisions and issue commands.\nDo this now.");
+		GUI.TextArea (new Rect (Screen.width/2 - 125, Screen.height/2 -50, 250, 100), "The game can be paused at any time by pressing space.\nThis will alow you more time to make decisions and issue commands.\nDo this now.", tutorialMessageStyle);
 	}
 
 	void DoSelection(){
