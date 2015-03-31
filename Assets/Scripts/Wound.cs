@@ -43,7 +43,7 @@ public class Wound : MonoBehaviour {
 
 	IEnumerator Fade(float value, float time) {
 		float alpha = renderer.material.color.a;
-		for (float t = 0.0f; t < 1.0f; t += Time.deltaTime / time) {
+		for (float t = 0.0f; t < time; t += Time.deltaTime / time) {
 			Color newColor = new Color(1, 1, 1, Mathf.Lerp(alpha, value, t));
 			renderer.material.color = newColor;
 			yield return null;

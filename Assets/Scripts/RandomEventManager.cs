@@ -8,6 +8,7 @@ public class RandomEventManager : MonoBehaviour {
 	public Body body;
 	public GameObject diseasePrefab;
 	public GameObject woundPrefab;
+	public GameObject pingPrefab;
 	public bool isDisabled = true; //Needs to be enabled from start to prevent race conditions
 
 	const float MIN_RANDOM_EVENT_TIME = 10f;
@@ -67,6 +68,7 @@ public class RandomEventManager : MonoBehaviour {
 	void SpawnWound() {
 		Block randomBodyPart =  body.blocks[Random.Range (0, body.blocks.Count)];
 		Vector3 spawnPoint = randomBodyPart.GetRandomPoint();
+		StartCoroutine (PingLocation (spawnPoint));
 		GameObject newWound = (GameObject)Instantiate (woundPrefab, spawnPoint, Quaternion.identity);
 		Wound newWoundScript = newWound.GetComponent<Wound> ();
 		newWoundScript.block = randomBodyPart;
@@ -79,7 +81,7 @@ public class RandomEventManager : MonoBehaviour {
 	public void SpawnDiseaseInfection() {
 		int randomBodyPart = Random.Range (0, body.blocks.Count);
 		Vector3 spawnPoint = body.blocks[randomBodyPart].GetRandomPoint();
-
+		StartCoroutine (PingLocation (spawnPoint));
 		for(int i = 0; i<numDiseasesSpawn; i++) {
 			GameObject newDisease = (GameObject)Instantiate(diseasePrefab, spawnPoint, Quaternion.identity);
 			Disease newDiseaseScript = newDisease.GetComponent<Disease>();
@@ -111,5 +113,24 @@ public class RandomEventManager : MonoBehaviour {
 			gameControl.TogglePauseGame();
 			woundedWindowActivated = true;
 		}
+	}
+
+	IEnumerator PingLocation(Vector3 position) {
+		float scaleFactor = 3f;
+		GameObject ping = (GameObject)Instantiate (pingPrefab, position, Quaternion.identity);
+		ping.transform.localScale = new Vector3 (scaleFactor, scaleFactor, scaleFactor);
+		for (float t = 0.0f; t < 1.0f; t += Time.deltaTime / 1.0f) {
+			float newScaleFactor = Mathf.Lerp(scaleFactor, 1f, t);
+			ping.transform.localScale = new Vector3	(newScaleFactor, newScaleFactor, newScaleFactor);
+			yield return null;
+		}
+		yield return new WaitForSeconds(2);
+		float alpha = ping.renderer.material.color.a;
+		for (float t = 0.0f; t < 2.0f; t += Time.deltaTime / 2.0f) {
+			Color newColor = new Color(1, 1, 1, Mathf.Lerp(alpha, 0, t));
+			ping.renderer.material.color = newColor;
+			yield return null;
+		}
+		Destroy(ping);
 	}
 }
