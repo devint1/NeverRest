@@ -131,6 +131,10 @@ public class WhiteBloodCell : MonoBehaviour {
 
 	// Updates currentblock and checks for collisions with diseases
 	void OnTriggerEnter2D(Collider2D other) {
+		if (diseasesabsorbed >= MAX_DISEASE_ABSORBED) {
+			return;
+		}
+
 		if (nextBlock && other.gameObject.name == nextBlock.gameObject.name) {
 			currentBlock = nextBlock;
 		} else if (other.gameObject.tag == "Disease") {
