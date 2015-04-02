@@ -24,6 +24,8 @@ public class Tutorial : MonoBehaviour {
 	Rect dialogRect = new Rect(750, 80, 250, 150);
 	bool dialogWindowActivated = false;
 
+	int counter = 0;
+
 	public bool StopGameLogic(){
 		if (!(currentState == State.Done || currentState == State.Off)) {
 			return true;
@@ -105,23 +107,50 @@ public class Tutorial : MonoBehaviour {
 			GUI.Window(0, new Rect(250, 10, 250, 150), EnergyDialog, "Energy Bar");
 			break;
 		case TutorialStates.State.Production:
-			GUI.Window(0, new Rect(175, Screen.height - 325, 250, 150), ProductionDialog, "Production");
+			GUI.Window(0, new Rect(200, Screen.height - 325, 250, 150), ProductionDialog, "Production");
 			break;
 		case TutorialStates.State.PlateProduction:
 			//GUI.Window(0, new Rect(220, Screen.height - 160, 250, 150), PlateProductionDialog, "Production");
-			GUI.TextArea (new Rect (300, Screen.height - 160, 250, 150), "Platelets are used to clot wounds as they appear.\nTo create new platelets, either press the platelet button or press the 'Q' key.\nCreate a platelet now.");
+			//gC.actionBarPrefab.GetComponentInChildren<ActionBarButton>();
+			ActionBarButton ab = gC.actionBarPrefab.transform.Find("platelet_Button").GetComponent<ActionBarButton>();
+			if(counter < 30) {
+				ab.renderer.material.color = Color.yellow;
+			}
+			else if(counter < 60) {
+				ab.renderer.material.color = Color.white;
+			}
+			else {
+				counter = 0;
+			}
+			counter++;
+			GUI.TextArea (new Rect (125, Screen.height - 200, 250, 150), "Platelets are used to clot wounds as they appear.\nTo create new platelets, either press the platelet button or press the 'Q' key.\nCreate a platelet now.");
 			if (gC.plateletProduction > 0){
 				//currentState = TutorialStates.State.Done;
+				ab.renderer.material.color = Color.white;
 				currentState = TutorialStates.State.WBCProduction;
+				counter = 0;
 			}
 			break;
 		case TutorialStates.State.WBCProduction:
 			//GUI.Window(0, new Rect(300, Screen.height - 160, 250, 150), WBCProductionDialog, "Production");
-			GUI.TextArea (new Rect (300, Screen.height - 160, 250, 150), "B Cells, a type of white blood cell, are used to combat diseases as they enter the body.\nTo create new B Cells, either press the B Cell button or press the 'W' key.\n\nCreate a B-Cell now.");
+			GUI.TextArea (new Rect (125, Screen.height - 290, 250, 150), "B Cells, a type of white blood cell, are used to combat diseases as they enter the body.\nTo create new B Cells, either press the B Cell button or press the 'W' key.\n\nCreate a B-Cell now.");
 
+			ActionBarButton wb = gC.actionBarPrefab.transform.Find("whitebloodcell_Button").GetComponent<ActionBarButton>();
+			if(counter < 30) {
+				wb.renderer.material.color = Color.yellow;
+			}
+			else if(counter < 60) {
+				wb.renderer.material.color = Color.white;
+			}
+			else {
+				counter = 0;
+			}
+			counter++;
 			if (gC.whiteBloodProduction > 0){
 				//currentState = TutorialStates.State.Done;
 				currentState = TutorialStates.State.PlateCombat;
+				wb.renderer.material.color = Color.white;
+				counter = 0;
 			}
 			break;
 		case TutorialStates.State.PlateCombat:

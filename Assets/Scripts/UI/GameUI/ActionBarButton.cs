@@ -49,8 +49,10 @@ public class ActionBarButton : MonoBehaviour {
 	}
 	
 	void OnMouseExit() {
-		showTooltip = false;
-		renderer.material.color = Color.white;
+		if (showTooltip) {
+			showTooltip = false;
+			renderer.material.color = Color.white;
+		}
 	}
 
 	void QueueWhiteBloodCell () {

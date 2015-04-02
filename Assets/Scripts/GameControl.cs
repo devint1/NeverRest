@@ -20,6 +20,7 @@ public class GameControl : MonoBehaviour {
 	public GameObject whiteBloodCellPrefab;
 	public GameObject plateletPrefab;
 	public GameObject redBloodCellPrefab;
+	public GameObject actionBarPrefab;
 
 	public Texture2D energyBarFull;
 	public Texture2D barEmpty;
@@ -84,6 +85,7 @@ public class GameControl : MonoBehaviour {
 
 		int i = 0;
 		//TODO move all the member assignment stuff into their start functions - I.E. should only be passed game control object and do it itself
+		/*
 		for(; i < numRBCs; i++) {
 			Vector3 randpt = redBloodSpawnPoint.GetRandomPoint();
 			GameObject newRBC = (GameObject)Instantiate (redBloodCellPrefab, new Vector3(randpt.x, randpt.y, 1.0f) , this.transform.rotation);
@@ -116,6 +118,10 @@ public class GameControl : MonoBehaviour {
 			newRedScript.renderer.enabled = false;
 		}
 		liveRBCs = 2 * numRBCs;
+		*/
+
+		//GameObject actionBar = (GameObject)Instantiate (actionBarPrefab, new Vector3(10, Screen.height - 150, -1), this.transform.rotation);
+
 
 		selected = new ArrayList();
 		whiteBloodCells = new ArrayList();
@@ -361,6 +367,7 @@ public class GameControl : MonoBehaviour {
 			wbcChanged = true;
 		}
 
+		/*
 		if (liveRBCs < 2 * numRBCs) {
 			int diff = 2 * numRBCs - liveRBCs;
 			for (int i = 0; i < diff; i++) {
@@ -378,6 +385,7 @@ public class GameControl : MonoBehaviour {
 			}
 			liveRBCs += diff;
 		}
+		*/
 	}
 
 	public void SpawnWhiteBloodCell() {
