@@ -112,10 +112,7 @@ public class Block : MonoBehaviour {
 			}
 
 			if (overallHealth <= 0) {
-				overallHealth = 0.0f;
-				oxygenLevel = 0.0f; 
-				temperaturePercent = 0.0f;
-				dead = true;
+				Die();
 			}
 
 			foreach (Wound wound in wounds) {
@@ -274,6 +271,20 @@ public class Block : MonoBehaviour {
 			Disease toDestroy = (Disease)diseases[i];
 			diseases.Remove(toDestroy);
 			GameObject.Destroy( toDestroy.gameObject );
+		}
+	}
+
+	public void Die(){
+		overallHealth = 0.0f;
+		oxygenLevel = 0.0f; 
+		temperaturePercent = 0.0f;
+		dead = true;
+
+		// Kill off all "child" body parts
+		foreach (ExitPoint e in GetExitPoints()) {
+			if(!e.isExitToHeart) {
+				e.nextBlock.Die();
+			}
 		}
 	}
 }

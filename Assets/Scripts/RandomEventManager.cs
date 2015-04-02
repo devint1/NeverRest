@@ -66,7 +66,7 @@ public class RandomEventManager : MonoBehaviour {
 
 
 	void SpawnWound() {
-		Block randomBodyPart =  body.blocks[Random.Range (0, body.blocks.Count)];
+		Block randomBodyPart =  body.blocks[getRandomAliveBodyPartIndex()];
 		Vector3 spawnPoint = randomBodyPart.GetRandomPoint();
 		StartCoroutine (PingLocation (spawnPoint));
 		GameObject newWound = (GameObject)Instantiate (woundPrefab, spawnPoint, Quaternion.identity);
@@ -79,13 +79,13 @@ public class RandomEventManager : MonoBehaviour {
 	}
 
 	public void SpawnDiseaseInfection() {
-		int randomBodyPart = Random.Range (0, body.blocks.Count);
-		Vector3 spawnPoint = body.blocks[randomBodyPart].GetRandomPoint();
+		int randomBodyPartIndex = getRandomAliveBodyPartIndex ();
+		Vector3 spawnPoint = body.blocks[randomBodyPartIndex].GetRandomPoint();
 		StartCoroutine (PingLocation (spawnPoint));
 		for(int i = 0; i<numDiseasesSpawn; i++) {
 			GameObject newDisease = (GameObject)Instantiate(diseasePrefab, spawnPoint, Quaternion.identity);
 			Disease newDiseaseScript = newDisease.GetComponent<Disease>();
-			newDiseaseScript.currentBlock = body.blocks[randomBodyPart];
+			newDiseaseScript.currentBlock = body.blocks[randomBodyPartIndex];
 			newDiseaseScript.gameControl = gameControl;
 			newDiseaseScript.destination = spawnPoint;
 			++gameControl.numDiseaseCells;
@@ -132,5 +132,15 @@ public class RandomEventManager : MonoBehaviour {
 			yield return null;
 		}
 		Destroy(ping);
+	}
+
+	int getRandomAliveBodyPartIndex() {
+		int randomBodyPartIndex = Random.Range (0, body.blocks.Count);
+
+		while (body.blocks[randomBodyPartIndex].dead) {
+			randomBodyPartIndex = Random.Range (0, body.blocks.Count);
+		}
+
+		return randomBodyPartIndex;
 	}
 }
