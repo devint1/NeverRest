@@ -13,6 +13,12 @@ public class ProductionQueue : MonoBehaviour {
 			Debug.Log ("ERROR! NOT ENOUGH ENERGY OR NOT ENOUGH SLOTS! ADD CODE HERE TO INFORM PLAYER!");
 			return;
 		}
+
+		if (buttonType == ActionBarButton.ButtonType.WhiteBloodCell) {
+				gameControl.whiteBloodProduction++;
+		} else if (buttonType == ActionBarButton.ButtonType.Platelet) {
+				gameControl.plateletProduction++;
+		}
 		
 		gameControl.energy -= baseCost * slot.costMultiplier;
 		slot.Produce (productionTime, image, buttonType);

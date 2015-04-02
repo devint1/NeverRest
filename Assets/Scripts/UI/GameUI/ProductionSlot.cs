@@ -34,9 +34,11 @@ public class ProductionSlot : MonoBehaviour {
 
 			if (productionType == ActionBarButton.ButtonType.WhiteBloodCell) {
 				gameControl.SpawnWhiteBloodCell();
+				gameControl.whiteBloodProduction--;
 			}
 			else if (productionType == ActionBarButton.ButtonType.Platelet) {
 				gameControl.SpawnPlatelet();
+				gameControl.plateletProduction--;
 			}
 		}
 	}

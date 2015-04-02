@@ -84,10 +84,21 @@ public class Tutorial : MonoBehaviour {
 			GUI.Window(0, new Rect(175, Screen.height - 325, 250, 150), ProductionDialog, "Production");
 			break;
 		case TutorialStates.State.PlateProduction:
-			GUI.Window(0, new Rect(220, Screen.height - 160, 250, 150), PlateProductionDialog, "Production");
+			//GUI.Window(0, new Rect(220, Screen.height - 160, 250, 150), PlateProductionDialog, "Production");
+			GUI.TextArea (new Rect (300, Screen.height - 160, 250, 150), "Platelets are used to clot wounds as they appear.\nTo create new platelets, either press the platelet button or press the 'Q' key.\nCreate a platelet now.");
+			if (gC.plateletProduction > 0){
+				//currentState = TutorialStates.State.Done;
+				currentState = TutorialStates.State.WBCProduction;
+			}
 			break;
 		case TutorialStates.State.WBCProduction:
-			GUI.Window(0, new Rect(300, Screen.height - 160, 250, 150), WBCProductionDialog, "Production");
+			//GUI.Window(0, new Rect(300, Screen.height - 160, 250, 150), WBCProductionDialog, "Production");
+			GUI.TextArea (new Rect (300, Screen.height - 160, 250, 150), "B Cells, a type of white blood cell, are used to combat diseases as they enter the body.\nTo create new B Cells, either press the B Cell button or press the 'W' key.\n\nCreate a B-Cell now.");
+
+			if (gC.whiteBloodProduction > 0){
+				//currentState = TutorialStates.State.Done;
+				currentState = TutorialStates.State.PlateCombat;
+			}
 			break;
 		case TutorialStates.State.PlateCombat:
 			GUI.Window(0, new Rect(Screen.width/2 - 125, Screen.height/2 -50, 250, 150), PlateCombatDialog, "Combat");
@@ -134,7 +145,7 @@ public class Tutorial : MonoBehaviour {
 
 	void HeartRateDialog(int windowID) {
 		dialogWindowActivated = true;
-		GUI.TextArea (new Rect (0, 20, 250, 100), "To increase the speed of the cells in the body, drag the 'Heart Beat' slider to the right.\nTry it out then press the 'OK' button to continue.");
+		GUI.TextArea (new Rect (0, 20, 250, 100), "To increase the speed of the cells in the body, drag the 'Heart Rate' slider to the right.\nTry it out then press the 'OK' button to continue.");
 		if (GUI.Button(new Rect(100, 125, 50, 20), "OK")) {
 			dialogOpen = EventType.EVENT_TYPE_NONE;
 			dialogWindowActivated = false;
