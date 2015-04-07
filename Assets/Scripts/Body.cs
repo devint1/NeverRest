@@ -5,6 +5,8 @@ using System.Collections.Generic;
 public class Body : MonoBehaviour {
 	public List<Block> blocks = new List<Block>();
 	public GameObject heart;
+	public GameObject toplayer;
+	public GameObject middlelayer;
 	
 	// Use this for initialization
 	void Start () {

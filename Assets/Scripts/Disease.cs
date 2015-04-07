@@ -17,6 +17,7 @@ public class Disease : MonoBehaviour {
 	const int MIN_DISEASE_RESPAWN_TIME = 20;
 	
 	void Start() {
+
 		if (currentBlock) {
 			destBlock = currentBlock;
 			destination = destBlock.GetRandomPoint ();
@@ -34,6 +35,8 @@ public class Disease : MonoBehaviour {
 		if( gameControl.IsPaused() ){
 			return;
 		}
+		
+		Vector2 directionToDestination = ((Vector2)destination - (Vector2)this.transform.position).normalized;
 
 		if (!gameControl.toggleWBC)
 			this.renderer.enabled = false;
@@ -70,12 +73,11 @@ public class Disease : MonoBehaviour {
 				else {
 					destination = destBlock.GetRandomPoint();
 				}
+				StartCoroutine(ChangeRotation(directionToDestination));
 			}
 		}
 
 		if (!captured) {
-			Vector2 directionToDestination = ((Vector2)destination - (Vector2)this.transform.position).normalized;
-
 			this.transform.position = new Vector3 ((directionToDestination.x * speed) + this.transform.position.x,
                                (directionToDestination.y * speed) + this.transform.position.y,
                                this.transform.position.z);
@@ -115,6 +117,17 @@ public class Disease : MonoBehaviour {
 			}
 		}
 		
+	}
+
+	IEnumerator ChangeRotation(Vector2 directionToDestination) {
+		float time = 0.5f;
+		float angle = Mathf.Atan2(directionToDestination.y, directionToDestination.x) * Mathf.Rad2Deg;
+		Quaternion currentRotation = this.transform.rotation;
+		Quaternion destinationRotation = Quaternion.AngleAxis(angle + 90, Vector3.forward);
+		for (float t = 0.0f; t < time; t += Time.deltaTime / time) {
+			this.transform.rotation = Quaternion.Lerp(currentRotation, destinationRotation, (t / time));
+			yield return null;
+		}
 	}
 	
 	public void BeenCapturedBy(GameObject whiteBloodCell) {
