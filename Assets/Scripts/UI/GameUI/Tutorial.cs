@@ -117,10 +117,15 @@ public class Tutorial : MonoBehaviour {
 			else {
 				counter = 0;
 			}
+
+			//SetAlphaOfBody(0.3f);
+
 			counter++;
 			GUI.TextArea (new Rect (125, Screen.height - 200, 250, 150), "Platelets are used to clot wounds as they appear.\nTo create new platelets, either press the platelet button or press the 'W' key.\nCreate a platelet now.", tutorialMessageStyle);
 			if (gC.plateletProduction > 0){
 				//currentState = TutorialStates.State.Done;
+				//SetAlphaOfBody(1.0f);
+
 				ab.renderer.material.color = Color.white;
 				currentState = TutorialStates.State.WBCProduction;
 				counter = 0;
@@ -151,6 +156,21 @@ public class Tutorial : MonoBehaviour {
 		case TutorialStates.State.Commence:
 			GUI.Window(0, new Rect(Screen.width/2 - 125, Screen.height/2 -50, 250, 75), CommenceDialog, "Tutorial", tutorialMessageStyle);
 			break;
+		}
+	}
+
+	//In case we want to fade out items that are not what the focus should be on
+	void SetAlphaOfBody(float a) {
+		Color color1 = gC.body.toplayer.renderer.material.color;
+		color1.a = a;
+		gC.body.toplayer.renderer.material.color = color1;
+		Color color2 = gC.body.middlelayer.renderer.material.color;
+		color2.a = a;
+		gC.body.middlelayer.renderer.material.color = color2;
+		for(int i = 0; i < gC.body.blocks.Count; i++) {
+			Color colorc = gC.body.blocks[i].renderer.material.color;
+			colorc.a = a;
+			gC.body.blocks[i].renderer.material.color = colorc;
 		}
 	}
 
