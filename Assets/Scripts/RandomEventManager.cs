@@ -65,32 +65,40 @@ public class RandomEventManager : MonoBehaviour {
 	}
 
 
-	void SpawnWound() {
+	public void SpawnWound() {
 		Block randomBodyPart =  body.blocks[getRandomAliveBodyPartIndex()];
-		Vector3 spawnPoint = randomBodyPart.GetRandomPoint();
+		SpawnWound (randomBodyPart);
+	}
+
+	public void SpawnWound (Block location){
+		Vector3 spawnPoint = location.GetRandomPoint();
 		StartCoroutine (PingLocation (spawnPoint));
 		GameObject newWound = (GameObject)Instantiate (woundPrefab, spawnPoint, Quaternion.identity);
 		Wound newWoundScript = newWound.GetComponent<Wound> ();
-		newWoundScript.block = randomBodyPart;
-		randomBodyPart.wounds.Add (newWound.GetComponent<Wound>());
+		newWoundScript.block = location;
+		location.wounds.Add (newWound.GetComponent<Wound>());
 		dialogOpen = EventType.EVENT_TYPE_WOUND;
 		if(!woundedWindowActivated)
 			gameControl.TogglePauseGame ();
 	}
 
 	public void SpawnDiseaseInfection() {
-		int randomBodyPartIndex = getRandomAliveBodyPartIndex ();
-		Vector3 spawnPoint = body.blocks[randomBodyPartIndex].GetRandomPoint();
+		Block randomBodyPart =  body.blocks[getRandomAliveBodyPartIndex()];
+		SpawnDiseaseInfection (randomBodyPart);
+	}
+
+	public void SpawnDiseaseInfection (Block location){
+		Vector3 spawnPoint = location.GetRandomPoint();
 		StartCoroutine (PingLocation (spawnPoint));
 		for(int i = 0; i<numDiseasesSpawn; i++) {
 			GameObject newDisease = (GameObject)Instantiate(diseasePrefab, spawnPoint, Quaternion.identity);
 			Disease newDiseaseScript = newDisease.GetComponent<Disease>();
-			newDiseaseScript.currentBlock = body.blocks[randomBodyPartIndex];
+			newDiseaseScript.currentBlock = location;
 			newDiseaseScript.gameControl = gameControl;
 			newDiseaseScript.destination = spawnPoint;
 			++gameControl.numDiseaseCells;
 		}
-
+		
 		numDiseasesSpawn += 3;
 		dialogOpen = EventType.EVENT_TYPE_DISEASE;
 		if(!diseaseWindowActivated)
