@@ -61,13 +61,13 @@ public class Platelets : MonoBehaviour {
 			return;
 		}
 
-		if (Time.time - spawnTime > 120) {
+		/*if (Time.time - spawnTime > 120) {
 			gameControl.selected.Remove (this.gameObject);
 			gameControl.platelets.Remove (this);
 			currentBlock.platelets.Remove(this);
 			Destroy (this.gameObject);
 			return;
-		}
+		}*/
 		
 		if (this.speed != gameControl.rbcSpeed) {
 			this.speed = gameControl.rbcSpeed / 250.0f;
