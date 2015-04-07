@@ -60,6 +60,8 @@ public class GameControl : MonoBehaviour {
 	bool gameOver = false;
 	bool isPaused = false;
 	bool upgradeMenuOpen = false;
+	float doubleClickTimer = 0;
+	bool click = false;
 
 	float levelProgressSpeed = 1.0f;
 	public float levelProgress = 0f;
@@ -151,6 +153,41 @@ public class GameControl : MonoBehaviour {
 		if (!mouseDown && Input.GetMouseButton (0)) {
 			mousePositionStart = Event.current.mousePosition;
 			mouseDown = true;
+			if (click && Time.time <= (doubleClickTimer +.35))
+			    {
+				Debug.Log("Double click ");
+				click =false;
+				//GameObject.GetComponent<WhiteBloodCell> ().DeSelect();
+				if(selected != null) {
+					foreach(GameObject obj in selected) {
+						// FIXME: Find out why nulls are still in selected
+						if(!obj) {
+							continue;
+						}
+						if(obj.tag == "WhiteBloodCell") {
+							obj.GetComponent<WhiteBloodCell> ().DeSelect();
+							Debug.Log("White blood double clicked");
+						}
+						else if(obj.tag == "Platelet") {
+							obj.GetComponent<Platelets> ().DeSelect();
+							Debug.Log("Platelet double clicked");
+
+						}
+					}
+					selected.Clear();
+				}
+
+
+			}
+			else if (click && Time.time >(doubleClickTimer +.35)){
+				click =false;
+			}
+			else{
+				click = true;
+				doubleClickTimer= Time.time;
+				//Debug.Log("single click ");
+			}
+
 			if (whiteBloodCells != null) {
 				foreach(WhiteBloodCell cell in whiteBloodCells) {
 					// FIXME: Find out why nulls are still in whiteBloodCells
