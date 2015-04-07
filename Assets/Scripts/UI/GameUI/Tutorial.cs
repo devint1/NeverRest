@@ -79,23 +79,23 @@ public class Tutorial : MonoBehaviour {
 			text.SetPixel (1, 1, col);
 			text.Apply ();
 			GUI.DrawTexture (box, text);
-			GUI.TextArea (new Rect (Screen.width/2 - 125, Screen.height/2 -50, 250, 100), "Multiple cells can be selected at a time by clicking and dragging around them.\nOnce selected, cells can be ordered to move by right clicking the desired location. \nSelect both of the cells in the chest now.");
+			GUI.TextArea (new Rect (Screen.width/2 - 125, Screen.height/2 -50, 275, 150), "Multiple cells can be selected at a time by clicking and dragging around them.\nOnce selected, cells can be ordered to move by right clicking the desired location. \nSelect both of the cells in the chest now.", tutorialMessageStyle);
 			if (gC.selected.Count >= 2){
 				//currentState = TutorialStates.State.Done;
 				currentState = TutorialStates.State.Move;
 			}
 			break;
 		case TutorialStates.State.Move:
-			GUI.TextArea (new Rect (Screen.width/2 - 87, Screen.height/2 -50, 175, 50), "Right click on a part of the body to move the selected cells.");
+			GUI.TextArea (new Rect (Screen.width/2 - 87, Screen.height/2 -50, 175, 50), "Right click on a part of the body to move the selected cells.", tutorialMessageStyle);
 			if(gC.firstMouse) {
 				currentState = TutorialStates.State.Unpause;
 			}
 			break;
 		case TutorialStates.State.Finish:
-			GUI.Window(0, new Rect (Screen.width/2 - 125, Screen.height/2 -50, 250, 150), FinishDialog, "Finished Tutorial");
+			GUI.Window(0, new Rect (Screen.width/2 - 125, Screen.height/2 -50, 250, 150), FinishDialog, "Finished Tutorial", tutorialMessageStyle);
 			break;
 		case TutorialStates.State.Unpause:
-			GUI.TextArea (new Rect (Screen.width/2 - 87, Screen.height/2 -50, 175, 50), "Now unpause the game to continue.\n (space key)");
+			GUI.TextArea (new Rect (Screen.width/2 - 87, Screen.height/2 -50, 175, 50), "Now unpause the game to continue.\n (space key)", tutorialMessageStyle);
 			if ( !gC.IsPaused() ) {
 				currentState = TutorialStates.State.HeartRate;
 			}
@@ -123,7 +123,7 @@ public class Tutorial : MonoBehaviour {
 				counter = 0;
 			}
 			counter++;
-			GUI.TextArea (new Rect (125, Screen.height - 200, 250, 150), "Platelets are used to clot wounds as they appear.\nTo create new platelets, either press the platelet button or press the 'Q' key.\nCreate a platelet now.");
+			GUI.TextArea (new Rect (125, Screen.height - 200, 250, 150), "Platelets are used to clot wounds as they appear.\nTo create new platelets, either press the platelet button or press the 'W' key.\nCreate a platelet now.", tutorialMessageStyle);
 			if (gC.plateletProduction > 0){
 				//currentState = TutorialStates.State.Done;
 				ab.renderer.material.color = Color.white;
@@ -133,7 +133,7 @@ public class Tutorial : MonoBehaviour {
 			break;
 		case TutorialStates.State.WBCProduction:
 			//GUI.Window(0, new Rect(300, Screen.height - 160, 250, 150), WBCProductionDialog, "Production");
-			GUI.TextArea (new Rect (125, Screen.height - 290, 250, 150), "B Cells, a type of white blood cell, are used to combat diseases as they enter the body.\nTo create new B Cells, either press the B Cell button or press the 'W' key.\n\nCreate a B-Cell now.");
+			GUI.TextArea (new Rect (125, Screen.height - 290, 250, 150), "B Cells, a type of white blood cell, are used to combat diseases as they enter the body.\nTo create new B Cells, either press the B Cell button or press the 'Q' key.\n\nCreate a B-Cell now.", tutorialMessageStyle);
 
 			ActionBarButton wb = gC.actionBarPrefab.transform.Find("whitebloodcell_Button").GetComponent<ActionBarButton>();
 			if(counter < 30) {
@@ -154,13 +154,13 @@ public class Tutorial : MonoBehaviour {
 			}
 			break;
 		case TutorialStates.State.PlateCombat:
-			GUI.Window(0, new Rect(Screen.width/2 - 125, Screen.height/2 -50, 250, 150), PlateCombatDialog, "Combat");
+			GUI.Window(0, new Rect(Screen.width/2 - 125, Screen.height/2 -50, 250, 150), PlateCombatDialog, "Combat", tutorialMessageStyle);
 			break;
 		case TutorialStates.State.WBCCombat:
-			GUI.Window(0, new Rect(Screen.width/2 - 125, Screen.height/2 -50, 250, 150), WBCCombatDialog, "Combat");
+			GUI.Window(0, new Rect(Screen.width/2 - 125, Screen.height/2 -50, 250, 150), WBCCombatDialog, "Combat", tutorialMessageStyle);
 			break;
 		case TutorialStates.State.Commence:
-			GUI.Window(0, new Rect(Screen.width/2 - 125, Screen.height/2 -50, 250, 75), CommenceDialog, "Tutorial");
+			GUI.Window(0, new Rect(Screen.width/2 - 125, Screen.height/2 -50, 250, 75), CommenceDialog, "Tutorial", tutorialMessageStyle);
 			break;
 		}
 	}
@@ -198,7 +198,7 @@ public class Tutorial : MonoBehaviour {
 
 	void HeartRateDialog(int windowID) {
 		dialogWindowActivated = true;
-		GUI.TextArea (new Rect (0, 20, 250, 100), "To increase the speed of the cells in the body, drag the 'Heart Rate' slider to the right.\nTry it out then press the 'OK' button to continue.");
+		GUI.TextArea (new Rect (0, 20, 250, 100), "To increase the speed of the cells in the body, drag the 'Heart Rate' slider to the right.\nTry it out then press the 'OK' button to continue.", tutorialMessageStyle);
 		if (GUI.Button(new Rect(100, 125, 50, 20), "OK")) {
 			dialogOpen = EventType.EVENT_TYPE_NONE;
 			dialogWindowActivated = false;
@@ -208,7 +208,7 @@ public class Tutorial : MonoBehaviour {
 
 	void FinishDialog(int windowID) {
 		dialogWindowActivated = true;
-		GUI.TextArea (new Rect (0, 20, 250, 100), "Congratulations! You have completed the tutorial.\nPress the 'OK' button to play the game.");
+		GUI.TextArea (new Rect (0, 20, 250, 100), "Congratulations! You have completed the tutorial.\nPress the 'OK' button to play the game.", tutorialMessageStyle);
 		if (GUI.Button(new Rect(100, 125, 50, 20), "OK")) {
 			dialogOpen = EventType.EVENT_TYPE_NONE;
 			dialogWindowActivated = false;
@@ -218,7 +218,7 @@ public class Tutorial : MonoBehaviour {
 
 	void EnergyDialog(int windowID) {
 		dialogWindowActivated = true;
-		GUI.TextArea (new Rect (0, 20, 250, 100), "The green bar represents the amount of energy available to use in production. It builds up over time, and is consumed during production.\nPress the 'OK' button to continue.");
+		GUI.TextArea (new Rect (0, 20, 250, 100), "The green bar represents the amount of energy available to use in production. It builds up over time, and is consumed during production.\nPress the 'OK' button to continue.", tutorialMessageStyle);
 		if (GUI.Button(new Rect(100, 125, 50, 20), "OK")) {
 			dialogOpen = EventType.EVENT_TYPE_NONE;
 			dialogWindowActivated = false;
@@ -228,7 +228,7 @@ public class Tutorial : MonoBehaviour {
 
 	void ProductionDialog(int windowID) {
 		dialogWindowActivated = true;
-		GUI.TextArea (new Rect (0, 20, 250, 100), "The amount of cells you can produce at a time is limited by the amount of energy available and the multiplication factor based on the number of cells in production.\nPress the 'OK' button to continue.");
+		GUI.TextArea (new Rect (0, 20, 250, 100), "The amount of cells you can produce at a time is limited by the amount of energy available and the multiplication factor based on the number of cells in production.\nPress the 'OK' button to continue.", tutorialMessageStyle);
 		if (GUI.Button(new Rect(100, 125, 50, 20), "OK")) {
 			dialogOpen = EventType.EVENT_TYPE_NONE;
 			dialogWindowActivated = false;
@@ -238,7 +238,7 @@ public class Tutorial : MonoBehaviour {
 
 	void PlateProductionDialog(int windowID) {
 		dialogWindowActivated = true;
-		GUI.TextArea (new Rect (0, 20, 250, 100), "Platelets are used to clot wounds as they appear.\nTo create new platelets, either press the platelet button or press the 'Q' key.\nPress the 'OK' button to continue.");
+		GUI.TextArea (new Rect (0, 20, 250, 100), "Platelets are used to clot wounds as they appear.\nTo create new platelets, either press the platelet button or press the 'Q' key.\nPress the 'OK' button to continue.", tutorialMessageStyle);
 		if (GUI.Button(new Rect(100, 125, 50, 20), "OK")) {
 			dialogOpen = EventType.EVENT_TYPE_NONE;
 			dialogWindowActivated = false;
@@ -248,7 +248,7 @@ public class Tutorial : MonoBehaviour {
 
 	void WBCProductionDialog(int windowID) {
 		dialogWindowActivated = true;
-		GUI.TextArea (new Rect (0, 20, 250, 100), "B Cells, a type of white blood cell, are used to combat diseases as they enter the body.\nTo create new B Cells, either press the B Cell button or press the 'W' key.\nPress the 'OK' button to continue.");
+		GUI.TextArea (new Rect (0, 20, 250, 100), "B Cells, a type of white blood cell, are used to combat diseases as they enter the body.\nTo create new B Cells, either press the B Cell button or press the 'W' key.\nPress the 'OK' button to continue.", tutorialMessageStyle);
 		if (GUI.Button(new Rect(100, 125, 50, 20), "OK")) {
 			dialogOpen = EventType.EVENT_TYPE_NONE;
 			dialogWindowActivated = false;
@@ -258,7 +258,7 @@ public class Tutorial : MonoBehaviour {
 
 	void PlateCombatDialog(int windowID) {
 		dialogWindowActivated = true;
-		GUI.TextArea (new Rect (0, 20, 250, 100), "To combat wounds, select a platelet and move the wound to the part of the body where the wound is located.\nPress the 'OK' button to continue.");
+		GUI.TextArea (new Rect (0, 20, 250, 100), "To combat wounds, select a platelet and move the wound to the part of the body where the wound is located.\nPress the 'OK' button to continue.", tutorialMessageStyle);
 		if (GUI.Button(new Rect(100, 125, 50, 20), "OK")) {
 			dialogOpen = EventType.EVENT_TYPE_NONE;
 			dialogWindowActivated = false;
@@ -268,7 +268,7 @@ public class Tutorial : MonoBehaviour {
 	
 	void WBCCombatDialog(int windowID) {
 		dialogWindowActivated = true;
-		GUI.TextArea (new Rect (0, 20, 250, 100), "To combat diseases, move the B cells to the part of the body where the diseases are located.\nPress the 'OK' button to continue.");
+		GUI.TextArea (new Rect (0, 20, 250, 100), "To combat diseases, move the B cells to the part of the body where the diseases are located.\nPress the 'OK' button to continue.", tutorialMessageStyle);
 		if (GUI.Button(new Rect(100, 125, 50, 20), "OK")) {
 			dialogOpen = EventType.EVENT_TYPE_NONE;
 			dialogWindowActivated = false;
@@ -278,7 +278,7 @@ public class Tutorial : MonoBehaviour {
 
 	void CommenceDialog(int windowID) {
 		dialogWindowActivated = true;
-		GUI.TextArea (new Rect (0, 20, 250, 25), "Commence the tutorial?");
+		GUI.TextArea (new Rect (0, 20, 250, 25), "Commence the tutorial?", tutorialMessageStyle);
 		if (GUI.Button(new Rect(150, 50, 50, 20), "Yes")) {
 			dialogOpen = EventType.EVENT_TYPE_NONE;
 			dialogWindowActivated = false;
