@@ -27,7 +27,7 @@ public class GameControl : MonoBehaviour {
 
 	public AudioClip backGroundMusic = null;
 
-	public int numDiseaseCells = 2;
+	public int numDiseaseCells;
 	public int numRBCs = 15;
 	public int rbcSpeed = 1;
 	public int whiteBloodProduction = 0;
@@ -76,6 +76,8 @@ public class GameControl : MonoBehaviour {
 
 		//GameObject gameUI = (GameObject) Instantiate(Resources.Load("GameUI"), Vector3.zero, Quaternion.identity);
 		//gameUI.GetComponent<GameUI>().gC = this;
+
+		numDiseaseCells = 0;
 
 		upgradeMenu = (GameObject) Instantiate(Resources.Load("UpgradeMenu"), Vector3.zero, Quaternion.identity);
 		upgradeMenu.SetActive(false);

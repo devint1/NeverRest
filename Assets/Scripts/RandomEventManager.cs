@@ -84,13 +84,13 @@ public class RandomEventManager : MonoBehaviour {
 
 	public void SpawnDiseaseInfection() {
 		Block randomBodyPart =  body.blocks[getRandomAliveBodyPartIndex()];
-		SpawnDiseaseInfection (randomBodyPart);
+		SpawnDiseaseInfection (randomBodyPart, 3);
 	}
 
-	public void SpawnDiseaseInfection (Block location){
+	public void SpawnDiseaseInfection (Block location, int diseaseNumber){
 		Vector3 spawnPoint = location.GetRandomPoint();
 		StartCoroutine (PingLocation (spawnPoint));
-		for(int i = 0; i<numDiseasesSpawn; i++) {
+		for(int i = 0; i<diseaseNumber; i++) {
 			GameObject newDisease = (GameObject)Instantiate(diseasePrefab, spawnPoint, Quaternion.identity);
 			Disease newDiseaseScript = newDisease.GetComponent<Disease>();
 			newDiseaseScript.currentBlock = location;
@@ -101,7 +101,7 @@ public class RandomEventManager : MonoBehaviour {
 		
 		numDiseasesSpawn += 3;
 		dialogOpen = EventType.EVENT_TYPE_DISEASE;
-		if(!diseaseWindowActivated)
+		if(!diseaseWindowActivated && gameControl.isPause)
 			gameControl.TogglePauseGame();
 	}
 
