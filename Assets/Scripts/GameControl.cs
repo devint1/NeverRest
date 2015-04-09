@@ -7,7 +7,7 @@ public class GameControl : MonoBehaviour {
 	public const float PLATELET_FOOD_RATE = 0.025f;
 	private const float MAX_LEVEL_PROGRESS_SPEED = 10.0f;
 	private const float MAX_ENERGY = 100.0f;
-	private const float ENERGY_RESTORE_PER_SECOND = 3.0f;
+	private const float ENERGY_RESTORE_PER_SECOND = 5.0f;
 
 	public ArrayList selected;
 	public ArrayList whiteBloodCells;
@@ -371,7 +371,8 @@ public class GameControl : MonoBehaviour {
 
 		// Restore Energy
 		if (energy < MAX_ENERGY) {
-			energy += ENERGY_RESTORE_PER_SECOND * Time.deltaTime;
+			energy += (ENERGY_RESTORE_PER_SECOND - rbcSpeed) * Time.deltaTime;
+			if (energy < 0) energy = 0;
 		}
 
 		// Check lose condition
