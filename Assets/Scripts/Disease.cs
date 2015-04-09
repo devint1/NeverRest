@@ -84,6 +84,14 @@ public class Disease : MonoBehaviour {
 		}
 	}
 
+	void OnMouseOver() {
+		currentBlock.OnMouseOver ();
+	}
+	
+	void OnMouseExit() {
+		currentBlock.OnMouseExit ();
+	}
+
 	void OnTriggerEnter2D(Collider2D other) {
 		if (destBlock && other.gameObject.name == destBlock.name) {
 			if(captured) {

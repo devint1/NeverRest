@@ -159,7 +159,7 @@ public class Block : MonoBehaviour {
 	}
 
 	// Block clicked. Send selected WhiteBloodCell here
-	void OnMouseOver() {
+	public void OnMouseOver() {
 		showStats = true;
 
 		if(dead) {
@@ -192,7 +192,7 @@ public class Block : MonoBehaviour {
 		//gameControl.selected.Clear();
 	}
 
-	void OnMouseExit() {
+	public void OnMouseExit() {
 		showStats = false;
 	}
 
@@ -235,7 +235,7 @@ public class Block : MonoBehaviour {
 		return transform.gameObject.GetComponentsInChildren<ExitPoint>();
 	}
 
-	IEnumerator FireMouseClick()
+	public IEnumerator FireMouseClick()
 	{
 		if(dead) {
 			//return false;

@@ -101,7 +101,7 @@ public class RandomEventManager : MonoBehaviour {
 		
 		numDiseasesSpawn += 3;
 		dialogOpen = EventType.EVENT_TYPE_DISEASE;
-		if(!diseaseWindowActivated && gameControl.isPause)
+		if(!diseaseWindowActivated)
 			gameControl.TogglePauseGame();
 	}
 
