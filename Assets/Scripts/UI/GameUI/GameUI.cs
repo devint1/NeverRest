@@ -138,7 +138,7 @@ public class GameUI : MonoBehaviour {
 		Destroy (pic);
 		numWBCBuilding -= 1;
 		WBCSlots [ndx] = 0;
-		gC.SpawnWhiteBloodCell();
+		gC.SpawnWhiteBloodCell(WhiteBloodCellType.GREEN);
 	}
 
 	IEnumerator GeneratePC(){

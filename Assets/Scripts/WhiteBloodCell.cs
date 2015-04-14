@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+public enum WhiteBloodCellType { GREEN, PURPLE, TEAL, FINDER };
+
 public class WhiteBloodCell : MonoBehaviour {
 	public Block currentBlock;
 	public GameControl gameControl;
@@ -9,6 +11,7 @@ public class WhiteBloodCell : MonoBehaviour {
 	public AudioClip spawnSound =  null;
 	public float speed = 0.0075f;
 	public Vector3 destination; //Point, Exitpoint, or disease that WhiteBloodCell is moving towards right now
+	public WhiteBloodCellType type;
 	
 	const int MAX_DISEASE_ABSORBED = 8;
 	
@@ -19,10 +22,12 @@ public class WhiteBloodCell : MonoBehaviour {
 	Vector2 userDest;
 	bool hasUserDest; //Need to use this since userDest cannot = null
 	ArrayList capture = new ArrayList ();
+	Color[] colors = { new Color(0.64f, 0.96f, 0.52f), new Color(0.77f, 0.42f, 0.97f), new Color(0.57f, 0.97f, 0.99f), new Color(0.41f, 0.42f, 0.57f) };
 
 	public void Start(){
 		nextBlock = currentBlock;
 		AudioSource temp = gameObject.AddComponent<AudioSource> ();
+		renderer.material.SetColor("_Color", colors[(int)type]);
 		temp.clip = spawnSound;
 		temp.Play ();
 	}

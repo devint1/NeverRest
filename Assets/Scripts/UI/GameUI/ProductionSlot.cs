@@ -33,7 +33,7 @@ public class ProductionSlot : MonoBehaviour {
 			spriteRenderer.sprite = NOT_PRODUCING_IMAGE;
 
 			if (productionType == ActionBarButton.ButtonType.WhiteBloodCell) {
-				gameControl.SpawnWhiteBloodCell();
+				gameControl.SpawnWhiteBloodCell(WhiteBloodCellType.GREEN);
 				gameControl.whiteBloodProduction--;
 			}
 			else if (productionType == ActionBarButton.ButtonType.Platelet) {

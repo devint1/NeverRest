@@ -131,7 +131,7 @@ public class GameControl : MonoBehaviour {
 		whiteBloodCells = new ArrayList();
 		platelets = new ArrayList ();
 		mousePositionStart = new Vector3();
-		SpawnWhiteBloodCell();
+		SpawnWhiteBloodCell(WhiteBloodCellType.GREEN);
 		SpawnPlatelet ();
 	}
 
@@ -428,9 +428,10 @@ public class GameControl : MonoBehaviour {
 		*/
 	}
 
-	public void SpawnWhiteBloodCell() {
+	public void SpawnWhiteBloodCell(WhiteBloodCellType type) {
 		GameObject newWhite = (GameObject)Instantiate (whiteBloodCellPrefab, whiteBloodSpawnPoint.GetRandomPoint(), this.transform.rotation);
 		WhiteBloodCell newWhiteScript = newWhite.GetComponent<WhiteBloodCell> ();
+		newWhiteScript.type = type;
 		newWhiteScript.currentBlock = whiteBloodSpawnPoint;
 		newWhiteScript.destination = whiteBloodSpawnPoint.GetRandomPoint ();
 		newWhiteScript.gameControl = this;
