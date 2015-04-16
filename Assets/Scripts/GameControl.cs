@@ -7,7 +7,7 @@ public class GameControl : MonoBehaviour {
 	public const float PLATELET_FOOD_RATE = 0.025f;
 	private const float MAX_LEVEL_PROGRESS_SPEED = 10.0f;
 	private const float MAX_ENERGY = 100.0f;
-	private const float ENERGY_RESTORE_PER_SECOND = 5.0f;
+	private const float ENERGY_RESTORE_PER_SECOND = 2.5f;
 
 	public ArrayList selected;
 	public ArrayList whiteBloodCells;

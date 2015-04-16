@@ -11,8 +11,8 @@ public class ActionBarButton : MonoBehaviour {
 
 	private const float WBC_BASE_COST = 10f;
 	private const float PLAT_BASE_COST = 10f; 
-	private const float WBC_DEFAULT_BUILDTIME = 5.0f;
-	private const float PLAT_DEFAULT_BUILDTIME = 5.0f;
+	private const float WBC_DEFAULT_BUILDTIME = 15.0f;
+	private const float PLAT_DEFAULT_BUILDTIME = 15.0f;
 
 	public Sprite PRODUCTION_SPRITE;
 
