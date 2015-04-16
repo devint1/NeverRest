@@ -66,6 +66,7 @@ public class Tutorial : MonoBehaviour {
 	void OnGUI(){
 		switch (currentState) {
 		case TutorialStates.State.Off:
+			break;
 		case TutorialStates.State.Done:
 			break;
 		case TutorialStates.State.Pause:
@@ -223,7 +224,7 @@ public class Tutorial : MonoBehaviour {
 
 	void FinishDialog(int windowID) {
 		dialogWindowActivated = true;
-		GUI.TextArea (new Rect (0, 20, 250, 100), "Congratulations! You have completed the tutorial.\nPress the 'OK' button to play the game.", tutorialMessageStyle);
+		//GUI.TextArea (new Rect (0, 20, 250, 100), "Congratulations! You have completed the tutorial.\nPress the 'OK' button to play the game.", tutorialMessageStyle);
 		if (GUI.Button(new Rect(100, 125, 50, 20), "OK")) {
 			dialogOpen = EventType.EVENT_TYPE_NONE;
 			dialogWindowActivated = false;
@@ -240,13 +241,16 @@ public class Tutorial : MonoBehaviour {
 			dialogWindowActivated = false;
 			currentState = TutorialStates.State.Pause;
 			tutPause = false;
+			Debug.Log(" YES ");
 		}
 		if (GUI.Button(new Rect(50, 50, 50, 20), "No")) {
 			dialogOpen = EventType.EVENT_TYPE_NONE;
 			dialogWindowActivated = false;
 			tutPause = false;
-			currentState = TutorialStates.State.Done;
+			currentState = TutorialStates.State.Off;
+			//Debug.Log("NO chosed ");
 		}
+		//Debug.Log("State is "+ currentState);
 	}
 
 	void DoEnemySpawn(){
@@ -269,10 +273,6 @@ public class Tutorial : MonoBehaviour {
 	void ProductionDialog(int windowID) {
 		dialogWindowActivated = true;
 		GUI.TextArea (new Rect (0, 20, 250, 100), "The amount of cells you can produce at a time is limited by the amount of energy available and the multiplication factor based on the number of cells in production.\nPress the 'OK' button to continue.", tutorialMessageStyle);
-		//bug fix
-		if( gC.energy< 50 ){
-			gC.energy = 50;	
-		}
 		if (GUI.Button(new Rect(100, 125, 50, 20), "OK")) {
 			dialogOpen = EventType.EVENT_TYPE_NONE;
 			dialogWindowActivated = false;
@@ -284,10 +284,6 @@ public class Tutorial : MonoBehaviour {
 	void PlateProductionDialog(int windowID) {
 		dialogWindowActivated = true;
 		GUI.TextArea (new Rect (0, 20, 250, 100), "Platelets are used to clot wounds as they appear.\nTo create new platelets, either press the platelet button or press the 'Q' key.\nPress the 'OK' button to continue.", tutorialMessageStyle);
-		//bug fix
-		if( gC.energy< 50 ){
-			gC.energy = 50;	
-		}
 		if (GUI.Button(new Rect(100, 125, 50, 20), "OK")) {
 			dialogOpen = EventType.EVENT_TYPE_NONE;
 			dialogWindowActivated = false;
@@ -299,10 +295,6 @@ public class Tutorial : MonoBehaviour {
 	void WBCProductionDialog(int windowID) {
 		dialogWindowActivated = true;
 		GUI.TextArea (new Rect (0, 20, 250, 100), "B Cells, a type of white blood cell, are used to combat diseases as they enter the body.\nTo create new B Cells, either press the B Cell button or press the 'W' key.\nPress the 'OK' button to continue.", tutorialMessageStyle);
-		//bug fix
-		if( gC.energy< 50 ){
-			gC.energy = 50;	
-		}
 		if (GUI.Button(new Rect(100, 125, 50, 20), "OK")) {
 			dialogOpen = EventType.EVENT_TYPE_NONE;
 			dialogWindowActivated = false;
@@ -314,10 +306,6 @@ public class Tutorial : MonoBehaviour {
 	void PlateCombatDialog(int windowID) {
 		dialogWindowActivated = true;
 		GUI.TextArea (new Rect (0, 20, 250, 100), "To combat wounds, select a platelet and move the wound to the part of the body where the wound is located.\nPress the 'OK' button to continue.", tutorialMessageStyle);
-		//bug fix
-		if( gC.energy< 50 ){
-			gC.energy = 50;	
-		}
 		if (GUI.Button(new Rect(100, 125, 50, 20), "OK")) {
 			dialogOpen = EventType.EVENT_TYPE_NONE;
 			dialogWindowActivated = false;

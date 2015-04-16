@@ -30,6 +30,7 @@ public class RandomEventManager : MonoBehaviour {
 		case EventType.EVENT_TYPE_DISEASE:
 			if(!diseaseWindowActivated) {
 				if (gameControl.tutorial.currentState != TutorialStates.State.Off) {
+					Debug.Log(" Game state is " + gameControl.tutorial.currentState);
 					gameControl.isPause = true;
 					GUI.Window(0, dialogRect, SpawnDiseaseDialog, "Infectious Disease!");
 				}
