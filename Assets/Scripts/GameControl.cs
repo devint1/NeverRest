@@ -8,7 +8,7 @@ public class GameControl : MonoBehaviour {
 	public const float PLATELET_FOOD_RATE = 0.025f;
 	private const float MAX_LEVEL_PROGRESS_SPEED = 10.0f;
 	private const float MAX_ENERGY = 100.0f;
-	private const float ENERGY_RESTORE_PER_SECOND = 2.5f;
+	private const float ENERGY_RESTORE_PER_SECOND = 5.0f;
 
 	public ArrayList selected;
 	public ArrayList whiteBloodCells;
@@ -31,11 +31,11 @@ public class GameControl : MonoBehaviour {
 
 	public int numDiseaseCells;
 	public int numRBCs = 15;
-	public int rbcSpeed = 1;
 	public int whiteBloodProduction = 0;
 	public int plateletProduction = 0;
 	public int liveRBCs;
 	public float energy = 50f;
+	public float rbcSpeed = 5;
 
 	public Block current_b;
 	public Body body;
@@ -329,7 +329,7 @@ public class GameControl : MonoBehaviour {
 			} 
 		}
 
-		rbcSpeed = (int)(heartSlider.value * 9.0f) + 1;
+		rbcSpeed = (heartSlider.value);//(int)(heartSlider.value * 9.0f) + 1;
 		Debug.Log ("Slider val = " + rbcSpeed);
 
 		// Display energy bar
