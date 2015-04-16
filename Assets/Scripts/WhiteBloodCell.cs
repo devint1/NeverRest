@@ -50,7 +50,7 @@ public class WhiteBloodCell : MonoBehaviour {
 	
 	public void DeSelect() {
 		if(isSelected) {
-			gameObject.renderer.material.color = Color.white;
+			renderer.material.SetColor("_Color", colors[(int)type]);
 		}
 		isSelected = false;
 		gameControl.wbcSelected= false;
