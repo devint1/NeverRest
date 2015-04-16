@@ -29,12 +29,16 @@ public class RandomEventManager : MonoBehaviour {
 		switch(dialogOpen) {
 		case EventType.EVENT_TYPE_DISEASE:
 			if(!diseaseWindowActivated) {
-				GUI.Window(0, dialogRect, SpawnDiseaseDialog, "Infectious Disease!");
+				if (gameControl.tutorial.currentState != TutorialStates.State.Done) {
+					GUI.Window(0, dialogRect, SpawnDiseaseDialog, "Infectious Disease!");
+				}
 			}
 			break;
 		case EventType.EVENT_TYPE_WOUND:
 			if(!woundedWindowActivated) {
-				GUI.Window(0, dialogRect, SpawnWoundDialog, "Wounded!");
+				if (gameControl.tutorial.currentState != TutorialStates.State.Done) {
+					GUI.Window(0, dialogRect, SpawnWoundDialog, "Wounded!");
+				}
 			}
 			break;
 		}
@@ -106,19 +110,25 @@ public class RandomEventManager : MonoBehaviour {
 	}
 
 	void SpawnDiseaseDialog(int windowID) {
-		GUI.TextArea (new Rect (0, 20, 250, 100), "Ahhhh! An infectious bacteria has managed to get inside your body! Quick! Orchestrate the proper response of bodily functions to stop the infection before it spreads out of control!");
-		if (GUI.Button(new Rect(100, 125, 50, 20), "OK")) {
-			dialogOpen = EventType.EVENT_TYPE_NONE;
-			gameControl.TogglePauseGame();
-			diseaseWindowActivated = true;
+		Debug.Log (" STate " + gameControl.tutorial.currentState);
+		if (gameControl.tutorial.currentState != TutorialStates.State.Done ) {
+			GUI.TextArea (new Rect (0, 20, 250, 100), "Ahhhh! An infectious bacteria has managed to get inside your body! Quick! Orchestrate the proper response of bodily functions to stop the infection before it spreads out of control!");
+			gameControl.TogglePauseGame ();
+			if (GUI.Button (new Rect (100, 125, 50, 20), "OK")) {
+				dialogOpen = EventType.EVENT_TYPE_NONE;
+				gameControl.TogglePauseGame ();
+				diseaseWindowActivated = true;
+			}
 		}
 	}
 
 	void SpawnWoundDialog(int windowID) {
+		Debug.Log (" STate " + gameControl.tutorial.currentState);
 		GUI.TextArea (new Rect (0, 20, 250, 100), "Ouch! You trip over a rock and injure yourself! Use platelets to clot the wound or you will bleed out!");
-		if (GUI.Button(new Rect(100, 125, 50, 20), "OK")) {
+		gameControl.TogglePauseGame ();
+		if (GUI.Button (new Rect (100, 125, 50, 20), "OK")) {
 			dialogOpen = EventType.EVENT_TYPE_NONE;
-			gameControl.TogglePauseGame();
+			gameControl.TogglePauseGame ();
 			woundedWindowActivated = true;
 		}
 	}

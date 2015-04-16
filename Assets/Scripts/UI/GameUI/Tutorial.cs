@@ -10,7 +10,7 @@ public class Tutorial : MonoBehaviour {
 	public GameControl gC;
 
 	public TutorialStates.State currentState;
-
+	public bool tutPause = false;
 	bool bStartedDragCoroutine;
 
 	float dragPercent;
@@ -88,6 +88,7 @@ public class Tutorial : MonoBehaviour {
 			GUI.TextArea (new Rect (Screen.width/2 - 87, Screen.height/2 -50, 175, 50), "Right click on a part of the body to move the selected cells.", tutorialMessageStyle);
 			if(gC.firstMouse) {
 				currentState = TutorialStates.State.Unpause;
+				tutPause = true;
 			}
 			break;
 		case TutorialStates.State.Finish:
@@ -97,15 +98,19 @@ public class Tutorial : MonoBehaviour {
 			GUI.TextArea (new Rect (Screen.width/2 - 87, Screen.height/2 -50, 175, 50), "Now unpause the game to continue.\n (space key)", tutorialMessageStyle);
 			if ( !gC.IsPaused() ) {
 				currentState = TutorialStates.State.HeartRate;
+				tutPause = false;
 			}
 			break;
 		case TutorialStates.State.HeartRate:
+			tutPause = true;
 			GUI.Window(0, new Rect(175, 60, 250, 150), HeartRateDialog, "Heart Rate Slider");
 			break;
 		case TutorialStates.State.EnergyBar:
+			tutPause = true;
 			GUI.Window(0, new Rect(250, 10, 250, 150), EnergyDialog, "Energy Bar");
 			break;
 		case TutorialStates.State.Production:
+			tutPause = true;
 			GUI.Window(0, new Rect(200, Screen.height - 325, 250, 150), ProductionDialog, "Production");
 			break;
 		case TutorialStates.State.PlateProduction:
@@ -127,6 +132,7 @@ public class Tutorial : MonoBehaviour {
 			counter++;
 			GUI.TextArea (new Rect (125, Screen.height - 200, 250, 150), "Platelets are used to clot wounds as they appear.\nTo create new platelets, either press the platelet button or press the 'W' key.\nCreate a platelet now.", tutorialMessageStyle);
 			if (gC.plateletProduction > 0){
+				tutPause = true;
 				//currentState = TutorialStates.State.Done;
 				//SetAlphaOfBody(1.0f);
 				
@@ -138,7 +144,7 @@ public class Tutorial : MonoBehaviour {
 		case TutorialStates.State.WBCProduction:
 			//GUI.Window(0, new Rect(300, Screen.height - 160, 250, 150), WBCProductionDialog, "Production");
 			GUI.TextArea (new Rect (125, Screen.height - 290, 250, 150), "B Cells, a type of white blood cell, are used to combat diseases as they enter the body.\nTo create new B Cells, either press the B Cell button or press the 'Q' key.\n\nCreate a B-Cell now.", tutorialMessageStyle);
-			
+			tutPause = true;
 			ActionBarButton wb = gC.actionBarPrefab.transform.Find("whitebloodcell_Button").GetComponent<ActionBarButton>();
 			if(counter < 30) {
 				wb.renderer.material.color = Color.yellow;
@@ -222,6 +228,7 @@ public class Tutorial : MonoBehaviour {
 			dialogOpen = EventType.EVENT_TYPE_NONE;
 			dialogWindowActivated = false;
 			currentState = TutorialStates.State.Done;
+			tutPause = false;
 		}
 	}
 
@@ -232,10 +239,12 @@ public class Tutorial : MonoBehaviour {
 			dialogOpen = EventType.EVENT_TYPE_NONE;
 			dialogWindowActivated = false;
 			currentState = TutorialStates.State.Pause;
+			tutPause = false;
 		}
 		if (GUI.Button(new Rect(50, 50, 50, 20), "No")) {
 			dialogOpen = EventType.EVENT_TYPE_NONE;
 			dialogWindowActivated = false;
+			tutPause = false;
 			currentState = TutorialStates.State.Done;
 		}
 	}
@@ -253,6 +262,7 @@ public class Tutorial : MonoBehaviour {
 			dialogOpen = EventType.EVENT_TYPE_NONE;
 			dialogWindowActivated = false;
 			currentState = TutorialStates.State.Production;
+			tutPause = false;
 		}
 	}
 	
@@ -263,6 +273,7 @@ public class Tutorial : MonoBehaviour {
 			dialogOpen = EventType.EVENT_TYPE_NONE;
 			dialogWindowActivated = false;
 			currentState = TutorialStates.State.PlateProduction;
+			tutPause = false;
 		}
 	}
 	
@@ -273,6 +284,7 @@ public class Tutorial : MonoBehaviour {
 			dialogOpen = EventType.EVENT_TYPE_NONE;
 			dialogWindowActivated = false;
 			currentState = TutorialStates.State.WBCProduction;
+			tutPause = false;
 		}
 	}
 	
@@ -283,6 +295,7 @@ public class Tutorial : MonoBehaviour {
 			dialogOpen = EventType.EVENT_TYPE_NONE;
 			dialogWindowActivated = false;
 			currentState = TutorialStates.State.PlateCombat;
+			tutPause = false;
 		}
 	}
 	
@@ -293,6 +306,7 @@ public class Tutorial : MonoBehaviour {
 			dialogOpen = EventType.EVENT_TYPE_NONE;
 			dialogWindowActivated = false;
 			currentState = TutorialStates.State.WBCCombat;
+			tutPause = false;
 		}
 	}
 	
@@ -303,6 +317,7 @@ public class Tutorial : MonoBehaviour {
 			dialogOpen = EventType.EVENT_TYPE_NONE;
 			dialogWindowActivated = false;
 			currentState = TutorialStates.State.Finish;
+			tutPause = false;
 		}
 	}
 
@@ -313,6 +328,7 @@ public class Tutorial : MonoBehaviour {
 			dialogOpen = EventType.EVENT_TYPE_NONE;
 			dialogWindowActivated = false;
 			currentState = TutorialStates.State.EnergyBar;
+			tutPause = false;
 		}
 	}
 }

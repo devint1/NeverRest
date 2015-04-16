@@ -101,7 +101,7 @@ public class Block : MonoBehaviour {
 				animator.Play("Flashing");
 			}
 		}
-		if (!gameControl.isPause) {
+		if (!gameControl.isPause || !gameControl.tutorial.tutPause) {
 			//If vitals are mostly good, slowly increase health. Else, take damage
 			if (oxygenLevel >= 0.75f && temperaturePercent >= 0.75f && diseases.Count == 0 && wounds.Count == 0 && overallHealth <= 1.0) {
 				overallHealth += HEALH_REGENERATION * Time.deltaTime;
@@ -121,10 +121,10 @@ public class Block : MonoBehaviour {
 			}
 
 			foreach (Wound wound in wounds) {
-				 
+				if (!gameControl.isPause || !gameControl.tutorial.tutPause) {
 					wound.health -= WOUND_HEAL_PER_PLATELET * wound.plateletsCount * Time.deltaTime;
 					//Debug.Log(wound.health);
-			 
+				}
 
 				/*
 			if (Time.time - wound.plateletArrivalTime > Wound.PLATELETE_INEFFECTIVENES_TIME) {
