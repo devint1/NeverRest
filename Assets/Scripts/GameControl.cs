@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.UI;
 
 public class GameControl : MonoBehaviour {
 
@@ -50,6 +51,7 @@ public class GameControl : MonoBehaviour {
 	public bool firstMouse = false;
 	public Tutorial tutorial;
 	public RandomEventManager rngManager;
+	public Slider heartSlider;
 
 	// int mousePressStart = -1;
 	Vector3 mousePositionStart;
@@ -326,16 +328,9 @@ public class GameControl : MonoBehaviour {
 
 			} 
 		}
-		rbcSpeed = (int)GUI.HorizontalSlider(new Rect(25, 55, 125, 30), rbcSpeed, 1.0F, 10.0F);
-		
-		// Display wihte blood cell production status
-		/*if (whiteBloodProduction > 0) {
-			GUI.TextArea (new Rect (25, 133, 125, 20), "1 per " + 30 / whiteBloodProduction + " seconds");
-		} else {
-			GUI.TextArea (new Rect (25, 133, 125, 20), "Production off");
-		}*/
-		
-		GUI.TextArea (new Rect (25, 70, 125, 20), "Heart Rate");
+
+		rbcSpeed = (int)(heartSlider.value * 9.0f) + 1;
+		Debug.Log ("Slider val = " + rbcSpeed);
 
 		// Display energy bar
 		// draw the background:
