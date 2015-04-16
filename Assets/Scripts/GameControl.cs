@@ -421,10 +421,9 @@ public class GameControl : MonoBehaviour {
 		}
 
 		// Restore Energy
-		if (energy < MAX_ENERGY) {
-			energy += (ENERGY_RESTORE_PER_SECOND - rbcSpeed) * Time.deltaTime;
-			if (energy < 0) energy = 0;
-		}
+		energy += (ENERGY_RESTORE_PER_SECOND - rbcSpeed) * Time.deltaTime;
+		if (energy < 0) energy = 0;
+		else if (energy > MAX_ENERGY) energy = MAX_ENERGY;
 
 		// Check lose condition
 		if (checkLoseCondition ()) {
