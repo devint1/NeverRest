@@ -269,6 +269,10 @@ public class Tutorial : MonoBehaviour {
 	void ProductionDialog(int windowID) {
 		dialogWindowActivated = true;
 		GUI.TextArea (new Rect (0, 20, 250, 100), "The amount of cells you can produce at a time is limited by the amount of energy available and the multiplication factor based on the number of cells in production.\nPress the 'OK' button to continue.", tutorialMessageStyle);
+		//bug fix
+		if( gC.energy< 50 ){
+			gC.energy = 50;	
+		}
 		if (GUI.Button(new Rect(100, 125, 50, 20), "OK")) {
 			dialogOpen = EventType.EVENT_TYPE_NONE;
 			dialogWindowActivated = false;
@@ -280,6 +284,10 @@ public class Tutorial : MonoBehaviour {
 	void PlateProductionDialog(int windowID) {
 		dialogWindowActivated = true;
 		GUI.TextArea (new Rect (0, 20, 250, 100), "Platelets are used to clot wounds as they appear.\nTo create new platelets, either press the platelet button or press the 'Q' key.\nPress the 'OK' button to continue.", tutorialMessageStyle);
+		//bug fix
+		if( gC.energy< 50 ){
+			gC.energy = 50;	
+		}
 		if (GUI.Button(new Rect(100, 125, 50, 20), "OK")) {
 			dialogOpen = EventType.EVENT_TYPE_NONE;
 			dialogWindowActivated = false;
@@ -291,6 +299,10 @@ public class Tutorial : MonoBehaviour {
 	void WBCProductionDialog(int windowID) {
 		dialogWindowActivated = true;
 		GUI.TextArea (new Rect (0, 20, 250, 100), "B Cells, a type of white blood cell, are used to combat diseases as they enter the body.\nTo create new B Cells, either press the B Cell button or press the 'W' key.\nPress the 'OK' button to continue.", tutorialMessageStyle);
+		//bug fix
+		if( gC.energy< 50 ){
+			gC.energy = 50;	
+		}
 		if (GUI.Button(new Rect(100, 125, 50, 20), "OK")) {
 			dialogOpen = EventType.EVENT_TYPE_NONE;
 			dialogWindowActivated = false;
@@ -302,6 +314,10 @@ public class Tutorial : MonoBehaviour {
 	void PlateCombatDialog(int windowID) {
 		dialogWindowActivated = true;
 		GUI.TextArea (new Rect (0, 20, 250, 100), "To combat wounds, select a platelet and move the wound to the part of the body where the wound is located.\nPress the 'OK' button to continue.", tutorialMessageStyle);
+		//bug fix
+		if( gC.energy< 50 ){
+			gC.energy = 50;	
+		}
 		if (GUI.Button(new Rect(100, 125, 50, 20), "OK")) {
 			dialogOpen = EventType.EVENT_TYPE_NONE;
 			dialogWindowActivated = false;

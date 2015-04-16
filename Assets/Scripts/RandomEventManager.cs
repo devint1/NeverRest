@@ -112,7 +112,7 @@ public class RandomEventManager : MonoBehaviour {
 	}
 
 	void SpawnDiseaseDialog(int windowID) {
-		Debug.Log (" Pause? " + gameControl.isPause);
+		//Debug.Log (" Pause? " + gameControl.isPause);
 			GUI.TextArea (new Rect (0, 20, 250, 100), "Ahhhh! An infectious bacteria has managed to get inside your body! Quick! Orchestrate the proper response of bodily functions to stop the infection before it spreads out of control!");
 			gameControl.TogglePauseGame ();
 			if (GUI.Button (new Rect (100, 125, 50, 20), "OK")) {
@@ -125,7 +125,7 @@ public class RandomEventManager : MonoBehaviour {
 	}
 
 	void SpawnWoundDialog(int windowID) {
-		Debug.Log (" Pause? " + gameControl.isPause);
+		//Debug.Log (" Pause? " + gameControl.isPause);
 		GUI.TextArea (new Rect (0, 20, 250, 100), "Ouch! You trip over a rock and injure yourself! Use platelets to clot the wound or you will bleed out!");
 		gameControl.TogglePauseGame ();
 		if (GUI.Button (new Rect (100, 125, 50, 20), "OK")) {
