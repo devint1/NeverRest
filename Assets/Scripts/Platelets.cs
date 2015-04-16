@@ -35,6 +35,7 @@ public class Platelets : MonoBehaviour {
 		if(!isSelected){
 			gameControl.selected.Add (this.gameObject);
 			gameObject.renderer.material.color = Color.green;
+
 		}
 		isSelected = true;
 	}
@@ -44,14 +45,18 @@ public class Platelets : MonoBehaviour {
 			gameObject.renderer.material.color = Color.white;
 		}
 		isSelected = false;
+		gameControl.plateletSelected = false;
 	}
 	
 	// Clicked on and selected
 	void OnMouseDown() {
 		if (!isSelected) {
 			Select();
+			gameControl.plateletSelected = true;
+			gameControl.current_b = currentBlock;
 		} else {
 			DeSelect();
+			gameControl.plateletSelected = false;
 		}
 	}
 

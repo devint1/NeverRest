@@ -12,6 +12,7 @@ public class GameControl : MonoBehaviour {
 	public ArrayList selected;
 	public ArrayList whiteBloodCells;
 	public ArrayList platelets;
+	public ArrayList doubleClicked;
 
 	public Block whiteBloodSpawnPoint;
 	public Block plateletSpawnPoint;
@@ -35,8 +36,10 @@ public class GameControl : MonoBehaviour {
 	public int liveRBCs;
 	public float energy = 50f;
 
+	public Block current_b;
 	public Body body;
-
+	public bool wbcSelected =false;
+	public bool plateletSelected = false;
 	public bool toggleRBC = false;
 	public bool toggleWBC = true;
 	public bool changed = true;
@@ -126,7 +129,7 @@ public class GameControl : MonoBehaviour {
 
 		//GameObject actionBar = (GameObject)Instantiate (actionBarPrefab, new Vector3(10, Screen.height - 150, -1), this.transform.rotation);
 
-
+		doubleClicked = new ArrayList ();
 		selected = new ArrayList();
 		whiteBloodCells = new ArrayList();
 		platelets = new ArrayList ();
@@ -157,28 +160,74 @@ public class GameControl : MonoBehaviour {
 			mouseDown = true;
 			if (click && Time.time <= (doubleClickTimer +.35))
 			    {
-				Debug.Log("Double click ");
 				click =false;
-				//GameObject.GetComponent<WhiteBloodCell> ().DeSelect();
+				if (wbcSelected){
+					foreach(WhiteBloodCell wbc in whiteBloodCells)
+					{
+						if (wbc.currentBlock == current_b){
+							wbc.Select();
+							doubleClicked.Add(wbc);
+
+						}
+					}
+					Debug.Log("selected " + selected.Count);
+					Debug.Log("Double click " + doubleClicked.Count);
+				}
+
+				/*
 				if(selected != null) {
+					Block current_b;
+
 					foreach(GameObject obj in selected) {
-						// FIXME: Find out why nulls are still in selected
+						//Debug.Log("print obj "+ obj );
 						if(!obj) {
+							doubleClicked.Clear();
+							click =false;
 							continue;
 						}
 						if(obj.tag == "WhiteBloodCell") {
 							obj.GetComponent<WhiteBloodCell> ().DeSelect();
-							Debug.Log("White blood double clicked");
+							doubleClicked.Clear();
+							current_b=obj.GetComponent<WhiteBloodCell> ().currentBlock;
+							Debug.Log("White blood double clicked"); 
+							//Debug.Log(obj.GetComponent<WhiteBloodCell> ().currentBlock + "obj");
+
+							foreach(WhiteBloodCell wbc in doubleClicked){
+								wbc.DeSelect();
+							}
+							Debug.Log("Number of WBC " +doubleClicked.Count);
+							doubleClicked.Clear();
+							click =false;
 						}
 						else if(obj.tag == "Platelet") {
+							doubleClicked.Clear();
+							current_b=obj.GetComponent<Platelets> ().currentBlock;
 							obj.GetComponent<Platelets> ().DeSelect();
 							Debug.Log("Platelet double clicked");
-
+							foreach(Platelets plat in platelets)
+							{
+								
+								if (plat.currentBlock == current_b){
+									
+									doubleClicked.Add(plat);
+									
+								}
+							}
+							foreach(Platelets plat in doubleClicked){
+								plat.DeSelect();
+							}
+							Debug.Log("Number of Platelets " +doubleClicked.Count);
+							doubleClicked.Clear();
+							click =false;
 						}
 					}
+					//Debug.Log ("clear double clcick");
 					selected.Clear();
-				}
 
+				}
+				Debug.Log ("clear double click");
+				click =false;
+				*/
 
 			}
 			else if (click && Time.time >(doubleClickTimer +.35)){
@@ -254,11 +303,13 @@ public class GameControl : MonoBehaviour {
 			mouseDown = false;
 			mousePositionStart.x = 0;
 			mousePositionStart.y = 0;
+
 		}
 
 		if (Input.GetMouseButton (1) && !firstMouse) {
 			firstMouse = true;
 		}
+		doubleClicked.Clear();
 	}
 
 	void OnGUI() {
@@ -440,6 +491,7 @@ public class GameControl : MonoBehaviour {
 			newWhiteScript.renderer.enabled = false;
 		
 		whiteBloodCells.Add (newWhite.GetComponent<WhiteBloodCell>());
+
 	}
 
 	public void SpawnPlatelet() {

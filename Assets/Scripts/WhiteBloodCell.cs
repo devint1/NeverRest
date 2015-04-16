@@ -45,6 +45,7 @@ public class WhiteBloodCell : MonoBehaviour {
 			gameObject.renderer.material.color = Color.blue;
 		}
 		isSelected = true;
+
 	}
 	
 	public void DeSelect() {
@@ -52,14 +53,18 @@ public class WhiteBloodCell : MonoBehaviour {
 			gameObject.renderer.material.color = Color.white;
 		}
 		isSelected = false;
+		gameControl.wbcSelected= false;
 	}
 	
 	// Clicked on and selected
 	void OnMouseDown() {
 		if (!isSelected) {
 			Select();
+			gameControl.current_b = currentBlock;
+			gameControl.wbcSelected = true;
 		} else {
 			DeSelect();
+			gameControl.wbcSelected= false;
 		}
 	}
 
