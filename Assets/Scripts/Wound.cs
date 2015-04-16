@@ -7,7 +7,6 @@ public class Wound : MonoBehaviour {
 	public float spawnTime;
 	public int plateletsCount;
 	public float plateletArrivalTime;
-
 	public const int NUM_PLATELETS_CONSUMED = 3;
 	public const int NUM_PLATELETS_PER_5S = 1;
 	public const float PLATELETE_INEFFECTIVENES_TIME = 5.0f;
@@ -24,20 +23,22 @@ public class Wound : MonoBehaviour {
 		if (!closed) {
 			renderer.material.color = new Color(1f, 1f, 1f, health);
 		}
+		if (!block.gameControl.isPause) {
+			Debug.Log(" game is " +block.gameControl.isPause );
+			if (!closed && health <= 0) {
+				block.wounds.Remove (this);
+				closed = true;
+				Animator animator = GetComponent<Animator> ();
 
-		if(!closed && health <= 0) {
-			block.wounds.Remove(this);
-			closed = true;
-			Animator animator = GetComponent<Animator>();
+				// Put in background
+				SpriteRenderer sprite = GetComponent<SpriteRenderer> ();
+				sprite.sortingOrder = 3;
 
-			// Put in background
-			SpriteRenderer sprite = GetComponent<SpriteRenderer>();
-			sprite.sortingOrder = 3;
-
-			// Fade to closed animation
-			animator.CrossFade("Closed", 0f);
-			renderer.material.color = new Color(1f, 1f, 1f, 0f);
-			StartCoroutine(Fade (1f, 0.5f));
+				// Fade to closed animation
+				animator.CrossFade ("Closed", 0f);
+				renderer.material.color = new Color (1f, 1f, 1f, 0f);
+				StartCoroutine (Fade (1f, 0.5f));
+			}
 		}
 	}
 

@@ -29,15 +29,17 @@ public class RandomEventManager : MonoBehaviour {
 		switch(dialogOpen) {
 		case EventType.EVENT_TYPE_DISEASE:
 			if(!diseaseWindowActivated) {
-				if (gameControl.tutorial.currentState != TutorialStates.State.Done) {
+				if (gameControl.tutorial.currentState != TutorialStates.State.Off) {
+					gameControl.isPause = true;
 					GUI.Window(0, dialogRect, SpawnDiseaseDialog, "Infectious Disease!");
 				}
 			}
 			break;
 		case EventType.EVENT_TYPE_WOUND:
 			if(!woundedWindowActivated) {
-				if (gameControl.tutorial.currentState != TutorialStates.State.Done) {
+				if (gameControl.tutorial.currentState != TutorialStates.State.Off) {
 					GUI.Window(0, dialogRect, SpawnWoundDialog, "Wounded!");
+					gameControl.isPause = true;
 				}
 			}
 			break;
@@ -110,26 +112,27 @@ public class RandomEventManager : MonoBehaviour {
 	}
 
 	void SpawnDiseaseDialog(int windowID) {
-		Debug.Log (" STate " + gameControl.tutorial.currentState);
-		if (gameControl.tutorial.currentState != TutorialStates.State.Done ) {
+		Debug.Log (" Pause? " + gameControl.isPause);
 			GUI.TextArea (new Rect (0, 20, 250, 100), "Ahhhh! An infectious bacteria has managed to get inside your body! Quick! Orchestrate the proper response of bodily functions to stop the infection before it spreads out of control!");
 			gameControl.TogglePauseGame ();
 			if (GUI.Button (new Rect (100, 125, 50, 20), "OK")) {
 				dialogOpen = EventType.EVENT_TYPE_NONE;
 				gameControl.TogglePauseGame ();
 				diseaseWindowActivated = true;
+				gameControl.isPause = false;
 			}
-		}
+
 	}
 
 	void SpawnWoundDialog(int windowID) {
-		Debug.Log (" STate " + gameControl.tutorial.currentState);
+		Debug.Log (" Pause? " + gameControl.isPause);
 		GUI.TextArea (new Rect (0, 20, 250, 100), "Ouch! You trip over a rock and injure yourself! Use platelets to clot the wound or you will bleed out!");
 		gameControl.TogglePauseGame ();
 		if (GUI.Button (new Rect (100, 125, 50, 20), "OK")) {
 			dialogOpen = EventType.EVENT_TYPE_NONE;
 			gameControl.TogglePauseGame ();
 			woundedWindowActivated = true;
+			gameControl.isPause = false;
 		}
 	}
 
