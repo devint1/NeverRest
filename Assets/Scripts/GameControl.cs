@@ -52,6 +52,7 @@ public class GameControl : MonoBehaviour {
 	public Tutorial tutorial;
 	public RandomEventManager rngManager;
 	public Slider heartSlider;
+	public Texture energyImage;
 
 	// int mousePressStart = -1;
 	Vector3 mousePositionStart;
@@ -330,22 +331,24 @@ public class GameControl : MonoBehaviour {
 		}
 
 		rbcSpeed = (heartSlider.value);//(int)(heartSlider.value * 9.0f) + 1;
-		Debug.Log ("Slider val = " + rbcSpeed);
+		//Debug.Log ("Slider val = " + rbcSpeed);
 
 		// Display energy bar
 		// draw the background:
-		GUI.BeginGroup (new Rect (20, 10, 200, 40));
-		GUI.Box (new Rect (0,0, 200, 40), barEmpty);
+		//GUI.BeginGroup (new Rect (20, 10, 500, 40));
+		//GUI.Box (new Rect (0,0, 200, 40), barEmpty);
 		
 		// draw the filled-in part:
-		GUI.BeginGroup (new Rect (0, 0, 200f * energy/MAX_ENERGY, 40));
-		GUI.Box (new Rect (0,0, 200, 40),energyBarFull);
-		GUI.EndGroup ();
+		//GUI.BeginGroup (new Rect (20, 10, 500f * energy/MAX_ENERGY, 40));
+		//GUI.Box (new Rect (0,0, 200, 40),energyBarFull);
+		GUI.DrawTexture (new Rect (10, 10, 313.0f * energy/MAX_ENERGY, 30), energyBarFull);
+		GUI.DrawTexture (new Rect (0.0f, 0.0f, 400.0f, 50.0f), energyImage);
+		//GUI.EndGroup ();
 
 		// Energ level text
-		GUI.Label(new Rect(70, 10, 100, 20), "Energy: " + (int)energy);
+		//GUI.Label(new Rect(70, 10, 100, 20), "Energy: " + (int)energy);
 
-		GUI.EndGroup ();
+		//GUI.EndGroup ();
 
 		// Draw text if enabled
 		if (drawText) {
