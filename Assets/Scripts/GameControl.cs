@@ -9,7 +9,7 @@ public class GameControl : MonoBehaviour {
 	public const float PLATELET_FOOD_RATE = 0.025f;
 	private const float MAX_LEVEL_PROGRESS_SPEED = 10.0f;
 	private const float MAX_ENERGY = 100.0f;
-	private const float ENERGY_RESTORE_PER_SECOND = 2.5f;
+	private const float ENERGY_RESTORE_PER_SECOND = 5.0f;
 
 	public ArrayList selected;
 	public ArrayList whiteBloodCells;
@@ -32,11 +32,11 @@ public class GameControl : MonoBehaviour {
 
 	public int numDiseaseCells;
 	public int numRBCs = 15;
-	public int rbcSpeed = 1;
 	public int whiteBloodProduction = 0;
 	public int plateletProduction = 0;
 	public int liveRBCs;
 	public float energy = 50f;
+	public float rbcSpeed = 5;
 
 	public Block current_b;
 	public Body body;
@@ -55,6 +55,8 @@ public class GameControl : MonoBehaviour {
 	public Persistence persistence;
 	public Image background;
 	public List<Sprite> backgroundImages = new List<Sprite>();
+	public Slider heartSlider;
+	public Texture energyImage;
 
 	// int mousePressStart = -1;
 	Vector3 mousePositionStart;
@@ -335,31 +337,26 @@ public class GameControl : MonoBehaviour {
 
 			} 
 		}
-		rbcSpeed = (int)GUI.HorizontalSlider(new Rect(25, 55, 125, 30), rbcSpeed, 1.0F, 10.0F);
-		
-		// Display wihte blood cell production status
-		/*if (whiteBloodProduction > 0) {
-			GUI.TextArea (new Rect (25, 133, 125, 20), "1 per " + 30 / whiteBloodProduction + " seconds");
-		} else {
-			GUI.TextArea (new Rect (25, 133, 125, 20), "Production off");
-		}*/
-		
-		GUI.TextArea (new Rect (25, 70, 125, 20), "Heart Rate");
+
+		rbcSpeed = (heartSlider.value);//(int)(heartSlider.value * 9.0f) + 1;
+		//Debug.Log ("Slider val = " + rbcSpeed);
 
 		// Display energy bar
 		// draw the background:
-		GUI.BeginGroup (new Rect (20, 10, 200, 40));
-		GUI.Box (new Rect (0,0, 200, 40), barEmpty);
+		//GUI.BeginGroup (new Rect (20, 10, 500, 40));
+		//GUI.Box (new Rect (0,0, 200, 40), barEmpty);
 		
 		// draw the filled-in part:
-		GUI.BeginGroup (new Rect (0, 0, 200f * energy/MAX_ENERGY, 40));
-		GUI.Box (new Rect (0,0, 200, 40),energyBarFull);
-		GUI.EndGroup ();
+		//GUI.BeginGroup (new Rect (20, 10, 500f * energy/MAX_ENERGY, 40));
+		//GUI.Box (new Rect (0,0, 200, 40),energyBarFull);
+		GUI.DrawTexture (new Rect (10, 10, 313.0f * energy/MAX_ENERGY, 30), energyBarFull);
+		GUI.DrawTexture (new Rect (0.0f, 0.0f, 400.0f, 50.0f), energyImage);
+		//GUI.EndGroup ();
 
 		// Energ level text
-		GUI.Label(new Rect(70, 10, 100, 20), "Energy: " + (int)energy);
+		//GUI.Label(new Rect(70, 10, 100, 20), "Energy: " + (int)energy);
 
-		GUI.EndGroup ();
+		//GUI.EndGroup ();
 
 		// Draw text if enabled
 		if (drawText) {

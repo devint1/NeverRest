@@ -112,8 +112,10 @@ public class Block : MonoBehaviour {
 				if (temperaturePercent < 0.75f) {
 					overallHealth -= (COLD_DAMAGE * (1.0f - temperaturePercent)) * Time.deltaTime;
 				}
+				if( !gameControl.isPause){
 				overallHealth -= DAMAGE_PER_DISEASE * diseases.Count * Time.deltaTime;
 				overallHealth -= DAMAGE_PER_WOUND * wounds.Count * Time.deltaTime;
+				}
 			}
 
 			if (overallHealth <= 0) {

@@ -134,6 +134,8 @@ public class RandomEventManager : MonoBehaviour {
 	}
 
 	IEnumerator PingLocation(Vector3 position) {
+		gameControl.isPause = false;
+		gameControl.tutorial.tutPause = false;
 		float scaleFactor = 3f;
 		GameObject ping = (GameObject)Instantiate (pingPrefab, position, Quaternion.identity);
 		ping.transform.localScale = new Vector3 (scaleFactor, scaleFactor, scaleFactor);
