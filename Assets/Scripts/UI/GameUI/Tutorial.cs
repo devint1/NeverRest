@@ -33,7 +33,17 @@ public class Tutorial : MonoBehaviour {
 	}
 
 	void Start(){
-		currentState = TutorialStates.State.Commence;
+		if (gC.persistence.currentLevel == 1) {
+			currentState = TutorialStates.State.Commence;
+
+		}
+		else {
+			dialogOpen = EventType.EVENT_TYPE_NONE;
+			dialogWindowActivated = false;
+			tutPause = false;
+			currentState = TutorialStates.State.Off;
+		}
+
 		bStartedDragCoroutine = false;
 		dragPercent = 0;
 		StartCoroutine (DragBox());

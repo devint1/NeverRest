@@ -31,7 +31,7 @@ public class RandomEventManager : MonoBehaviour {
 			if(!diseaseWindowActivated) {
 				if (gameControl.tutorial.currentState != TutorialStates.State.Off) {
 					Debug.Log(" Game state is " + gameControl.tutorial.currentState);
-					gameControl.isPause = true;
+					//gameControl.isPause = true;
 					GUI.Window(0, dialogRect, SpawnDiseaseDialog, "Infectious Disease!");
 				}
 			}
@@ -40,7 +40,7 @@ public class RandomEventManager : MonoBehaviour {
 			if(!woundedWindowActivated) {
 				if (gameControl.tutorial.currentState != TutorialStates.State.Off) {
 					GUI.Window(0, dialogRect, SpawnWoundDialog, "Wounded!");
-					gameControl.isPause = true;
+					//gameControl.isPause = true;
 				}
 			}
 			break;
@@ -85,13 +85,11 @@ public class RandomEventManager : MonoBehaviour {
 		newWoundScript.block = location;
 		location.wounds.Add (newWound.GetComponent<Wound>());
 		dialogOpen = EventType.EVENT_TYPE_WOUND;
-		if(!woundedWindowActivated)
-			gameControl.TogglePauseGame ();
 	}
 
 	public void SpawnDiseaseInfection() {
 		Block randomBodyPart =  body.blocks[getRandomAliveBodyPartIndex()];
-		SpawnDiseaseInfection (randomBodyPart, 3);
+		SpawnDiseaseInfection (randomBodyPart, Random.Range(3, 5));
 	}
 
 	public void SpawnDiseaseInfection (Block location, int diseaseNumber){
@@ -108,19 +106,17 @@ public class RandomEventManager : MonoBehaviour {
 		
 		numDiseasesSpawn += 3;
 		dialogOpen = EventType.EVENT_TYPE_DISEASE;
-		if(!diseaseWindowActivated)
-			gameControl.TogglePauseGame();
 	}
 
 	void SpawnDiseaseDialog(int windowID) {
 		//Debug.Log (" Pause? " + gameControl.isPause);
 			GUI.TextArea (new Rect (0, 20, 250, 100), "Ahhhh! An infectious bacteria has managed to get inside your body! Quick! Orchestrate the proper response of bodily functions to stop the infection before it spreads out of control!");
-			gameControl.TogglePauseGame ();
+			//gameControl.TogglePauseGame ();
 			if (GUI.Button (new Rect (100, 125, 50, 20), "OK")) {
 				dialogOpen = EventType.EVENT_TYPE_NONE;
-				gameControl.TogglePauseGame ();
+				//gameControl.TogglePauseGame ();
 				diseaseWindowActivated = true;
-				gameControl.isPause = false;
+				//gameControl.isPause = false;
 			}
 
 	}
@@ -128,12 +124,12 @@ public class RandomEventManager : MonoBehaviour {
 	void SpawnWoundDialog(int windowID) {
 		//Debug.Log (" Pause? " + gameControl.isPause);
 		GUI.TextArea (new Rect (0, 20, 250, 100), "Ouch! You trip over a rock and injure yourself! Use platelets to clot the wound or you will bleed out!");
-		gameControl.TogglePauseGame ();
+		//gameControl.TogglePauseGame ();
 		if (GUI.Button (new Rect (100, 125, 50, 20), "OK")) {
 			dialogOpen = EventType.EVENT_TYPE_NONE;
-			gameControl.TogglePauseGame ();
+			//gameControl.TogglePauseGame ();
 			woundedWindowActivated = true;
-			gameControl.isPause = false;
+			//gameControl.isPause = false;
 		}
 	}
 

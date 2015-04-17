@@ -13,8 +13,8 @@ public class Disease : MonoBehaviour {
 	public Vector3 destination;
 
 	Block destBlock;
-	const int MAX_DISEASE_RESPAWN_TIME = 10;
-	const int MIN_DISEASE_RESPAWN_TIME = 20;
+	const int MAX_DISEASE_RESPAWN_TIME = 15;
+	const int MIN_DISEASE_RESPAWN_TIME = 40;
 	
 	void Start() {
 
@@ -112,22 +112,20 @@ public class Disease : MonoBehaviour {
 	
 	// Creates new disease every x seconds
 	IEnumerator DuplicateCycle() {
-		if(!gameControl.tutorial){
-			while (!captured) {
-				int waitFor = Random.Range (MIN_DISEASE_RESPAWN_TIME, MAX_DISEASE_RESPAWN_TIME);
-				yield return new WaitForSeconds(waitFor);
-				
-				if (!captured && currentBlock.diseases.Count < Block.MAX_NUM_DISEASE_PER_BLOCK) {
-					GameObject newDisease = (GameObject)Instantiate (diseasePrefab, this.transform.position, this.transform.rotation);
-					Disease newDiseaseScript = newDisease.GetComponent<Disease>();
-					newDiseaseScript.gameControl = gameControl;
-					newDiseaseScript.destination = destination;
-					++gameControl.numDiseaseCells;
-				}
+		int waitFor = Random.Range (MIN_DISEASE_RESPAWN_TIME, MAX_DISEASE_RESPAWN_TIME);
+		yield return new  WaitForSeconds(waitFor);
+
+		if(!gameControl.isPause){
+			if (!captured && currentBlock.diseases.Count < Block.MAX_NUM_DISEASE_PER_BLOCK) {
+				GameObject newDisease = (GameObject)Instantiate (diseasePrefab, this.transform.position, this.transform.rotation);
+				Disease newDiseaseScript = newDisease.GetComponent<Disease>();
+				newDiseaseScript.gameControl = gameControl;
+				newDiseaseScript.destination = destination;
+				++gameControl.numDiseaseCells;
 			}
 		}
 			
-		
+		StartCoroutine(DuplicateCycle());
 	}
 
 	IEnumerator ChangeRotation(Vector2 directionToDestination) {

@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
+using UnityEngine.UI;
 
 public class GameControl : MonoBehaviour {
 
@@ -50,6 +52,9 @@ public class GameControl : MonoBehaviour {
 	public bool firstMouse = false;
 	public Tutorial tutorial;
 	public RandomEventManager rngManager;
+	public Persistence persistence;
+	public Image background;
+	public List<Sprite> backgroundImages = new List<Sprite>();
 
 	// int mousePressStart = -1;
 	Vector3 mousePositionStart;
@@ -73,6 +78,10 @@ public class GameControl : MonoBehaviour {
 	GameObject upgradeMenu;
 
 	void Start() {
+		persistence = GameObject.Find ("Persistence").GetComponent<Persistence>();
+
+		//background.sprite = particlesByLevel[persistence.currentLevel-1];
+
 		if (backGroundMusic) {
 			AudioSource temp = gameObject.AddComponent<AudioSource> ();
 			temp.clip = backGroundMusic;
@@ -426,12 +435,12 @@ public class GameControl : MonoBehaviour {
 		else if (energy > MAX_ENERGY) energy = MAX_ENERGY;
 
 		// Check lose condition
-		if (checkLoseCondition ()) {
+		if (checkLoseCondition () || Input.GetKeyDown (KeyCode.F10)) {
 			StartCoroutine (Lose ());
 		}
 
 		// Check win condition
-		if(levelProgress >= levelDistance) {
+		if(levelProgress >= levelDistance || Input.GetKeyDown (KeyCode.F9)) {
 			StartCoroutine (Win ());
 		}
 		else {
@@ -514,6 +523,7 @@ public class GameControl : MonoBehaviour {
 			yield break;
 		}
 		gameOver = true;
+		persistence.currentLevel++;
 		GameObject winTextObj = new GameObject("WinText");
 		winTextObj.transform.position = new Vector3(0.465f, 0.561f, 1f);
 		GUIText winText = (GUIText)winTextObj.AddComponent(typeof(GUIText));

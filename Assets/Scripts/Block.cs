@@ -25,7 +25,7 @@ public class Block : MonoBehaviour {
 	private Animator animator;
 	private bool showStats = false;
 
-	public const int MAX_NUM_DISEASE_PER_BLOCK = 200;
+	public const int MAX_NUM_DISEASE_PER_BLOCK = 50;
 	private const float HEALH_REGENERATION = 0.03f;
 	private const float DAMAGE_PER_DISEASE = 0.001f;
 	private const float COLD_DAMAGE = 0.03f;
