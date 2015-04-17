@@ -82,7 +82,7 @@ public class GameControl : MonoBehaviour {
 	void Start() {
 		persistence = GameObject.Find ("Persistence").GetComponent<Persistence>();
 
-		//background.sprite = particlesByLevel[persistence.currentLevel-1];
+		background.sprite = backgroundImages[persistence.currentLevel-1];
 
 		if (backGroundMusic) {
 			AudioSource temp = gameObject.AddComponent<AudioSource> ();
