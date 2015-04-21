@@ -25,15 +25,23 @@ public class ProductionSlot : MonoBehaviour {
 		timeRemaining -= Time.deltaTime;
 
 		float percentProgress = (float)(totalTime - timeRemaining) / totalTime;
-		renderer.material.color = Color.Lerp(Color.clear, Color.white, percentProgress);
+		GetComponent<Renderer>().material.color = Color.Lerp(Color.clear, Color.white, percentProgress);
 
 		//End producin if time is up
 		if(timeRemaining <= 0) {
 			producing = false;
 			spriteRenderer.sprite = NOT_PRODUCING_IMAGE;
 
-			if (productionType == ActionBarButton.ButtonType.WhiteBloodCell) {
+			if (productionType == ActionBarButton.ButtonType.WhiteBloodCellGreen) {
 				gameControl.SpawnWhiteBloodCell(WhiteBloodCellType.GREEN);
+				gameControl.whiteBloodProduction--;
+			}
+			else if (productionType == ActionBarButton.ButtonType.WhiteBloodCellPurple) {
+				gameControl.SpawnWhiteBloodCell(WhiteBloodCellType.PURPLE);
+				gameControl.whiteBloodProduction--;
+			}
+			else if (productionType == ActionBarButton.ButtonType.WhiteBloodCellTeal) {
+				gameControl.SpawnWhiteBloodCell(WhiteBloodCellType.TEAL);
 				gameControl.whiteBloodProduction--;
 			}
 			else if (productionType == ActionBarButton.ButtonType.Platelet) {

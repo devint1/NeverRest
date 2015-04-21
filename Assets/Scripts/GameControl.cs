@@ -58,7 +58,7 @@ public class GameControl : MonoBehaviour {
 	public List<Sprite> backgroundImages = new List<Sprite>();
 	public Slider heartSlider;
 	public Texture energyImage;
-
+	private bool isTutorial;
 	// int mousePressStart = -1;
 	Vector3 mousePositionStart;
 
@@ -82,6 +82,12 @@ public class GameControl : MonoBehaviour {
 
 	void Start() {
 		persistence = GameObject.Find ("Persistence").GetComponent<Persistence>();
+
+		// Get rid of purple/teal WBCs for level 1
+		if (persistence.currentLevel <= 1) {
+			Destroy(GameObject.Find("whitebloodcell_Button_Purple"));
+			Destroy(GameObject.Find("whitebloodcell_Button_Teal"));
+		}
 
 		background.sprite = backgroundImages[persistence.currentLevel-1];
 
@@ -143,6 +149,7 @@ public class GameControl : MonoBehaviour {
 					{
 						if (wbc.currentBlock == current_b){
 							wbc.Select();
+
 							doubleClicked.Add(wbc);
 
 						}
@@ -411,7 +418,7 @@ public class GameControl : MonoBehaviour {
 		}
 		else {
 			levelProgressSpeed = calcLevelProgressSpeed();
-			levelProgress += levelProgressSpeed * Time.deltaTime;
+			levelProgress += levelProgressSpeed * Time.deltaTime * rbcSpeed/5;
 		}
 
 		if (whiteBloodCells != null) {
@@ -442,7 +449,7 @@ public class GameControl : MonoBehaviour {
 		newWhiteScript.gameControl = this;
 		
 		if (toggleWBC)
-			newWhiteScript.renderer.enabled = false;
+			newWhiteScript.GetComponent<Renderer>().enabled = false;
 		
 		whiteBloodCells.Add (newWhite.GetComponent<WhiteBloodCell>());
 

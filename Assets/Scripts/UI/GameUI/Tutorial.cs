@@ -10,6 +10,7 @@ public class Tutorial : MonoBehaviour {
 	public GameControl gC;
 
 	public TutorialStates.State currentState;
+	public bool tutPause = false;
 	bool bStartedDragCoroutine;
 
 	float dragPercent;
@@ -20,6 +21,7 @@ public class Tutorial : MonoBehaviour {
 
 	EventType dialogOpen = EventType.EVENT_TYPE_NONE;
 	Rect dialogRect = new Rect(750, 80, 250, 150);
+	bool dialogWindowActivated = false;
 
 	int counter = 0;
 
@@ -37,6 +39,8 @@ public class Tutorial : MonoBehaviour {
 		}
 		else {
 			dialogOpen = EventType.EVENT_TYPE_NONE;
+			dialogWindowActivated = false;
+			tutPause = false;
 			currentState = TutorialStates.State.Off;
 		}
 
@@ -95,6 +99,7 @@ public class Tutorial : MonoBehaviour {
 			GUI.TextArea (new Rect (Screen.width/2 - 87, Screen.height/2 -50, 175, 50), "Right click on a part of the body to move the selected cells.", tutorialMessageStyle);
 			if(gC.firstMouse) {
 				currentState = TutorialStates.State.Unpause;
+				tutPause = true;
 			}
 			break;
 		case TutorialStates.State.Finish:
@@ -104,15 +109,19 @@ public class Tutorial : MonoBehaviour {
 			GUI.TextArea (new Rect (Screen.width/2 - 87, Screen.height/2 -50, 175, 50), "Now unpause the game to continue.\n (space key)", tutorialMessageStyle);
 			if ( !gC.IsPaused() ) {
 				currentState = TutorialStates.State.HeartRate;
+				tutPause = false;
 			}
 			break;
 		case TutorialStates.State.HeartRate:
+			tutPause = true;
 			GUI.Window(0, new Rect(175, 60, 250, 150), HeartRateDialog, "Heart Rate Slider");
 			break;
 		case TutorialStates.State.EnergyBar:
+			tutPause = true;
 			GUI.Window(0, new Rect(250, 10, 250, 150), EnergyDialog, "Energy Bar");
 			break;
 		case TutorialStates.State.Production:
+			tutPause = true;
 			GUI.Window(0, new Rect(200, Screen.height - 325, 250, 150), ProductionDialog, "Production");
 			break;
 		case TutorialStates.State.PlateProduction:
@@ -120,10 +129,10 @@ public class Tutorial : MonoBehaviour {
 			//gC.actionBarPrefab.GetComponentInChildren<ActionBarButton>();
 			ActionBarButton ab = gC.actionBarPrefab.transform.Find("platelet_Button").GetComponent<ActionBarButton>();
 			if(counter < 30) {
-				ab.renderer.material.color = Color.yellow;
+				ab.GetComponent<Renderer>().material.color = Color.yellow;
 			}
 			else if(counter < 60) {
-				ab.renderer.material.color = Color.white;
+				ab.GetComponent<Renderer>().material.color = Color.white;
 			}
 			else {
 				counter = 0;
@@ -134,10 +143,11 @@ public class Tutorial : MonoBehaviour {
 			counter++;
 			GUI.TextArea (new Rect (125, Screen.height - 200, 250, 150), "Platelets are used to clot wounds as they appear.\nTo create new platelets, either press the platelet button or press the 'W' key.\nCreate a platelet now.", tutorialMessageStyle);
 			if (gC.plateletProduction > 0){
+				tutPause = true;
 				//currentState = TutorialStates.State.Done;
 				//SetAlphaOfBody(1.0f);
 				
-				ab.renderer.material.color = Color.white;
+				ab.GetComponent<Renderer>().material.color = Color.white;
 				currentState = TutorialStates.State.WBCProduction;
 				counter = 0;
 			}
@@ -145,12 +155,13 @@ public class Tutorial : MonoBehaviour {
 		case TutorialStates.State.WBCProduction:
 			//GUI.Window(0, new Rect(300, Screen.height - 160, 250, 150), WBCProductionDialog, "Production");
 			GUI.TextArea (new Rect (125, Screen.height - 290, 250, 150), "B Cells, a type of white blood cell, are used to combat diseases as they enter the body.\nTo create new B Cells, either press the B Cell button or press the 'Q' key.\n\nCreate a B-Cell now.", tutorialMessageStyle);
+			tutPause = true;
 			ActionBarButton wb = gC.actionBarPrefab.transform.Find("whitebloodcell_Button").GetComponent<ActionBarButton>();
 			if(counter < 30) {
-				wb.renderer.material.color = Color.yellow;
+				wb.GetComponent<Renderer>().material.color = Color.yellow;
 			}
 			else if(counter < 60) {
-				wb.renderer.material.color = Color.white;
+				wb.GetComponent<Renderer>().material.color = Color.white;
 			}
 			else {
 				counter = 0;
@@ -159,7 +170,7 @@ public class Tutorial : MonoBehaviour {
 			if (gC.whiteBloodProduction > 0){
 				//currentState = TutorialStates.State.Done;
 				currentState = TutorialStates.State.PlateCombat;
-				wb.renderer.material.color = Color.white;
+				wb.GetComponent<Renderer>().material.color = Color.white;
 				counter = 0;
 			}
 			break;
@@ -177,16 +188,16 @@ public class Tutorial : MonoBehaviour {
 
 	//In case we want to fade out items that are not what the focus should be on
 	void SetAlphaOfBody(float a) {
-		Color color1 = gC.body.toplayer.renderer.material.color;
+		Color color1 = gC.body.toplayer.GetComponent<Renderer>().material.color;
 		color1.a = a;
-		gC.body.toplayer.renderer.material.color = color1;
-		Color color2 = gC.body.middlelayer.renderer.material.color;
+		gC.body.toplayer.GetComponent<Renderer>().material.color = color1;
+		Color color2 = gC.body.middlelayer.GetComponent<Renderer>().material.color;
 		color2.a = a;
-		gC.body.middlelayer.renderer.material.color = color2;
+		gC.body.middlelayer.GetComponent<Renderer>().material.color = color2;
 		for(int i = 0; i < gC.body.blocks.Count; i++) {
-			Color colorc = gC.body.blocks[i].renderer.material.color;
+			Color colorc = gC.body.blocks[i].GetComponent<Renderer>().material.color;
 			colorc.a = a;
-			gC.body.blocks[i].renderer.material.color = colorc;
+			gC.body.blocks[i].GetComponent<Renderer>().material.color = colorc;
 		}
 	}
 
@@ -222,88 +233,132 @@ public class Tutorial : MonoBehaviour {
 	}
 
 	void FinishDialog(int windowID) {
+		dialogWindowActivated = true;
 		//GUI.TextArea (new Rect (0, 20, 250, 100), "Congratulations! You have completed the tutorial.\nPress the 'OK' button to play the game.", tutorialMessageStyle);
 		if (GUI.Button(new Rect(100, 125, 50, 20), "OK")) {
 			dialogOpen = EventType.EVENT_TYPE_NONE;
+			dialogWindowActivated = false;
 			currentState = TutorialStates.State.Done;
+			tutPause = false;
 		}
 	}
 
 	void CommenceDialog(int windowID) {
+		dialogWindowActivated = true;
+		/*
 		GUI.TextArea (new Rect (0, 20, 250, 25), "Commence the tutorial?", tutorialMessageStyle);
 		if (GUI.Button(new Rect(150, 50, 50, 20), "Yes")) {
 			dialogOpen = EventType.EVENT_TYPE_NONE;
+			dialogWindowActivated = false;
 			currentState = TutorialStates.State.Pause;
+			tutPause = false;
 		}
 		if (GUI.Button(new Rect(50, 50, 50, 20), "No")) {
 			dialogOpen = EventType.EVENT_TYPE_NONE;
+			dialogWindowActivated = false;
+			tutPause = false;
 			currentState = TutorialStates.State.Off;
 			//Debug.Log("NO chosed ");
 		}
-		//Debug.Log("State is "+ currentState);
+*/
+		// activate tutorial in Map Scence, LevelButton 
+		//Debug.Log("IS tut " + gC.persistence.isTutorial);
+		if (gC.persistence.isTutorial) {
+			dialogOpen = EventType.EVENT_TYPE_NONE;
+			dialogWindowActivated = false;
+			currentState = TutorialStates.State.Pause;
+			tutPause = false;
+				}
+		else {
+			dialogOpen = EventType.EVENT_TYPE_NONE;
+			dialogWindowActivated = false;
+			tutPause = false;
+			currentState = TutorialStates.State.Off;
+			//Debug.Log("NO chosed ");
+		}
+
 	}
 
 	void DoEnemySpawn(){
 		if (gC.numDiseaseCells == 0) {
 			gC.rngManager.SpawnDiseaseInfection(GameObject.Find("Stomach").GetComponent<Block>(), 1);
 		}
-		GUI.TextArea (new Rect (0, 20, 250, 25), "You have suffere a wound on your stomach!", tutorialMessageStyle);
 	}
 
 	void EnergyDialog(int windowID) {
+		dialogWindowActivated = true;
 		GUI.TextArea (new Rect (0, 20, 250, 100), "The green bar represents the amount of energy available to use in production. It builds up over time, and is consumed during production.\nPress the 'OK' button to continue.", tutorialMessageStyle);
 		if (GUI.Button(new Rect(100, 125, 50, 20), "OK")) {
 			dialogOpen = EventType.EVENT_TYPE_NONE;
+			dialogWindowActivated = false;
 			currentState = TutorialStates.State.Production;
+			tutPause = false;
 		}
 	}
 	
 	void ProductionDialog(int windowID) {
+		dialogWindowActivated = true;
 		GUI.TextArea (new Rect (0, 20, 250, 100), "The amount of cells you can produce at a time is limited by the amount of energy available and the multiplication factor based on the number of cells in production.\nPress the 'OK' button to continue.", tutorialMessageStyle);
 		if (GUI.Button(new Rect(100, 125, 50, 20), "OK")) {
 			dialogOpen = EventType.EVENT_TYPE_NONE;
+			dialogWindowActivated = false;
 			currentState = TutorialStates.State.PlateProduction;
+			tutPause = false;
 		}
 	}
 	
 	void PlateProductionDialog(int windowID) {
+		dialogWindowActivated = true;
 		GUI.TextArea (new Rect (0, 20, 250, 100), "Platelets are used to clot wounds as they appear.\nTo create new platelets, either press the platelet button or press the 'Q' key.\nPress the 'OK' button to continue.", tutorialMessageStyle);
 		if (GUI.Button(new Rect(100, 125, 50, 20), "OK")) {
 			dialogOpen = EventType.EVENT_TYPE_NONE;
+			dialogWindowActivated = false;
 			currentState = TutorialStates.State.WBCProduction;
-
+			tutPause = false;
 		}
 	}
 	
 	void WBCProductionDialog(int windowID) {
+		dialogWindowActivated = true;
 		GUI.TextArea (new Rect (0, 20, 250, 100), "B Cells, a type of white blood cell, are used to combat diseases as they enter the body.\nTo create new B Cells, either press the B Cell button or press the 'W' key.\nPress the 'OK' button to continue.", tutorialMessageStyle);
 		if (GUI.Button(new Rect(100, 125, 50, 20), "OK")) {
 			dialogOpen = EventType.EVENT_TYPE_NONE;
+			dialogWindowActivated = false;
 			currentState = TutorialStates.State.PlateCombat;
+			tutPause = false;
 		}
 	}
 	
 	void PlateCombatDialog(int windowID) {
+		dialogWindowActivated = true;
 		GUI.TextArea (new Rect (0, 20, 250, 100), "To combat wounds, select a platelet and move the wound to the part of the body where the wound is located.\nPress the 'OK' button to continue.", tutorialMessageStyle);
 		if (GUI.Button(new Rect(100, 125, 50, 20), "OK")) {
 			dialogOpen = EventType.EVENT_TYPE_NONE;
+			dialogWindowActivated = false;
 			currentState = TutorialStates.State.WBCCombat;
+			tutPause = false;
 		}
 	}
 	
 	void WBCCombatDialog(int windowID) {
+		dialogWindowActivated = true;
 		GUI.TextArea (new Rect (0, 20, 250, 100), "To combat diseases, move the B cells to the part of the body where the diseases are located.\nPress the 'OK' button to continue.", tutorialMessageStyle);
 		if (GUI.Button(new Rect(100, 125, 50, 20), "OK")) {
 			dialogOpen = EventType.EVENT_TYPE_NONE;
+			dialogWindowActivated = false;
 			currentState = TutorialStates.State.Finish;
+			tutPause = false;
 		}
 	}
 
 	void HeartRateDialog(int windowID) {
+		dialogWindowActivated = true;
 		GUI.TextArea (new Rect (0, 20, 250, 100), "To increase the speed of the cells in the body, drag the 'Heart Rate' slider to the right.\nTry it out then press the 'OK' button to continue.", tutorialMessageStyle);
 		if (GUI.Button(new Rect(100, 125, 50, 20), "OK")) {
 			dialogOpen = EventType.EVENT_TYPE_NONE;
+			dialogWindowActivated = false;
 			currentState = TutorialStates.State.EnergyBar;
+			tutPause = false;
 		}
 	}
 }

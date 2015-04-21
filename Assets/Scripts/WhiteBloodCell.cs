@@ -27,7 +27,7 @@ public class WhiteBloodCell : MonoBehaviour {
 	public void Start(){
 		nextBlock = currentBlock;
 		AudioSource temp = gameObject.AddComponent<AudioSource> ();
-		renderer.material.SetColor("_Color", colors[(int)type]);
+		GetComponent<Renderer>().material.SetColor("_Color", colors[(int)type]);
 		temp.clip = spawnSound;
 		temp.Play ();
 	}
@@ -42,15 +42,17 @@ public class WhiteBloodCell : MonoBehaviour {
 	public void Select(){
 		if(!isSelected){
 			gameControl.selected.Add (this.gameObject);
-			gameObject.renderer.material.color = Color.blue;
+			gameObject.GetComponent<Renderer>().material.color = Color.blue;
+			Debug.Log ("Selected wbc" + gameObject+isSelected);
 		}
 		isSelected = true;
-
+		gameControl.wbcSelected= true;
+		//
 	}
 	
 	public void DeSelect() {
 		if(isSelected) {
-			renderer.material.SetColor("_Color", colors[(int)type]);
+			GetComponent<Renderer>().material.SetColor("_Color", colors[(int)type]);
 		}
 		isSelected = false;
 		gameControl.wbcSelected= false;
@@ -93,9 +95,9 @@ public class WhiteBloodCell : MonoBehaviour {
 		}
 		
 		if (!gameControl.toggleWBC)
-			this.renderer.enabled = false;
+			this.GetComponent<Renderer>().enabled = false;
 		else
-			this.renderer.enabled = true;
+			this.GetComponent<Renderer>().enabled = true;
 
 		if (!currentBlock.notClotted)
 			speed = gameControl.rbcSpeed / 1000.0f;
