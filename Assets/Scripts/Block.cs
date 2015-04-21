@@ -286,6 +286,7 @@ public class Block : MonoBehaviour {
 		oxygenLevel = 0.0f; 
 		temperaturePercent = 0.0f;
 		dead = true;
+		gameControl.deadBlocks++;
 
 		// Kill off all "child" body parts
 		foreach (ExitPoint e in GetExitPoints()) {

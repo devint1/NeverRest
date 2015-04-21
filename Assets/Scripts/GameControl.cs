@@ -35,6 +35,7 @@ public class GameControl : MonoBehaviour {
 	public int whiteBloodProduction = 0;
 	public int plateletProduction = 0;
 	public int liveRBCs;
+	public int deadBlocks = 0;
 	public float energy = 50f;
 	public float rbcSpeed = 5;
 
