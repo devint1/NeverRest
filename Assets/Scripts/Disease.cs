@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+public enum DiseaseType { GREEN, PURPLE, BLUE }
+
 public class Disease : MonoBehaviour {
 	public GameControl gameControl;
 	public Block currentBlock;
@@ -9,6 +11,8 @@ public class Disease : MonoBehaviour {
 	public bool removedFromCell = false;
 	public float speed = 0.005f;
 	public float heartHealthDamagePerSec = 0.01f;
+	public DiseaseType type;
+	public bool discovered = false;
 	
 	public Vector3 destination;
 
@@ -17,6 +21,14 @@ public class Disease : MonoBehaviour {
 	const int MIN_DISEASE_RESPAWN_TIME = 40;
 	
 	void Start() {
+		if (gameControl.persistence.currentLevel == 1) {
+			type = DiseaseType.GREEN;
+			discovered = true;
+		}
+		else if(type == null) {
+			type = (DiseaseType)Random.Range(0,3);
+			discovered = false;
+		}
 
 		if (currentBlock) {
 			destBlock = currentBlock;
@@ -39,9 +51,9 @@ public class Disease : MonoBehaviour {
 		Vector2 directionToDestination = ((Vector2)destination - (Vector2)this.transform.position).normalized;
 
 		if (!gameControl.toggleWBC)
-			this.renderer.enabled = false;
+			this.GetComponent<Renderer>().enabled = false;
 		else
-			this.renderer.enabled = true;
+			this.GetComponent<Renderer>().enabled = true;
 		
 		if (this.speed != gameControl.rbcSpeed) {
 			this.speed = gameControl.rbcSpeed / 250.0f;
@@ -121,6 +133,7 @@ public class Disease : MonoBehaviour {
 				Disease newDiseaseScript = newDisease.GetComponent<Disease>();
 				newDiseaseScript.gameControl = gameControl;
 				newDiseaseScript.destination = destination;
+				newDiseaseScript.type = type;
 				++gameControl.numDiseaseCells;
 			}
 		}

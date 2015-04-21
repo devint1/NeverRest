@@ -5,7 +5,7 @@ public class Clouds : MonoBehaviour {
 	public Transform end;
 	public Transform start;
 
-	private float moveSpeed = 1.5f;
+	private float moveSpeed = 0.5f;
 
 	// Update is called once per frame
 	void Update () {
