@@ -101,7 +101,7 @@ public class Block : MonoBehaviour {
 				animator.Play("Flashing");
 			}
 		}
-		if (!gameControl.isPause && !gameControl.tutorial.tutPause) {
+		if (!gameControl.isPause) {
 			//If vitals are mostly good, slowly increase health. Else, take damage
 			if (oxygenLevel >= 0.75f && temperaturePercent >= 0.75f && diseases.Count == 0 && wounds.Count == 0 && overallHealth <= 1.0) {
 				overallHealth += HEALH_REGENERATION * Time.deltaTime;
