@@ -318,6 +318,7 @@ public class GameControl : MonoBehaviour {
 		//GUI.Box (new Rect (0,0, 200, 40),energyBarFull);
 		GUI.DrawTexture (new Rect (10, 10, 313.0f * energy/MAX_ENERGY, 30), energyBarFull);
 		GUI.DrawTexture (new Rect (0.0f, 0.0f, 400.0f, 50.0f), energyImage);
+		GUI.Box (new Rect (325, 9, 70, 25), "" + (energy/MAX_ENERGY*100).ToString("F2") + "%");
 		//GUI.EndGroup ();
 
 		// Energ level text
