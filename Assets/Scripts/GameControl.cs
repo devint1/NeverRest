@@ -50,7 +50,6 @@ public class GameControl : MonoBehaviour {
 	public bool wbcChanged = true;
 	public bool isSelected = false;
 	public bool showMenu = false;
-	public bool isPause = false;
 	public bool firstMouse = false;
 	public Tutorial tutorial;
 	public RandomEventManager rngManager;
@@ -70,10 +69,10 @@ public class GameControl : MonoBehaviour {
 	bool mouseDown = false;
 	bool drawText = false;
 	bool gameOver = false;
-	bool isPaused = false;
 	bool upgradeMenuOpen = false;
 	float doubleClickTimer = 0;
 	bool click = false;
+	bool isPaused = false;
 
 	float levelProgressSpeed = 1.0f;
 	public float levelProgress = 0f;
@@ -292,17 +291,19 @@ public class GameControl : MonoBehaviour {
 
 	void OnGUI() {
 		// Get white blood cell production from slider
-		if (isPaused && showMenu){
-			GUI.Box(new Rect(Screen.width/4, Screen.height/4, Screen.width/2, Screen.height/2), "PAUSED");
+		if (isPaused && showMenu) {
+			GUI.Box (new Rect (Screen.width / 4, Screen.height / 4, Screen.width / 2, Screen.height / 2), "PAUSED");
 
-			if (GUI.Button(new Rect(Screen.width/4+10, Screen.height/4+Screen.height/10+10, Screen.width/2-20, Screen.height/10), "RESUME")){
+			if (GUI.Button (new Rect (Screen.width / 4 + 10, Screen.height / 4 + Screen.height / 10 + 10, Screen.width / 2 - 20, Screen.height / 10), "RESUME")) {
 				isPaused = false;
 				showMenu = false;
 			}
-			if (GUI.Button(new Rect(Screen.width/4+10, Screen.height/4+3*Screen.height/10+10, Screen.width/2-20, Screen.height/10), "MAIN MENU")){
-				Application.LoadLevel("MenuScene");
+			if (GUI.Button (new Rect (Screen.width / 4 + 10, Screen.height / 4 + 3 * Screen.height / 10 + 10, Screen.width / 2 - 20, Screen.height / 10), "MAIN MENU")) {
+				Application.LoadLevel ("MenuScene");
 
 			} 
+		} else if (isPaused) {
+
 		}
 
 		rbcSpeed = (heartSlider.value);//(int)(heartSlider.value * 9.0f) + 1;
@@ -351,7 +352,7 @@ public class GameControl : MonoBehaviour {
 		if (Input.GetKeyDown(KeyCode.Space)){
 			TogglePauseGame();
 			showMenu = false;
-			isPause = !isPause;
+			isPaused = !isPaused;
 		}
 
 		if( tutorial.StopGameLogic() ){

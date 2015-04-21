@@ -101,7 +101,7 @@ public class Block : MonoBehaviour {
 				animator.Play("Flashing");
 			}
 		}
-		if (!gameControl.isPause) {
+		if (!gameControl.IsPaused()) {
 			//If vitals are mostly good, slowly increase health. Else, take damage
 			if (oxygenLevel >= 0.75f && temperaturePercent >= 0.75f && diseases.Count == 0 && wounds.Count == 0 && overallHealth <= 1.0) {
 				overallHealth += HEALH_REGENERATION * Time.deltaTime;
@@ -112,7 +112,7 @@ public class Block : MonoBehaviour {
 				if (temperaturePercent < 0.75f) {
 					overallHealth -= (COLD_DAMAGE * (1.0f - temperaturePercent)) * Time.deltaTime;
 				}
-				if( !gameControl.isPause){
+				if( !gameControl.IsPaused()){
 				overallHealth -= DAMAGE_PER_DISEASE * diseases.Count * Time.deltaTime;
 				overallHealth -= DAMAGE_PER_WOUND * wounds.Count * Time.deltaTime;
 				}

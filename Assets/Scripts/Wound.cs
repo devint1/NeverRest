@@ -23,7 +23,7 @@ public class Wound : MonoBehaviour {
 		if (!closed) {
 			renderer.material.color = new Color(1f, 1f, 1f, health);
 		}
-		if (!block.gameControl.isPause) {
+		if (!block.gameControl.IsPaused()) {
 			//Debug.Log(" game is " +block.gameControl.isPause );
 			if (!closed && health <= 0) {
 				block.wounds.Remove (this);
