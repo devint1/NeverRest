@@ -20,17 +20,17 @@ public class PointControl : MonoBehaviour {
 	void Update () {
 
 		if (visited) {
-			gameObject.renderer.material.color = Color.red;
+			gameObject.GetComponent<Renderer>().material.color = Color.red;
 			 
 		} 
 		else if (Vector2.Distance (map.player.transform.position, gameObject.transform.position )< 150 && !isPlayerOn){
-			gameObject.renderer.material.color = Color.green;
+			gameObject.GetComponent<Renderer>().material.color = Color.green;
 
 
 
 		}
 		else {
-			this.gameObject.renderer.material.color = Color.white;
+			this.gameObject.GetComponent<Renderer>().material.color = Color.white;
 
 		}
 

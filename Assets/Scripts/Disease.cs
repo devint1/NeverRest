@@ -9,6 +9,7 @@ public class Disease : MonoBehaviour {
 	public bool removedFromCell = false;
 	public float speed = 0.005f;
 	public float heartHealthDamagePerSec = 0.01f;
+	public WhiteBloodCellType type;
 	
 	public Vector3 destination;
 
@@ -39,9 +40,9 @@ public class Disease : MonoBehaviour {
 		Vector2 directionToDestination = ((Vector2)destination - (Vector2)this.transform.position).normalized;
 
 		if (!gameControl.toggleWBC)
-			this.renderer.enabled = false;
+			this.GetComponent<Renderer>().enabled = false;
 		else
-			this.renderer.enabled = true;
+			this.GetComponent<Renderer>().enabled = true;
 		
 		if (this.speed != gameControl.rbcSpeed) {
 			this.speed = gameControl.rbcSpeed / 250.0f;

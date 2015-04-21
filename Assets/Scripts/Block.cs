@@ -81,12 +81,12 @@ public class Block : MonoBehaviour {
 
 	void Update() {
 		//Change color based on healh
-		Color tmpCol = renderer.material.color;
-		renderer.material.color = Color.Lerp(Color.white, Color.black, 1.0f-overallHealth);
-		tmpCol.r = renderer.material.color.r;
-		tmpCol.g = renderer.material.color.g;
-		tmpCol.b = renderer.material.color.b;
-		renderer.material.color = tmpCol;
+		Color tmpCol = GetComponent<Renderer>().material.color;
+		GetComponent<Renderer>().material.color = Color.Lerp(Color.white, Color.black, 1.0f-overallHealth);
+		tmpCol.r = GetComponent<Renderer>().material.color.r;
+		tmpCol.g = GetComponent<Renderer>().material.color.g;
+		tmpCol.b = GetComponent<Renderer>().material.color.b;
+		GetComponent<Renderer>().material.color = tmpCol;
 
 		if(dead) {
 			DestroyAllDiseases();
@@ -101,7 +101,7 @@ public class Block : MonoBehaviour {
 				animator.Play("Flashing");
 			}
 		}
-		if (!gameControl.isPause && !gameControl.tutorial.tutPause) {
+		if (!gameControl.isPause) {
 			//If vitals are mostly good, slowly increase health. Else, take damage
 			if (oxygenLevel >= 0.75f && temperaturePercent >= 0.75f && diseases.Count == 0 && wounds.Count == 0 && overallHealth <= 1.0) {
 				overallHealth += HEALH_REGENERATION * Time.deltaTime;
@@ -254,7 +254,7 @@ public class Block : MonoBehaviour {
 			while (c.a > 0) {
 				yield return new WaitForSeconds (.1f);
 				c.a -= .1f;
-				mouseTarget.renderer.material.color = c;
+				mouseTarget.GetComponent<Renderer>().material.color = c;
 			}
 			gameControl.isSelected = false;
 			//gameControl.selected.Clear ();
@@ -286,6 +286,7 @@ public class Block : MonoBehaviour {
 		oxygenLevel = 0.0f; 
 		temperaturePercent = 0.0f;
 		dead = true;
+		gameControl.deadBlocks++;
 
 		// Kill off all "child" body parts
 		foreach (ExitPoint e in GetExitPoints()) {

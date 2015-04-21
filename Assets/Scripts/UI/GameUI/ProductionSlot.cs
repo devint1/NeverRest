@@ -25,7 +25,7 @@ public class ProductionSlot : MonoBehaviour {
 		timeRemaining -= Time.deltaTime;
 
 		float percentProgress = (float)(totalTime - timeRemaining) / totalTime;
-		renderer.material.color = Color.Lerp(Color.clear, Color.white, percentProgress);
+		GetComponent<Renderer>().material.color = Color.Lerp(Color.clear, Color.white, percentProgress);
 
 		//End producin if time is up
 		if(timeRemaining <= 0) {

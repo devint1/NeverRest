@@ -134,7 +134,7 @@ public class Tesselator {
 		if (!renderer) {
 			renderer = obj.AddComponent<MeshRenderer>();
 		}
-		filter.renderer.material = material;
+		filter.GetComponent<Renderer>().material = material;
 		filter.mesh = mesh;
 	}
 
