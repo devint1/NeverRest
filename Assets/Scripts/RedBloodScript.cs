@@ -28,7 +28,7 @@ public class RedBloodScript : MonoBehaviour {
 		if (gameControl.liveRBCs < 2 * gameControl.numRBCs) {
 			Vector3 randpt = gameControl.redBloodSpawnPoint.GetRandomPoint ();
 			GameObject newRBC = (GameObject)Instantiate (gameControl.redBloodCellPrefab, new Vector3 (randpt.x, randpt.y, 1.0f), this.transform.rotation);
-			newRBC.renderer.transform.localScale = new Vector3(.1f,.1f,.1f);
+			newRBC.GetComponent<Renderer>().transform.localScale = new Vector3(.1f,.1f,.1f);
 			RedBloodScript newRedScript = newRBC.GetComponent<RedBloodScript> ();
 			newRedScript.currentBlock = heartBlock;
 			newRedScript.prevBlock = newRedScript.currentBlock;
@@ -58,9 +58,9 @@ public class RedBloodScript : MonoBehaviour {
 		if (!gameControl.toggleRBC) {
 			//Destroy(this.gameObject);
 			//Destroy(this);
-			this.renderer.enabled = false;
+			this.GetComponent<Renderer>().enabled = false;
 		} else {
-			this.renderer.enabled = true;
+			this.GetComponent<Renderer>().enabled = true;
 		}
 
 		if (this.speed != gameControl.rbcSpeed) {
@@ -68,9 +68,9 @@ public class RedBloodScript : MonoBehaviour {
 		}
 		
 		if(!oxygenated)
-			this.renderer.material.SetColor("_Color", new Color(172.0f / 255.0f,0.0f,0.0f));
+			this.GetComponent<Renderer>().material.SetColor("_Color", new Color(172.0f / 255.0f,0.0f,0.0f));
 		else
-			this.renderer.material.SetColor("_Color", new Color(255.0f / 255.0f,0.0f,0.0f));
+			this.GetComponent<Renderer>().material.SetColor("_Color", new Color(255.0f / 255.0f,0.0f,0.0f));
 
 		if (!(prevBlock.notClotted))
 			speed = gameControl.rbcSpeed / 1000.0f;

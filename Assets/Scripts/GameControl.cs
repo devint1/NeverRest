@@ -9,6 +9,7 @@ public class GameControl : MonoBehaviour {
 	public const float PLATELET_FOOD_RATE = 0.025f;
 	private const float MAX_LEVEL_PROGRESS_SPEED = 10.0f;
 	private const float MAX_ENERGY = 100.0f;
+	private const int MAX_NUM_DEAD_BODY_PARTS = 6;
 	private const float ENERGY_RESTORE_PER_SECOND = 5.0f;
 
 	public ArrayList selected;
@@ -35,6 +36,7 @@ public class GameControl : MonoBehaviour {
 	public int whiteBloodProduction = 0;
 	public int plateletProduction = 0;
 	public int liveRBCs;
+	public int deadBlocks = 0;
 	public float energy = 50f;
 	public float rbcSpeed = 5;
 
@@ -48,7 +50,6 @@ public class GameControl : MonoBehaviour {
 	public bool wbcChanged = true;
 	public bool isSelected = false;
 	public bool showMenu = false;
-	public bool isPause = false;
 	public bool firstMouse = false;
 	public Tutorial tutorial;
 	public RandomEventManager rngManager;
@@ -57,7 +58,7 @@ public class GameControl : MonoBehaviour {
 	public List<Sprite> backgroundImages = new List<Sprite>();
 	public Slider heartSlider;
 	public Texture energyImage;
-
+	private bool isTutorial;
 	// int mousePressStart = -1;
 	Vector3 mousePositionStart;
 
@@ -68,10 +69,10 @@ public class GameControl : MonoBehaviour {
 	bool mouseDown = false;
 	bool drawText = false;
 	bool gameOver = false;
-	bool isPaused = false;
 	bool upgradeMenuOpen = false;
 	float doubleClickTimer = 0;
 	bool click = false;
+	bool isPaused = false;
 
 	float levelProgressSpeed = 1.0f;
 	public float levelProgress = 0f;
@@ -81,6 +82,12 @@ public class GameControl : MonoBehaviour {
 
 	void Start() {
 		persistence = GameObject.Find ("Persistence").GetComponent<Persistence>();
+
+		// Get rid of purple/teal WBCs for level 1
+		if (persistence.currentLevel <= 1) {
+			Destroy(GameObject.Find("whitebloodcell_Button_Purple"));
+			Destroy(GameObject.Find("whitebloodcell_Button_Teal"));
+		}
 
 		background.sprite = backgroundImages[persistence.currentLevel-1];
 
@@ -102,41 +109,6 @@ public class GameControl : MonoBehaviour {
 		tutorial.gC = this;
 
 		int i = 0;
-		//TODO move all the member assignment stuff into their start functions - I.E. should only be passed game control object and do it itself
-		/*
-		for(; i < numRBCs; i++) {
-			Vector3 randpt = redBloodSpawnPoint.GetRandomPoint();
-			GameObject newRBC = (GameObject)Instantiate (redBloodCellPrefab, new Vector3(randpt.x, randpt.y, 1.0f) , this.transform.rotation);
-			RedBloodScript newRedScript = newRBC.GetComponent<RedBloodScript> ();
-			newRBC.renderer.transform.localScale = new Vector3(.6f,.6f,.6f);
-			newRedScript.currentBlock = redBloodSpawnPoint;
-			newRedScript.prevBlock = redBloodSpawnPoint;
-			newRedScript.destination = redBloodSpawnPoint.GetRandomPoint ();
-			newRedScript.origBlock = body.GetBodyPart((numRBCs - i) / (numRBCs / body.blocks.Count));
-			newRedScript.destBlock = newRedScript.origBlock;
-			newRedScript.heartBlock = body.GetChest ();
-			newRedScript.gameControl = this;
-			newRedScript.spawnTime = Time.time;
-			newRedScript.renderer.enabled = false;
-		}
-		for(; i > 0; i--) {
-			Vector3 randpt = body.GetBodyPart((numRBCs - i) / (numRBCs / body.blocks.Count)).GetRandomPoint();
-			GameObject newRBC = (GameObject)Instantiate (redBloodCellPrefab, new Vector3(randpt.x, randpt.y, 1.0f), this.transform.rotation);
-			RedBloodScript newRedScript = newRBC.GetComponent<RedBloodScript> ();
-			newRBC.renderer.transform.localScale = new Vector3(.6f,.6f,.6f);
-			newRedScript.prevBlock = newRedScript.currentBlock;
-			newRedScript.currentBlock = body.GetBodyPart((numRBCs - i) / (numRBCs / body.blocks.Count));
-			newRedScript.destination = body.GetBodyPart((numRBCs - i) / (numRBCs / body.blocks.Count)).GetRandomPoint ();
-			newRedScript.origBlock = body.GetBodyPart((numRBCs - i) / (numRBCs / body.blocks.Count));
-			newRedScript.heartBlock = body.GetChest ();
-			newRedScript.destBlock = newRedScript.heartBlock;
-			newRedScript.oxygenated = false;
-			newRedScript.gameControl = this;
-			newRedScript.spawnTime = Time.time;
-			newRedScript.renderer.enabled = false;
-		}
-		liveRBCs = 2 * numRBCs;
-		*/
 
 		//GameObject actionBar = (GameObject)Instantiate (actionBarPrefab, new Vector3(10, Screen.height - 150, -1), this.transform.rotation);
 
@@ -177,6 +149,7 @@ public class GameControl : MonoBehaviour {
 					{
 						if (wbc.currentBlock == current_b){
 							wbc.Select();
+
 							doubleClicked.Add(wbc);
 
 						}
@@ -325,17 +298,19 @@ public class GameControl : MonoBehaviour {
 
 	void OnGUI() {
 		// Get white blood cell production from slider
-		if (isPaused && showMenu){
-			GUI.Box(new Rect(Screen.width/4, Screen.height/4, Screen.width/2, Screen.height/2), "PAUSED");
+		if (isPaused && showMenu) {
+			GUI.Box (new Rect (Screen.width / 4, Screen.height / 4, Screen.width / 2, Screen.height / 2), "PAUSED");
 
-			if (GUI.Button(new Rect(Screen.width/4+10, Screen.height/4+Screen.height/10+10, Screen.width/2-20, Screen.height/10), "RESUME")){
+			if (GUI.Button (new Rect (Screen.width / 4 + 10, Screen.height / 4 + Screen.height / 10 + 10, Screen.width / 2 - 20, Screen.height / 10), "RESUME")) {
 				isPaused = false;
 				showMenu = false;
 			}
-			if (GUI.Button(new Rect(Screen.width/4+10, Screen.height/4+3*Screen.height/10+10, Screen.width/2-20, Screen.height/10), "MAIN MENU")){
-				Application.LoadLevel("MenuScene");
+			if (GUI.Button (new Rect (Screen.width / 4 + 10, Screen.height / 4 + 3 * Screen.height / 10 + 10, Screen.width / 2 - 20, Screen.height / 10), "MAIN MENU")) {
+				Application.LoadLevel ("MenuScene");
 
 			} 
+		} else if (isPaused) {
+
 		}
 
 		rbcSpeed = (heartSlider.value);//(int)(heartSlider.value * 9.0f) + 1;
@@ -351,6 +326,7 @@ public class GameControl : MonoBehaviour {
 		//GUI.Box (new Rect (0,0, 200, 40),energyBarFull);
 		GUI.DrawTexture (new Rect (10, 10, 313.0f * energy/MAX_ENERGY, 30), energyBarFull);
 		GUI.DrawTexture (new Rect (0.0f, 0.0f, 400.0f, 50.0f), energyImage);
+		GUI.Box (new Rect (325, 9, 70, 25), "" + (energy/MAX_ENERGY*100).ToString("F2") + "%");
 		//GUI.EndGroup ();
 
 		// Energ level text
@@ -383,7 +359,7 @@ public class GameControl : MonoBehaviour {
 		if (Input.GetKeyDown(KeyCode.Space)){
 			TogglePauseGame();
 			showMenu = false;
-			isPause = !isPause;
+			isPaused = !isPaused;
 		}
 
 		if( tutorial.StopGameLogic() ){
@@ -442,7 +418,7 @@ public class GameControl : MonoBehaviour {
 		}
 		else {
 			levelProgressSpeed = calcLevelProgressSpeed();
-			levelProgress += levelProgressSpeed * Time.deltaTime;
+			levelProgress += levelProgressSpeed * Time.deltaTime * rbcSpeed/5;
 		}
 
 		if (whiteBloodCells != null) {
@@ -462,26 +438,6 @@ public class GameControl : MonoBehaviour {
 			}
 			wbcChanged = true;
 		}
-
-		/*
-		if (liveRBCs < 2 * numRBCs) {
-			int diff = 2 * numRBCs - liveRBCs;
-			for (int i = 0; i < diff; i++) {
-				Vector3 randpt = redBloodSpawnPoint.GetRandomPoint();
-				GameObject newRBC = (GameObject)Instantiate (redBloodCellPrefab, new Vector3(randpt.x, randpt.y, 1.0f) , this.transform.rotation);
-				RedBloodScript newRedScript = newRBC.GetComponent<RedBloodScript> ();
-				newRBC.renderer.transform.localScale = new Vector3(.1f,.1f,.1f);
-				newRedScript.currentBlock = redBloodSpawnPoint;
-				newRedScript.destination = redBloodSpawnPoint.GetRandomPoint ();
-				newRedScript.origBlock = body.GetBodyPart((diff - i) / (numRBCs / body.blocks.Count));
-				newRedScript.destBlock = newRedScript.origBlock;
-				newRedScript.heartBlock = body.GetChest ();
-				newRedScript.gameControl = this;
-				newRedScript.spawnTime = Time.time;
-			}
-			liveRBCs += diff;
-		}
-		*/
 	}
 
 	public void SpawnWhiteBloodCell(WhiteBloodCellType type) {
@@ -493,7 +449,7 @@ public class GameControl : MonoBehaviour {
 		newWhiteScript.gameControl = this;
 		
 		if (toggleWBC)
-			newWhiteScript.renderer.enabled = false;
+			newWhiteScript.GetComponent<Renderer>().enabled = false;
 		
 		whiteBloodCells.Add (newWhite.GetComponent<WhiteBloodCell>());
 
@@ -560,7 +516,7 @@ public class GameControl : MonoBehaviour {
 			}
 		}
 
-		if (deadLimbs >= 4)
+		if (deadLimbs >= MAX_NUM_DEAD_BODY_PARTS)
 			return true;
 		else
 			return false;

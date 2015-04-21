@@ -21,9 +21,9 @@ public class Wound : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		if (!closed) {
-			renderer.material.color = new Color(1f, 1f, 1f, health);
+			GetComponent<Renderer>().material.color = new Color(1f, 1f, 1f, health);
 		}
-		if (!block.gameControl.isPause) {
+		if (!block.gameControl.IsPaused()) {
 			//Debug.Log(" game is " +block.gameControl.isPause );
 			if (!closed && health <= 0) {
 				block.wounds.Remove (this);
@@ -36,17 +36,17 @@ public class Wound : MonoBehaviour {
 
 				// Fade to closed animation
 				animator.CrossFade ("Closed", 0f);
-				renderer.material.color = new Color (1f, 1f, 1f, 0f);
+				GetComponent<Renderer>().material.color = new Color (1f, 1f, 1f, 0f);
 				StartCoroutine (Fade (1f, 0.5f));
 			}
 		}
 	}
 
 	IEnumerator Fade(float value, float time) {
-		float alpha = renderer.material.color.a;
+		float alpha = GetComponent<Renderer>().material.color.a;
 		for (float t = 0.0f; t < time; t += Time.deltaTime / time) {
 			Color newColor = new Color(1, 1, 1, Mathf.Lerp(alpha, value, t));
-			renderer.material.color = newColor;
+			GetComponent<Renderer>().material.color = newColor;
 			yield return null;
 		}
 	}
