@@ -127,7 +127,7 @@ public class Disease : MonoBehaviour {
 		int waitFor = Random.Range (MIN_DISEASE_RESPAWN_TIME, MAX_DISEASE_RESPAWN_TIME);
 		yield return new  WaitForSeconds(waitFor);
 
-		if(!gameControl.isPause){
+		if(!gameControl.IsPaused()){
 			if (!captured && currentBlock.diseases.Count < Block.MAX_NUM_DISEASE_PER_BLOCK) {
 				GameObject newDisease = (GameObject)Instantiate (diseasePrefab, this.transform.position, this.transform.rotation);
 				Disease newDiseaseScript = newDisease.GetComponent<Disease>();
