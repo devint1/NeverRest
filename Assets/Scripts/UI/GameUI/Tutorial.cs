@@ -129,10 +129,10 @@ public class Tutorial : MonoBehaviour {
 			//gC.actionBarPrefab.GetComponentInChildren<ActionBarButton>();
 			ActionBarButton ab = gC.actionBarPrefab.transform.Find("platelet_Button").GetComponent<ActionBarButton>();
 			if(counter < 30) {
-				ab.renderer.material.color = Color.yellow;
+				ab.GetComponent<Renderer>().material.color = Color.yellow;
 			}
 			else if(counter < 60) {
-				ab.renderer.material.color = Color.white;
+				ab.GetComponent<Renderer>().material.color = Color.white;
 			}
 			else {
 				counter = 0;
@@ -147,7 +147,7 @@ public class Tutorial : MonoBehaviour {
 				//currentState = TutorialStates.State.Done;
 				//SetAlphaOfBody(1.0f);
 				
-				ab.renderer.material.color = Color.white;
+				ab.GetComponent<Renderer>().material.color = Color.white;
 				currentState = TutorialStates.State.WBCProduction;
 				counter = 0;
 			}
@@ -158,10 +158,10 @@ public class Tutorial : MonoBehaviour {
 			tutPause = true;
 			ActionBarButton wb = gC.actionBarPrefab.transform.Find("whitebloodcell_Button").GetComponent<ActionBarButton>();
 			if(counter < 30) {
-				wb.renderer.material.color = Color.yellow;
+				wb.GetComponent<Renderer>().material.color = Color.yellow;
 			}
 			else if(counter < 60) {
-				wb.renderer.material.color = Color.white;
+				wb.GetComponent<Renderer>().material.color = Color.white;
 			}
 			else {
 				counter = 0;
@@ -170,7 +170,7 @@ public class Tutorial : MonoBehaviour {
 			if (gC.whiteBloodProduction > 0){
 				//currentState = TutorialStates.State.Done;
 				currentState = TutorialStates.State.PlateCombat;
-				wb.renderer.material.color = Color.white;
+				wb.GetComponent<Renderer>().material.color = Color.white;
 				counter = 0;
 			}
 			break;
@@ -188,16 +188,16 @@ public class Tutorial : MonoBehaviour {
 
 	//In case we want to fade out items that are not what the focus should be on
 	void SetAlphaOfBody(float a) {
-		Color color1 = gC.body.toplayer.renderer.material.color;
+		Color color1 = gC.body.toplayer.GetComponent<Renderer>().material.color;
 		color1.a = a;
-		gC.body.toplayer.renderer.material.color = color1;
-		Color color2 = gC.body.middlelayer.renderer.material.color;
+		gC.body.toplayer.GetComponent<Renderer>().material.color = color1;
+		Color color2 = gC.body.middlelayer.GetComponent<Renderer>().material.color;
 		color2.a = a;
-		gC.body.middlelayer.renderer.material.color = color2;
+		gC.body.middlelayer.GetComponent<Renderer>().material.color = color2;
 		for(int i = 0; i < gC.body.blocks.Count; i++) {
-			Color colorc = gC.body.blocks[i].renderer.material.color;
+			Color colorc = gC.body.blocks[i].GetComponent<Renderer>().material.color;
 			colorc.a = a;
-			gC.body.blocks[i].renderer.material.color = colorc;
+			gC.body.blocks[i].GetComponent<Renderer>().material.color = colorc;
 		}
 	}
 
@@ -245,13 +245,13 @@ public class Tutorial : MonoBehaviour {
 
 	void CommenceDialog(int windowID) {
 		dialogWindowActivated = true;
+		/*
 		GUI.TextArea (new Rect (0, 20, 250, 25), "Commence the tutorial?", tutorialMessageStyle);
 		if (GUI.Button(new Rect(150, 50, 50, 20), "Yes")) {
 			dialogOpen = EventType.EVENT_TYPE_NONE;
 			dialogWindowActivated = false;
 			currentState = TutorialStates.State.Pause;
 			tutPause = false;
-			Debug.Log(" YES ");
 		}
 		if (GUI.Button(new Rect(50, 50, 50, 20), "No")) {
 			dialogOpen = EventType.EVENT_TYPE_NONE;
@@ -260,7 +260,23 @@ public class Tutorial : MonoBehaviour {
 			currentState = TutorialStates.State.Off;
 			//Debug.Log("NO chosed ");
 		}
-		//Debug.Log("State is "+ currentState);
+*/
+		// activate tutorial in Map Scence, LevelButton 
+		//Debug.Log("IS tut " + gC.persistence.isTutorial);
+		if (gC.persistence.isTutorial) {
+			dialogOpen = EventType.EVENT_TYPE_NONE;
+			dialogWindowActivated = false;
+			currentState = TutorialStates.State.Pause;
+			tutPause = false;
+				}
+		else {
+			dialogOpen = EventType.EVENT_TYPE_NONE;
+			dialogWindowActivated = false;
+			tutPause = false;
+			currentState = TutorialStates.State.Off;
+			//Debug.Log("NO chosed ");
+		}
+
 	}
 
 	void DoEnemySpawn(){

@@ -57,7 +57,7 @@ public class GameControl : MonoBehaviour {
 	public List<Sprite> backgroundImages = new List<Sprite>();
 	public Slider heartSlider;
 	public Texture energyImage;
-
+	private bool isTutorial;
 	// int mousePressStart = -1;
 	Vector3 mousePositionStart;
 
@@ -177,6 +177,7 @@ public class GameControl : MonoBehaviour {
 					{
 						if (wbc.currentBlock == current_b){
 							wbc.Select();
+
 							doubleClicked.Add(wbc);
 
 						}
@@ -442,7 +443,7 @@ public class GameControl : MonoBehaviour {
 		}
 		else {
 			levelProgressSpeed = calcLevelProgressSpeed();
-			levelProgress += levelProgressSpeed * Time.deltaTime;
+			levelProgress += levelProgressSpeed * Time.deltaTime * rbcSpeed/5;
 		}
 
 		if (whiteBloodCells != null) {
@@ -493,7 +494,7 @@ public class GameControl : MonoBehaviour {
 		newWhiteScript.gameControl = this;
 		
 		if (toggleWBC)
-			newWhiteScript.renderer.enabled = false;
+			newWhiteScript.GetComponent<Renderer>().enabled = false;
 		
 		whiteBloodCells.Add (newWhite.GetComponent<WhiteBloodCell>());
 

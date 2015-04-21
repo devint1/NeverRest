@@ -11,7 +11,7 @@ public class LevelButton : MonoBehaviour {
 
 	public Persistence p;
 	private SpriteRenderer spriteRenderer;
-
+	public bool isTut = false;
 	// Use this for initialization
 	void Start () {
 		spriteRenderer = this.GetComponent<SpriteRenderer> ();
@@ -30,6 +30,7 @@ public class LevelButton : MonoBehaviour {
 
 	void OnMouseDown() {
 		if (p.currentLevel == levelNumber) {
+			p.isTutorial = isTut;
 			Application.LoadLevel("GameScene");
 		}
 	}

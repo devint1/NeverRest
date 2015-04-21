@@ -5,6 +5,8 @@ public class Persistence : MonoBehaviour {
 	public int currentLevel = 1;
 
 	public static Persistence i;
+	public  bool isTutorial;
+
 		
 	void Awake () {
 		if(!i) {

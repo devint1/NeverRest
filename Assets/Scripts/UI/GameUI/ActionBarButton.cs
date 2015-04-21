@@ -45,13 +45,13 @@ public class ActionBarButton : MonoBehaviour {
 
 	void OnMouseOver() {
 		showTooltip = true;
-		renderer.material.color = Color.yellow;
+		GetComponent<Renderer>().material.color = Color.yellow;
 	}
 	
 	void OnMouseExit() {
 		if (showTooltip) {
 			showTooltip = false;
-			renderer.material.color = Color.white;
+			GetComponent<Renderer>().material.color = Color.white;
 		}
 	}
 

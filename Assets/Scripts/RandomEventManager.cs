@@ -145,10 +145,10 @@ public class RandomEventManager : MonoBehaviour {
 			yield return null;
 		}
 		yield return new WaitForSeconds(2);
-		float alpha = ping.renderer.material.color.a;
+		float alpha = ping.GetComponent<Renderer>().material.color.a;
 		for (float t = 0.0f; t < 2.0f; t += Time.deltaTime / 2.0f) {
 			Color newColor = new Color(1, 1, 1, Mathf.Lerp(alpha, 0, t));
-			ping.renderer.material.color = newColor;
+			ping.GetComponent<Renderer>().material.color = newColor;
 			yield return null;
 		}
 		Destroy(ping);

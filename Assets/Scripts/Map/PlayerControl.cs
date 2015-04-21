@@ -20,10 +20,10 @@ public class PlayerControl : MonoBehaviour {
 	void Update () {
 	
 		if (isSelected) {
-			gameObject.renderer.material.color = Color.blue;
+			gameObject.GetComponent<Renderer>().material.color = Color.blue;
 
 		} else {
-			gameObject.renderer.material.color = Color.white;
+			gameObject.GetComponent<Renderer>().material.color = Color.white;
 		}
 		if ( (Input.GetMouseButton (1))) {
 			this.isSelected = false;
