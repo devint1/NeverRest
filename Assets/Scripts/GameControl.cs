@@ -82,6 +82,12 @@ public class GameControl : MonoBehaviour {
 	void Start() {
 		persistence = GameObject.Find ("Persistence").GetComponent<Persistence>();
 
+		// Get rid of purple/teal WBCs for level 1
+		if (persistence.currentLevel <= 1) {
+			Destroy(GameObject.Find("whitebloodcell_Button_Purple"));
+			Destroy(GameObject.Find("whitebloodcell_Button_Teal"));
+		}
+
 		background.sprite = backgroundImages[persistence.currentLevel-1];
 
 		if (backGroundMusic) {
