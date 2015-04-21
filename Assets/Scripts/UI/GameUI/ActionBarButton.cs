@@ -17,10 +17,10 @@ public class ActionBarButton : MonoBehaviour {
 	public Sprite PRODUCTION_SPRITE;
 
 	void Update() {
-		if (Input.GetKeyDown (KeyCode.Q) && buttonType == ButtonType.WhiteBloodCell) {
+		if (Input.GetKeyDown (KeyCode.W) && buttonType == ButtonType.WhiteBloodCell) {
 			QueueWhiteBloodCell();
 		}
-		if (Input.GetKeyDown (KeyCode.W) && buttonType == ButtonType.Platelet) {
+		if (Input.GetKeyDown (KeyCode.Q) && buttonType == ButtonType.Platelet) {
 			QueuePlatelet();
 		}
 	}
@@ -28,9 +28,9 @@ public class ActionBarButton : MonoBehaviour {
 	void OnGUI(){
 		if (showTooltip) {
 			if(buttonType == ButtonType.WhiteBloodCell)
-				GUI.TextArea(new Rect(Input.mousePosition.x,Screen.height-(Input.mousePosition.y+55),150,50), "Create White Blood Cell\nHotkey: Q\nBase Cost: " + WBC_BASE_COST + " Energy");
+				GUI.TextArea(new Rect(Input.mousePosition.x,Screen.height-(Input.mousePosition.y+55),150,50), "Create White Blood Cell\nHotkey: W\nBase Cost: " + WBC_BASE_COST + " Energy");
 			else if (buttonType == ButtonType.Platelet)
-				GUI.TextArea(new Rect(Input.mousePosition.x,Screen.height-(Input.mousePosition.y+55),150,50), "Create Platelet\nHotkey: W\nBase Cost: " + PLAT_BASE_COST + " Energy");
+				GUI.TextArea(new Rect(Input.mousePosition.x,Screen.height-(Input.mousePosition.y+55),150,50), "Create Platelet\nHotkey: Q\nBase Cost: " + PLAT_BASE_COST + " Energy");
 		}
 	}
 

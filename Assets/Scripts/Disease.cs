@@ -9,6 +9,7 @@ public class Disease : MonoBehaviour {
 	public bool removedFromCell = false;
 	public float speed = 0.005f;
 	public float heartHealthDamagePerSec = 0.01f;
+	public WhiteBloodCellType type;
 	
 	public Vector3 destination;
 
