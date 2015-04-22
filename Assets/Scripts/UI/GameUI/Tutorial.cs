@@ -245,7 +245,7 @@ public class Tutorial : MonoBehaviour {
 
 	void CommenceDialog(int windowID) {
 		dialogWindowActivated = true;
-		/*
+		
 		GUI.TextArea (new Rect (0, 20, 250, 25), "Commence the tutorial?", tutorialMessageStyle);
 		if (GUI.Button(new Rect(150, 50, 50, 20), "Yes")) {
 			dialogOpen = EventType.EVENT_TYPE_NONE;
@@ -260,9 +260,10 @@ public class Tutorial : MonoBehaviour {
 			currentState = TutorialStates.State.Off;
 			//Debug.Log("NO chosed ");
 		}
-*/
+
 		// activate tutorial in Map Scence, LevelButton 
 		//Debug.Log("IS tut " + gC.persistence.isTutorial);
+		/*
 		if (gC.persistence.isTutorial) {
 			dialogOpen = EventType.EVENT_TYPE_NONE;
 			dialogWindowActivated = false;
@@ -276,7 +277,7 @@ public class Tutorial : MonoBehaviour {
 			currentState = TutorialStates.State.Off;
 			//Debug.Log("NO chosed ");
 		}
-
+*/
 	}
 
 	void DoEnemySpawn(){
