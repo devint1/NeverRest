@@ -117,8 +117,6 @@ public class GameControl : MonoBehaviour {
 		whiteBloodCells = new ArrayList();
 		platelets = new ArrayList ();
 		mousePositionStart = new Vector3();
-		SpawnWhiteBloodCell(WhiteBloodCellType.GREEN);
-		SpawnPlatelet ();
 	}
 
 	public bool IsPaused(){
