@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public enum DiseaseType { GREEN, PURPLE, BLUE }
+public enum DiseaseType { undefined, GREEN, PURPLE, BLUE }
 
 public class Disease : MonoBehaviour {
 	public GameControl gameControl;
@@ -23,11 +23,25 @@ public class Disease : MonoBehaviour {
 	void Start() {
 		if (gameControl.persistence.currentLevel == 1) {
 			type = DiseaseType.GREEN;
+			gameObject.GetComponent<Animator> ().CrossFade ("Bacteria1", 0f);
 			discovered = true;
-		}
-		else if(type == null) {
-			type = (DiseaseType)Random.Range(0,3);
+		} 
+		else if (gameControl.persistence.currentLevel == 2) {
+			if (type == DiseaseType.undefined) {
+				type = (DiseaseType)Random.Range (1, 4);
+			}
+
+			discovered = true;
+			string animationState = "Bacteria"+((int)type);
+			gameObject.GetComponent<Animator> ().CrossFade (animationState, 0f);
+		} 
+		else {
+			if (type == DiseaseType.undefined) {
+				type = (DiseaseType)Random.Range (1, 4);
+			}
+			
 			discovered = false;
+			gameObject.GetComponent<Animator> ().CrossFade ("BacteriaUnknown", 0f);
 		}
 
 		if (currentBlock) {
@@ -157,5 +171,11 @@ public class Disease : MonoBehaviour {
 		transform.parent = whiteBloodCell.transform;
 		captured = true;
 		speed *= 2.5f;
+	}
+
+	public void Discover() {
+		discovered = true;
+		string animationState = "Bacteria"+((int)type);
+		gameObject.GetComponent<Animator> ().CrossFade (animationState, 0.5f);
 	}
 }

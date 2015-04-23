@@ -24,6 +24,12 @@ public class RandomEventManager : MonoBehaviour {
 		isDisabled = true;
 		StartCoroutine(RandomEventCycle());
 	}
+
+	void Update() {
+		if (Input.GetKeyDown (KeyCode.F11)) {
+			SpawnDiseaseInfection();
+		}
+	}
 	
 	void OnGUI() {
 		switch(dialogOpen) {
@@ -94,6 +100,14 @@ public class RandomEventManager : MonoBehaviour {
 
 	public void SpawnDiseaseInfection (Block location, int diseaseNumber){
 		Vector3 spawnPoint = location.GetRandomPoint();
+		int type;
+		if(gameControl.persistence.currentLevel == 1) {
+			type = 1;
+		}
+		else {
+			type = Random.Range (1, 4);
+		}
+
 		StartCoroutine (PingLocation (spawnPoint));
 		for(int i = 0; i<diseaseNumber; i++) {
 			GameObject newDisease = (GameObject)Instantiate(diseasePrefab, spawnPoint, Quaternion.identity);
@@ -101,6 +115,8 @@ public class RandomEventManager : MonoBehaviour {
 			newDiseaseScript.currentBlock = location;
 			newDiseaseScript.gameControl = gameControl;
 			newDiseaseScript.destination = spawnPoint;
+			newDiseaseScript.type = (DiseaseType)type;
+
 			++gameControl.numDiseaseCells;
 		}
 		
