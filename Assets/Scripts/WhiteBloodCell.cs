@@ -22,7 +22,7 @@ public class WhiteBloodCell : MonoBehaviour {
 	Vector2 userDest;
 	bool hasUserDest; //Need to use this since userDest cannot = null
 	ArrayList capture = new ArrayList ();
-	Color[] colors = { new Color(0.64f, 0.96f, 0.52f), new Color(0.77f, 0.42f, 0.97f), new Color(0.57f, 0.97f, 0.99f), new Color(0.41f, 0.42f, 0.57f) };
+	Color[] colors = { new Color(0.49f, 0.92f, 0.34f), new Color(0.84f, 0.55f, 0.99f), new Color(0.20f, 0.70f, 1.0f), new Color(0.41f, 0.42f, 0.57f) };
 
 	public void Start(){
 		nextBlock = currentBlock;
