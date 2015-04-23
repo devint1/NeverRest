@@ -16,7 +16,8 @@ public class ProductionQueue : MonoBehaviour {
 
 		if (buttonType == ActionBarButton.ButtonType.WhiteBloodCellGreen
 		    || buttonType == ActionBarButton.ButtonType.WhiteBloodCellPurple
-		    || buttonType == ActionBarButton.ButtonType.WhiteBloodCellTeal) {
+		    || buttonType == ActionBarButton.ButtonType.WhiteBloodCellTeal
+		    || buttonType == ActionBarButton.ButtonType.WhiteBloodCellFinder) {
 				gameControl.whiteBloodProduction++;
 		} else if (buttonType == ActionBarButton.ButtonType.Platelet) {
 				gameControl.plateletProduction++;

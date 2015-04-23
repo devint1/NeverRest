@@ -2,7 +2,7 @@
 using System.Collections;
 
 public class ActionBarButton : MonoBehaviour {
-	public enum ButtonType {WhiteBloodCellGreen, WhiteBloodCellPurple, WhiteBloodCellTeal, Platelet}
+	public enum ButtonType {WhiteBloodCellGreen, WhiteBloodCellPurple, WhiteBloodCellTeal, WhiteBloodCellFinder, Platelet}
 
 	public ProductionQueue productionQueue;
 	public ButtonType buttonType;
@@ -22,7 +22,8 @@ public class ActionBarButton : MonoBehaviour {
 		}
 		if ((Input.GetKeyDown (KeyCode.W) && buttonType == ButtonType.WhiteBloodCellGreen)
 		    || (Input.GetKeyDown (KeyCode.E) && buttonType == ButtonType.WhiteBloodCellPurple)
-		    || (Input.GetKeyDown (KeyCode.R) && buttonType == ButtonType.WhiteBloodCellTeal)) {
+		    || (Input.GetKeyDown (KeyCode.R) && buttonType == ButtonType.WhiteBloodCellTeal)
+		    || (Input.GetKeyDown (KeyCode.T) && buttonType == ButtonType.WhiteBloodCellFinder)) {
 			QueueWhiteBloodCell();
 		}
 	}
@@ -37,13 +38,16 @@ public class ActionBarButton : MonoBehaviour {
 				GUI.TextArea(new Rect(Input.mousePosition.x,Screen.height-(Input.mousePosition.y+55),150,50), "Create Purple White Blood Cell\nHotkey: E\nBase Cost: " + WBC_BASE_COST + " Energy");
 			else if(buttonType == ButtonType.WhiteBloodCellTeal)
 				GUI.TextArea(new Rect(Input.mousePosition.x,Screen.height-(Input.mousePosition.y+55),150,50), "Create Teal White Blood Cell\nHotkey: R\nBase Cost: " + WBC_BASE_COST + " Energy");
+			else if(buttonType == ButtonType.WhiteBloodCellFinder)
+				GUI.TextArea(new Rect(Input.mousePosition.x,Screen.height-(Input.mousePosition.y+55),150,50), "Create Finder White Blood Cell\nHotkey: T\nBase Cost: " + WBC_BASE_COST + " Energy");
 		}
 	}
 
 	void OnMouseDown() {
 		if (buttonType == ButtonType.WhiteBloodCellGreen
 		    || buttonType == ButtonType.WhiteBloodCellPurple
-			|| buttonType == ButtonType.WhiteBloodCellTeal) {
+			|| buttonType == ButtonType.WhiteBloodCellTeal
+		    || buttonType == ButtonType.WhiteBloodCellFinder) {
 			QueueWhiteBloodCell();
 		}
 		else if (buttonType == ButtonType.Platelet) {

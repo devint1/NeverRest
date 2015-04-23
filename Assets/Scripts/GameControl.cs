@@ -89,6 +89,11 @@ public class GameControl : MonoBehaviour {
 			Destroy(GameObject.Find("whitebloodcell_Button_Teal"));
 		}
 
+		// Get rid of finder WBCs for levels 1 and 2
+		if (persistence.currentLevel <= 2) {
+			Destroy(GameObject.Find("whitebloodcell_Button_Finder"));
+		}
+
 		background.sprite = backgroundImages[persistence.currentLevel-1];
 
 		if (backGroundMusic) {
