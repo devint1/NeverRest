@@ -151,6 +151,11 @@ public class WhiteBloodCell : MonoBehaviour {
 			currentBlock = nextBlock;
 		} else if (other.gameObject.tag == "Disease") {
 			Disease disease = other.gameObject.GetComponent<Disease> ();
+			if((disease.type == DiseaseType.GREEN && type != WhiteBloodCellType.GREEN)
+			   || (disease.type == DiseaseType.PURPLE && type != WhiteBloodCellType.PURPLE)
+			   || (disease.type == DiseaseType.BLUE && type != WhiteBloodCellType.TEAL)) {
+				return;
+			}
 			if (!disease.captured) {
 				disease.captured = true;
 				disease.BeenCapturedBy (this.gameObject);
