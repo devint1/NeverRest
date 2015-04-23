@@ -282,16 +282,18 @@ public class Block : MonoBehaviour {
 	}
 
 	public void Die(){
-		overallHealth = 0.0f;
-		oxygenLevel = 0.0f; 
-		temperaturePercent = 0.0f;
-		dead = true;
-		gameControl.deadBlocks++;
+		if (!dead) {
+			overallHealth = 0.0f;
+			oxygenLevel = 0.0f; 
+			temperaturePercent = 0.0f;
+			dead = true;
+			gameControl.deadBlocks++;
 
-		// Kill off all "child" body parts
-		foreach (ExitPoint e in GetExitPoints()) {
-			if(!e.isExitToHeart) {
-				e.nextBlock.Die();
+			// Kill off all "child" body parts
+			foreach (ExitPoint e in GetExitPoints()) {
+					if (!e.isExitToHeart) {
+							e.nextBlock.Die ();
+					}
 			}
 		}
 	}

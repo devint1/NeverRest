@@ -355,6 +355,9 @@ public class GameControl : MonoBehaviour {
 		if( Input.GetKeyDown( KeyCode.F8 )){
 			rngManager.SpawnDiseaseInfection();
 		}
+		if( Input.GetKeyDown( KeyCode.F7 )){
+			rngManager.SpawnWound();
+		}
 		if (IsPaused () || showMenu || upgradeMenuOpen || tutorial.StopGameLogic ()) {
 				rngManager.isDisabled = true;
 		} else {
@@ -512,15 +515,15 @@ public class GameControl : MonoBehaviour {
 	bool checkLoseCondition(){
 		int deadLimbs = 0;
 		foreach (Block b in body.blocks) {
-			if(b.blockType == BlockType.CHEST && b.overallHealth <= 0) {
+			if(b.blockType == BlockType.CHEST && b.dead) {
 				return true;
 			}
-			if(b.blockType == BlockType.LIMB && b.overallHealth <= 0){
+			if(b.blockType == BlockType.LIMB && b.dead){
 				deadLimbs++;
 			}
 		}
-
-		if (deadLimbs >= MAX_NUM_DEAD_BODY_PARTS)
+		
+		if (deadBlocks >= MAX_NUM_DEAD_BODY_PARTS)
 			return true;
 		else
 			return false;
