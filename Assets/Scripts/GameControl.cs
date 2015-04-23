@@ -310,7 +310,7 @@ public class GameControl : MonoBehaviour {
 
 			} 
 		} else if (isPaused) {
-
+			GUI.TextArea( new Rect( 400, 400, 100, 50), "PAUSED" ); 
 		}
 
 		rbcSpeed = (heartSlider.value);//(int)(heartSlider.value * 9.0f) + 1;
@@ -359,7 +359,6 @@ public class GameControl : MonoBehaviour {
 		if (Input.GetKeyDown(KeyCode.Space)){
 			TogglePauseGame();
 			showMenu = false;
-			isPaused = !isPaused;
 		}
 
 		if( tutorial.StopGameLogic() ){
