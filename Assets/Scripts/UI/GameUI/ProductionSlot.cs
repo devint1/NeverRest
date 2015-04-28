@@ -22,9 +22,11 @@ public class ProductionSlot : MonoBehaviour {
 			return;
 
 		//Decremen Time remaining and adjust transparency to show progression
-		timeRemaining -= Time.deltaTime;
+		if (!gameControl.IsPaused ()) {
+			timeRemaining -= Time.deltaTime;
+		}
 
-		float percentProgress = (float)(totalTime - timeRemaining) / totalTime;
+		float percentProgress = (float)(totalTime - timeRemaining) / totalTime * .90f + .1f;
 		GetComponent<Renderer>().material.color = Color.Lerp(Color.clear, Color.white, percentProgress);
 
 		//End producin if time is up
