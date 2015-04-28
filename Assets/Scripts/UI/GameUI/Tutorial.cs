@@ -176,6 +176,7 @@ public class Tutorial : MonoBehaviour {
 		if (Input.GetKeyDown (KeyCode.Space)) {
 			currentState = TutorialStates.State.Selection;
 		}
+		gC.TogglePauseGame ();
 		GUI.TextArea (new Rect (Screen.width/2 - 125, Screen.height/2 -50, 250, 150), "The tutorial starts out with the game paused. Unpause the game by hitting the space key. Once unpaused, the platelet cells will begin construction. Their progress will be displayed in the bottom left corner along the grey bar with x4 at the top of it. Unpaused the game and wait for the three platelet cells to be created.", tutorialMessageStyle);
 	}
 	
