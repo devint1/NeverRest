@@ -51,6 +51,7 @@ public class GameControl : MonoBehaviour {
 	public bool isSelected = false;
 	public bool showMenu = false;
 	public bool firstMouse = false;
+
 	public Tutorial tutorial;
 	public RandomEventManager rngManager;
 	public Persistence persistence;
@@ -58,6 +59,12 @@ public class GameControl : MonoBehaviour {
 	public List<Sprite> backgroundImages = new List<Sprite>();
 	public Slider heartSlider;
 	public Texture energyImage;
+
+	public SpriteRenderer levelCompletion;
+	public Sprite bg1;
+	public Sprite bg2;
+	public Sprite bg3;
+
 	private bool isTutorial;
 	// int mousePressStart = -1;
 	Vector3 mousePositionStart;
@@ -87,11 +94,16 @@ public class GameControl : MonoBehaviour {
 		if (persistence.currentLevel <= 1) {
 			Destroy(GameObject.Find("whitebloodcell_Button_Purple"));
 			Destroy(GameObject.Find("whitebloodcell_Button_Teal"));
+			levelCompletion.sprite = bg1;
 		}
 
 		// Get rid of finder WBCs for levels 1 and 2
 		if (persistence.currentLevel <= 2) {
 			Destroy(GameObject.Find("whitebloodcell_Button_Finder"));
+		}
+
+		if (persistence.currentLevel == 2) {
+			levelCompletion.sprite = bg2;
 		}
 
 		background.sprite = backgroundImages[persistence.currentLevel-1];
