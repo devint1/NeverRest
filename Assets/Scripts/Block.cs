@@ -289,6 +289,10 @@ public class Block : MonoBehaviour {
 			dead = true;
 			gameControl.deadBlocks++;
 
+			for(int i = 0; i < wounds.Count; i++) {
+				((Wound)(wounds[i])).health = 0;
+			}
+
 			// Kill off all "child" body parts
 			foreach (ExitPoint e in GetExitPoints()) {
 					if (!e.isExitToHeart) {
