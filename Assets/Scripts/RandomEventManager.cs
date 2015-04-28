@@ -19,20 +19,15 @@ public class RandomEventManager : MonoBehaviour {
 	Rect dialogRect = new Rect(750, 80, 250, 150);
 	bool diseaseWindowActivated = false;
 	bool woundedWindowActivated = false;
-	bool randomEventCycleStarted = false;
 
-	void Awake () {
+	void Start () {
 		isDisabled = true;
-
+		StartCoroutine(RandomEventCycle());
 	}
 
 	void Update() {
 		if (Input.GetKeyDown (KeyCode.F11)) {
 			SpawnDiseaseInfection();
-		}
-		if(gameControl.persistence && !randomEventCycleStarted) {
-			StartCoroutine(RandomEventCycle());
-			randomEventCycleStarted = true;
 		}
 	}
 	
