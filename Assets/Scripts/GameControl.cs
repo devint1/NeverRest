@@ -369,6 +369,7 @@ public class GameControl : MonoBehaviour {
 
 		// Restore Energy
 		if (!IsPaused ()) {
+			energy += (ENERGY_RESTORE_PER_SECOND - rbcSpeed/3) * Time.deltaTime;
 			if (energy < 0){
 				energy = 0;
 			}

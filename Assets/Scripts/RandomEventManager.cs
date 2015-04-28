@@ -57,6 +57,9 @@ public class RandomEventManager : MonoBehaviour {
 	IEnumerator RandomEventCycle() {
 		float waitFor = Random.Range (MIN_RANDOM_EVENT_TIME, MAX_RANDOM_EVENT_TIME);
 		EventType eventType = (EventType) Mathf.RoundToInt(Random.Range(1, 3));
+		if (gameControl.persistence.currentLevel == 1 && eventType == EventType.EVENT_TYPE_DISEASE) {
+			eventType = EventType.EVENT_TYPE_WOUND;
+		}
 
 		if (!isDisabled) {
 			switch(eventType) {
