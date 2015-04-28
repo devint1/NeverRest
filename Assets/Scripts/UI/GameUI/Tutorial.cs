@@ -238,10 +238,12 @@ public class Tutorial : MonoBehaviour {
 	}
 	
 	void CommenceDialog(int windowID) {
-		gC.TogglePauseGame ();
+		//gC.TogglePauseGame ();
 		GUI.TextArea (new Rect (0, 20, 250, 25), "Commence the tutorial?", tutorialMessageStyle);
+		gC.TogglePauseGame ();
 		if (GUI.Button(new Rect(150, 50, 50, 20), "Yes")) {
 			dialogOpen = EventType.EVENT_TYPE_NONE;
+
 			currentState = TutorialStates.State.PlateProduction;
 			gC.rngManager.SpawnWound( GameObject.Find( "/Body/Stomach" ).GetComponent<Block>());
 			gC.energy = 100;
@@ -249,8 +251,9 @@ public class Tutorial : MonoBehaviour {
 		}
 		if (GUI.Button(new Rect(50, 50, 50, 20), "No")) {
 			dialogOpen = EventType.EVENT_TYPE_NONE;
-			currentState = TutorialStates.State.Off;
 			gC.TogglePauseGame ();
+			currentState = TutorialStates.State.Off;
+			//gC.TogglePauseGame ();
 			//Debug.Log("NO chosed ");
 		}
 		
