@@ -147,7 +147,14 @@ public class Disease : MonoBehaviour {
 				Disease newDiseaseScript = newDisease.GetComponent<Disease>();
 				newDiseaseScript.gameControl = gameControl;
 				newDiseaseScript.destination = destination;
-				newDiseaseScript.type = type;
+				int chance = Random.Range(1,5);
+				if (chance >= 4) {
+					DiseaseType dt = (DiseaseType)(Random.Range(1,3));
+					newDiseaseScript.type = dt;
+				}
+				else {
+					newDiseaseScript.type = type;
+				}
 				++gameControl.numDiseaseCells;
 			}
 		}

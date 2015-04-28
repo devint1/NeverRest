@@ -21,7 +21,6 @@ public class RandomEventManager : MonoBehaviour {
 	bool diseaseWindowActivated = false;
 	bool woundedWindowActivated = false;
 	bool randomEventCycleStarted = false;
-	object raccoonLock = new object();
 
 	void Awake () {
 		isDisabled = true;
@@ -66,6 +65,7 @@ public class RandomEventManager : MonoBehaviour {
 	IEnumerator RandomEventCycle() {
 		float waitFor = Random.Range (MIN_RANDOM_EVENT_TIME, MAX_RANDOM_EVENT_TIME);
 		EventType eventType = (EventType) Random.Range(1, 3);
+		yield return new WaitForSeconds(waitFor);
 		if (gameControl.persistence.currentLevel == 1 && eventType == EventType.EVENT_TYPE_DISEASE) {
 			eventType = EventType.EVENT_TYPE_WOUND;
 		}
@@ -91,18 +91,19 @@ public class RandomEventManager : MonoBehaviour {
 			// FindSupplies();
 			// BreakLeg();
 		}
-
-		yield return new WaitForSeconds(waitFor);
 		StartCoroutine(RandomEventCycle());
 	}
 
 
 	public void SpawnWound() {
 		Block randomBodyPart =  body.blocks[getRandomAliveBodyPartIndex()];
-		SpawnWound (randomBodyPart);
+		Vector3 spawnPoint = SpawnWound (randomBodyPart);
+		if (gameControl.persistence.currentLevel > 1) {
+			SpawnDiseaseInfection (randomBodyPart, Random.Range (3, 5), spawnPoint);
+		}
 	}
 
-	public void SpawnWound (Block location){
+	public Vector3 SpawnWound (Block location){
 		Vector3 spawnPoint = location.GetRandomPoint();
 		StartCoroutine (PingLocation (spawnPoint));
 		GameObject newWound = (GameObject)Instantiate (woundPrefab, spawnPoint, Quaternion.identity);
@@ -110,6 +111,8 @@ public class RandomEventManager : MonoBehaviour {
 		newWoundScript.block = location;
 		location.wounds.Add (newWound.GetComponent<Wound>());
 		dialogOpen = EventType.EVENT_TYPE_WOUND;
+
+		return spawnPoint;
 	}
 
 	public void SpawnDiseaseInfection() {
@@ -176,6 +179,31 @@ public class RandomEventManager : MonoBehaviour {
 			yield return null;
 		}
 		Destroy(raccoon);
+	}
+
+	public void SpawnDiseaseInfection (Block location, int diseaseNumber, Vector3 spawnPoint) {
+		int type;
+		if(gameControl.persistence.currentLevel == 1) {
+			type = 1;
+		}
+		else {
+			type = Random.Range (1, 4);
+		}
+		
+		StartCoroutine (PingLocation (spawnPoint));
+		for(int i = 0; i<diseaseNumber; i++) {
+			GameObject newDisease = (GameObject)Instantiate(diseasePrefab, spawnPoint, Quaternion.identity);
+			Disease newDiseaseScript = newDisease.GetComponent<Disease>();
+			newDiseaseScript.currentBlock = location;
+			newDiseaseScript.gameControl = gameControl;
+			newDiseaseScript.destination = spawnPoint;
+			newDiseaseScript.type = (DiseaseType)type;
+			
+			++gameControl.numDiseaseCells;
+		}
+		
+		numDiseasesSpawn += 3;
+		dialogOpen = EventType.EVENT_TYPE_DISEASE;
 	}
 
 	void SpawnDiseaseDialog(int windowID) {
