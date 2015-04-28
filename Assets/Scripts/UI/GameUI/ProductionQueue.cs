@@ -22,7 +22,7 @@ public class ProductionQueue : MonoBehaviour {
 		} else if (buttonType == ActionBarButton.ButtonType.Platelet) {
 				gameControl.plateletProduction++;
 		}
-		Debug.Log ("Energy " + gameControl.energy);
+		//Debug.Log ("Energy " + gameControl.energy);
 		if (slot && baseCost * slot.costMultiplier < gameControl.energy) {
 			gameControl.energy -= baseCost * slot.costMultiplier;
 			slot.Produce (productionTime, image, buttonType);

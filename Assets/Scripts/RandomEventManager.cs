@@ -36,7 +36,7 @@ public class RandomEventManager : MonoBehaviour {
 		case EventType.EVENT_TYPE_DISEASE:
 			if(!diseaseWindowActivated) {
 				if (gameControl.tutorial.currentState != TutorialStates.State.Off) {
-					Debug.Log(" Game state is " + gameControl.tutorial.currentState);
+					//Debug.Log(" Game state is " + gameControl.tutorial.currentState);
 					//gameControl.isPause = true;
 					GUI.Window(0, dialogRect, SpawnDiseaseDialog, "Infectious Disease!");
 				}
@@ -58,7 +58,10 @@ public class RandomEventManager : MonoBehaviour {
 		float waitFor = Random.Range (MIN_RANDOM_EVENT_TIME, MAX_RANDOM_EVENT_TIME);
 		yield return new WaitForSeconds(waitFor);
 		EventType eventType = (EventType) Mathf.RoundToInt(Random.Range(1, 3));
-		if (gameControl.persistence.currentLevel == 1 && eventType == EventType.EVENT_TYPE_DISEASE) {
+		if ( eventType == EventType.EVENT_TYPE_DISEASE) {
+			eventType = EventType.EVENT_TYPE_DISEASE;
+		}
+		else if ( eventType == EventType.EVENT_TYPE_WOUND) {
 			eventType = EventType.EVENT_TYPE_WOUND;
 		}
 

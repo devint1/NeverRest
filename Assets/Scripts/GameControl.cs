@@ -10,7 +10,7 @@ public class GameControl : MonoBehaviour {
 	private const float MAX_LEVEL_PROGRESS_SPEED = 10.0f;
 	private const float MAX_ENERGY = 100.0f;
 	private const int MAX_NUM_DEAD_BODY_PARTS = 6;
-	private const float ENERGY_RESTORE_PER_SECOND = 5.0f;
+	private const float ENERGY_RESTORE_PER_SECOND = 4.0f;
 
 	public ArrayList selected;
 	public ArrayList whiteBloodCells;
