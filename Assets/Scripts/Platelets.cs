@@ -34,7 +34,7 @@ public class Platelets : MonoBehaviour {
 	public void Select(){
 		if(!isSelected){
 			gameControl.selected.Add (this.gameObject);
-			gameObject.GetComponent<Renderer>().material.color = Color.green;
+			gameObject.GetComponent<Renderer>().material.color = Color.blue;
 
 		}
 		isSelected = true;
