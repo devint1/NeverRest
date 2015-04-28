@@ -124,6 +124,7 @@ public class GameControl : MonoBehaviour {
 
 		tutorial = gameObject.AddComponent<Tutorial> ();
 		tutorial.gC = this;
+		levelDistance = 500 + 500 * persistence.currentLevel;
 
 		int i = 0;
 

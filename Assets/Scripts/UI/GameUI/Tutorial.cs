@@ -69,7 +69,7 @@ public class Tutorial : MonoBehaviour {
 	
 	void Update(){
 		if (currentState == State.WaitForLevelTwo && gC.persistence.currentLevel == 2) {
-			currentState = State.WBCProduction;
+			currentState = State.WBCCombat;
 		}
 	}
 	void OnGUI(){
@@ -175,6 +175,7 @@ public class Tutorial : MonoBehaviour {
 			GUI.Window(0, new Rect(Screen.width/2 - 125, Screen.height/2 -50, 250, 150), PlateCombatDialog, "Combat", tutorialMessageStyle);
 			break;
 		case TutorialStates.State.WBCCombat:
+			GUI.Window(0, new Rect(Screen.width/2 - 125, Screen.height/2 -50, 250, 150), WBCCombatDialog, "Combat", tutorialMessageStyle);
 			break;
 		case TutorialStates.State.Commence:
 			GUI.Window(0, new Rect(Screen.width/2 - 125, Screen.height/2 -50, 250, 75), CommenceDialog, "Tutorial", tutorialMessageStyle);
@@ -237,18 +238,19 @@ public class Tutorial : MonoBehaviour {
 	}
 	
 	void CommenceDialog(int windowID) {
-		
+		gC.TogglePauseGame ();
 		GUI.TextArea (new Rect (0, 20, 250, 25), "Commence the tutorial?", tutorialMessageStyle);
 		if (GUI.Button(new Rect(150, 50, 50, 20), "Yes")) {
 			dialogOpen = EventType.EVENT_TYPE_NONE;
 			currentState = TutorialStates.State.PlateProduction;
 			gC.rngManager.SpawnWound( GameObject.Find( "/Body/Stomach" ).GetComponent<Block>());
 			gC.energy = 100;
-			gC.TogglePauseGame();
+
 		}
 		if (GUI.Button(new Rect(50, 50, 50, 20), "No")) {
 			dialogOpen = EventType.EVENT_TYPE_NONE;
 			currentState = TutorialStates.State.Off;
+			gC.TogglePauseGame ();
 			//Debug.Log("NO chosed ");
 		}
 		
@@ -306,6 +308,14 @@ public class Tutorial : MonoBehaviour {
 		if (GUI.Button(new Rect(100, 125, 50, 20), "OK")) {
 			dialogOpen = EventType.EVENT_TYPE_NONE;
 			currentState = TutorialStates.State.WBCCombat;
+		}
+	}
+	
+	void WBCCombatDialog(int windowID) {
+		GUI.TextArea (new Rect (0, 20, 250, 100), "To combat diseases, move the B cells to the part of the body where the diseases are located.\nPress the 'OK' button to continue.", tutorialMessageStyle);
+		if (GUI.Button(new Rect(100, 125, 50, 20), "OK")) {
+			dialogOpen = EventType.EVENT_TYPE_NONE;
+			currentState = TutorialStates.State.Finish;
 		}
 	}
 	
