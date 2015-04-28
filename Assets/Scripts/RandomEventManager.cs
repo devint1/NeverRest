@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-enum EventType { EVENT_TYPE_NONE, EVENT_TYPE_DISEASE, EVENT_TYPE_WOUND };
+enum EventType { EVENT_TYPE_NONE, EVENT_TYPE_DISEASE, EVENT_TYPE_WOUND, EVENT_TYPE_RACOON };
 
 public class RandomEventManager : MonoBehaviour {
 	public GameControl gameControl;
@@ -9,6 +9,7 @@ public class RandomEventManager : MonoBehaviour {
 	public GameObject diseasePrefab;
 	public GameObject woundPrefab;
 	public GameObject pingPrefab;
+	public GameObject raccoonPrefab;
 	public bool isDisabled = true; //Needs to be enabled from start to prevent race conditions
 
 	const float MIN_RANDOM_EVENT_TIME = 10f;
@@ -20,10 +21,10 @@ public class RandomEventManager : MonoBehaviour {
 	bool diseaseWindowActivated = false;
 	bool woundedWindowActivated = false;
 	bool randomEventCycleStarted = false;
+	object raccoonLock = new object();
 
 	void Awake () {
 		isDisabled = true;
-
 	}
 
 	void Update() {
@@ -31,6 +32,9 @@ public class RandomEventManager : MonoBehaviour {
 			SpawnDiseaseInfection();
 		}
 		if(gameControl.persistence && !randomEventCycleStarted) {
+			if(gameControl.persistence.currentLevel == 4) {
+				RaccoonAttack();
+			}
 			StartCoroutine(RandomEventCycle());
 			randomEventCycleStarted = true;
 		}
@@ -61,9 +65,14 @@ public class RandomEventManager : MonoBehaviour {
 
 	IEnumerator RandomEventCycle() {
 		float waitFor = Random.Range (MIN_RANDOM_EVENT_TIME, MAX_RANDOM_EVENT_TIME);
-		EventType eventType = (EventType) Mathf.RoundToInt(Random.Range(1, 3));
+		EventType eventType = (EventType) Random.Range(1, 3);
 		if (gameControl.persistence.currentLevel == 1 && eventType == EventType.EVENT_TYPE_DISEASE) {
 			eventType = EventType.EVENT_TYPE_WOUND;
+		}
+
+		// Enable raccoon attack on level 4
+		if (gameControl.persistence.currentLevel == 4) {
+			eventType += Mathf.RoundToInt(Random.Range(0, 1));
 		}
 
 		if (!isDisabled) {
@@ -74,9 +83,11 @@ public class RandomEventManager : MonoBehaviour {
 			case EventType.EVENT_TYPE_WOUND:
 				SpawnWound();
 				break;
+			case EventType.EVENT_TYPE_RACOON:
+				RaccoonAttack();
+				break;
 			}
 			// SpawnVirus();
-			// RacoonAttack();
 			// FindSupplies();
 			// BreakLeg();
 		}
@@ -130,6 +141,41 @@ public class RandomEventManager : MonoBehaviour {
 		
 		numDiseasesSpawn += 3;
 		dialogOpen = EventType.EVENT_TYPE_DISEASE;
+	}
+
+	void RaccoonAttack() {
+		Block randomBodyPart =  body.blocks[getRandomAliveBodyPartIndex()];
+		RaccoonAttack (randomBodyPart);
+	}
+
+	void RaccoonAttack (Block location) {
+		Vector3 spawnPoint = location.GetRandomPoint();
+		GameObject raccoon = (GameObject)Instantiate(raccoonPrefab, spawnPoint, Quaternion.identity);
+		int numAttacks = Random.Range(1, 11);;
+		StartCoroutine(AnimateRaccoon(raccoon, numAttacks));
+	}
+
+	IEnumerator AnimateRaccoon(GameObject raccoon, int numAttacks) {
+		float time = 1f;
+		for(int i = 0; i < numAttacks; ++i) {
+			Block randomBodyPart = body.blocks[getRandomAliveBodyPartIndex()];
+			Vector3 start = raccoon.transform.position;
+			Vector3 destination = randomBodyPart.GetRandomPoint();
+			for (float t = 0.0f; t < time; t += Time.deltaTime / time) {
+				Vector3 newPosition = Vector3.Lerp(start, destination, t);
+				raccoon.transform.position = newPosition;
+				yield return null;
+			}
+			SpawnWound(randomBodyPart);
+			SpawnDiseaseInfection(randomBodyPart, 5);
+		}
+		float alpha = raccoon.renderer.material.color.a;
+		for (float t = 0.0f; t < time; t += Time.deltaTime / time) {
+			Color newColor = new Color(1, 1, 1, Mathf.Lerp(alpha, 0, t));
+			raccoon.renderer.material.color = newColor;
+			yield return null;
+		}
+		Destroy(raccoon);
 	}
 
 	void SpawnDiseaseDialog(int windowID) {
