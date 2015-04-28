@@ -83,10 +83,16 @@ public class Platelets : MonoBehaviour {
 		else
 			speed = gameControl.rbcSpeed / 250.0f;
 
-		if (currentBlock.wounds.Count > 0 && !attackingWound) {
-			woundToAttack = (Wound)(currentBlock.wounds[0]); 
-			destination = woundToAttack.transform.position;
-			attackingWound = true;
+		if (!attackingWound) {
+			for(int i = 0; i < currentBlock.wounds.Count; i++) {
+				if (!((Wound)(currentBlock.wounds [i])).beingAttacked) {
+					woundToAttack = (Wound)(currentBlock.wounds [i]); 
+					destination = woundToAttack.transform.position;
+					attackingWound = true;
+					woundToAttack.beingAttacked = true;
+					break;
+				}
+			}
 		}
 
 		//If we are at current way point or the destination has been changed

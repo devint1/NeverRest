@@ -10,6 +10,7 @@ public class Wound : MonoBehaviour {
 	public const int NUM_PLATELETS_CONSUMED = 3;
 	public const int NUM_PLATELETS_PER_5S = 1;
 	public const float PLATELETE_INEFFECTIVENES_TIME = 5.0f;
+	public bool beingAttacked = false;
 
 	bool closed = false;
 
