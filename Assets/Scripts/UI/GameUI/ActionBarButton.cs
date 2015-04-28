@@ -26,20 +26,27 @@ public class ActionBarButton : MonoBehaviour {
 		    || (Input.GetKeyDown (KeyCode.T) && buttonType == ButtonType.WhiteBloodCellFinder)) {
 			QueueWhiteBloodCell();
 		}
+		if (showTooltip) {
+			RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero);
+			if(!hit || hit.collider.gameObject != this.gameObject) {
+				showTooltip = false;
+				GetComponent<Renderer>().material.color = Color.white;
+			}
+		}
 	}
 
 	void OnGUI(){
 		if (showTooltip) {
 			if (buttonType == ButtonType.Platelet)
-				GUI.TextArea(new Rect(Input.mousePosition.x,Screen.height-(Input.mousePosition.y+55),150,50), "Create Platelet\nHotkey: Q\nBase Cost: " + PLAT_BASE_COST + " Energy");
+				GUI.TextArea(new Rect(Input.mousePosition.x+10,Screen.height-(Input.mousePosition.y+65),170,68), "Platelet:\nHeals wounds and cuts\nHotkey: Q\nBase Cost: " + PLAT_BASE_COST + " Energy");
 			else if(buttonType == ButtonType.WhiteBloodCellGreen)
-				GUI.TextArea(new Rect(Input.mousePosition.x,Screen.height-(Input.mousePosition.y+55),150,50), "Create Green White Blood Cell\nHotkey: W\nBase Cost: " + WBC_BASE_COST + " Energy");
+				GUI.TextArea(new Rect(Input.mousePosition.x+10,Screen.height-(Input.mousePosition.y+65),170,68), "White Blood Cell:\nNeutralizes Green Bacteria\nHotkey: W\nBase Cost: " + WBC_BASE_COST + " Energy");
 			else if(buttonType == ButtonType.WhiteBloodCellPurple)
-				GUI.TextArea(new Rect(Input.mousePosition.x,Screen.height-(Input.mousePosition.y+55),150,50), "Create Purple White Blood Cell\nHotkey: E\nBase Cost: " + WBC_BASE_COST + " Energy");
+				GUI.TextArea(new Rect(Input.mousePosition.x+10,Screen.height-(Input.mousePosition.y+65),170,68), "White Blood Cell:\nNeutralizes Purple Bacteria\nHotkey: E\nBase Cost: " + WBC_BASE_COST + " Energy");
 			else if(buttonType == ButtonType.WhiteBloodCellTeal)
-				GUI.TextArea(new Rect(Input.mousePosition.x,Screen.height-(Input.mousePosition.y+55),150,50), "Create Teal White Blood Cell\nHotkey: R\nBase Cost: " + WBC_BASE_COST + " Energy");
+				GUI.TextArea(new Rect(Input.mousePosition.x+10,Screen.height-(Input.mousePosition.y+65),170,68), "White Blood Cell:\nNeutralizes Teal Bacteria\nHotkey: R\nBase Cost: " + WBC_BASE_COST + " Energy");
 			else if(buttonType == ButtonType.WhiteBloodCellFinder)
-				GUI.TextArea(new Rect(Input.mousePosition.x,Screen.height-(Input.mousePosition.y+55),150,50), "Create Finder White Blood Cell\nHotkey: T\nBase Cost: " + WBC_BASE_COST + " Energy");
+				GUI.TextArea(new Rect(Input.mousePosition.x+10,Screen.height-(Input.mousePosition.y+65),170,68), "Helper T Cell:\nIdentifies Unknown Bacteria\nHotkey: T\nBase Cost: " + WBC_BASE_COST + " Energy");
 		}
 	}
 
@@ -58,13 +65,6 @@ public class ActionBarButton : MonoBehaviour {
 	void OnMouseOver() {
 		showTooltip = true;
 		GetComponent<Renderer>().material.color = Color.yellow;
-	}
-	
-	void OnMouseExit() {
-		if (showTooltip) {
-			showTooltip = false;
-			GetComponent<Renderer>().material.color = Color.white;
-		}
 	}
 
 	void QueueWhiteBloodCell () {
