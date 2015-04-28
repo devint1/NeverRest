@@ -367,6 +367,16 @@ public class GameControl : MonoBehaviour {
 			showMenu = false;
 		}
 
+		// Restore Energy
+		if (!IsPaused ()) {
+			if (energy < 0){
+				energy = 0;
+			}
+			else if (energy > MAX_ENERGY){
+				energy = MAX_ENERGY;
+			}
+		}
+
 		if( tutorial.StopGameLogic() ){
 			return;
 		}
@@ -406,11 +416,6 @@ public class GameControl : MonoBehaviour {
 			toggleWBC = !toggleWBC;
 			wbcChanged = false;
 		}
-
-		// Restore Energy
-		energy += (ENERGY_RESTORE_PER_SECOND - rbcSpeed) * Time.deltaTime;
-		if (energy < 0) energy = 0;
-		else if (energy > MAX_ENERGY) energy = MAX_ENERGY;
 
 		// Check lose condition
 		if (checkLoseCondition () || Input.GetKeyDown (KeyCode.F10)) {
