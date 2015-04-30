@@ -106,6 +106,10 @@ public class GameControl : MonoBehaviour {
 			levelCompletion.sprite = bg2;
 		}
 
+		if (persistence.currentLevel >= 3) {
+			levelCompletion.sprite = bg3;
+		}
+
 		background.sprite = backgroundImages[persistence.currentLevel-1];
 
 		if (backGroundMusic) {
