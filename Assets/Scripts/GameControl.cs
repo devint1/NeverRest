@@ -105,7 +105,7 @@ public class GameControl : MonoBehaviour {
 		if (persistence.currentLevel == 2 || persistence.currentLevel == 3) {
 			levelCompletion.sprite = bg2;
 		}
-
+		
 		if (persistence.currentLevel >= 4) {
 			levelCompletion.sprite = bg3;
 		}
