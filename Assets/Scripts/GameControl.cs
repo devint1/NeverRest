@@ -94,7 +94,7 @@ public class GameControl : MonoBehaviour {
 		if (persistence.currentLevel <= 1) {
 			Destroy(GameObject.Find("whitebloodcell_Button_Purple"));
 			Destroy(GameObject.Find("whitebloodcell_Button_Teal"));
-			levelCompletion.sprite = bg1;
+			//levelCompletion.sprite = bg1;
 		}
 
 		// Get rid of finder WBCs for levels 1 and 2
@@ -166,89 +166,28 @@ public class GameControl : MonoBehaviour {
 						if (wbc.currentBlock == current_b){
 							wbc.Select();
 
-							doubleClicked.Add(wbc);
+							//doubleClicked.Add(wbc);
 
+						}
+						else{
+							wbc.DeSelect();
 						}
 					}
-					Debug.Log("selected " + selected.Count);
-					Debug.Log("Double click " + doubleClicked.Count);
+				//	Debug.Log("selected " + selected.Count);
+				//	Debug.Log("Double click " + doubleClicked.Count);
 				}
 
-				/*
-				if(selected != null) {
-					Block current_b;
 
-					foreach(GameObject obj in selected) {
-						//Debug.Log("print obj "+ obj );
-						if(!obj) {
-							doubleClicked.Clear();
-							click =false;
-							continue;
-						}
-						if(obj.tag == "WhiteBloodCell") {
-							obj.GetComponent<WhiteBloodCell> ().DeSelect();
-							doubleClicked.Clear();
-							current_b=obj.GetComponent<WhiteBloodCell> ().currentBlock;
-							Debug.Log("White blood double clicked"); 
-							//Debug.Log(obj.GetComponent<WhiteBloodCell> ().currentBlock + "obj");
-
-							foreach(WhiteBloodCell wbc in doubleClicked){
-								wbc.DeSelect();
-							}
-							Debug.Log("Number of WBC " +doubleClicked.Count);
-							doubleClicked.Clear();
-							click =false;
-						}
-						else if(obj.tag == "Platelet") {
-							doubleClicked.Clear();
-							current_b=obj.GetComponent<Platelets> ().currentBlock;
-							obj.GetComponent<Platelets> ().DeSelect();
-							Debug.Log("Platelet double clicked");
-							foreach(Platelets plat in platelets)
-							{
-								
-								if (plat.currentBlock == current_b){
-									
-									doubleClicked.Add(plat);
-									
-								}
-							}
-							foreach(Platelets plat in doubleClicked){
-								plat.DeSelect();
-							}
-							Debug.Log("Number of Platelets " +doubleClicked.Count);
-							doubleClicked.Clear();
-							click =false;
-						}
-					}
-					//Debug.Log ("clear double clcick");
-					selected.Clear();
-
-				}
-				Debug.Log ("clear double click");
-				click =false;
-				*/
 
 			}
 			else if (click && Time.time >(doubleClickTimer +.35)){
 				click =false;
 			}
-			else{
-				click = true;
-				doubleClickTimer= Time.time;
-				//Debug.Log("single click ");
-			}
+	
 
-			if (whiteBloodCells != null) {
-				foreach(WhiteBloodCell cell in whiteBloodCells) {
-					// FIXME: Find out why nulls are still in whiteBloodCells
-					if(!cell) {
-						continue;
-					}
-					cell.DeSelect();
-				}
-			}
-			if(selected != null) {
+	
+
+			else if(selected != null) {
 				foreach(GameObject obj in selected) {
 					// FIXME: Find out why nulls are still in selected
 					if(!obj) {
@@ -263,7 +202,12 @@ public class GameControl : MonoBehaviour {
 				}
 				selected.Clear();
 			}
-		} else if (mouseDown && Input.GetMouseButton (0)) {
+
+		}
+		else if (click){
+			doubleClickTimer= Time.time;
+		}
+		else if (mouseDown && Input.GetMouseButton (0)) {
 			// Beginning of box selection
 			// Draw selection box
 			text = new Texture2D (1, 1);
@@ -276,7 +220,8 @@ public class GameControl : MonoBehaviour {
 			               Event.current.mousePosition.y - mousePositionStart.y);
 			GUI.DrawTexture (box, text);
 			drawText = true;
-		} else if(mouseDown && !(Input.GetMouseButton (0))) {
+			click = false;
+		} else if(mouseDown && !(Input.GetMouseButton (0)) && !click ) {
 			// End of box selection
 			// Select cells in box
 			box = new Rect(mousePositionStart.x, mousePositionStart.y,
@@ -289,6 +234,9 @@ public class GameControl : MonoBehaviour {
 						pos.y = Camera.main.pixelHeight - pos.y;
 						if(box.Contains(pos, true)){
 							cell.Select();
+						}
+						else{
+							//cell.DeSelect();
 						}
 					}
 				}
@@ -306,10 +254,26 @@ public class GameControl : MonoBehaviour {
 
 		}
 
-		if (Input.GetMouseButton (1) && !firstMouse) {
+		else if (Input.GetMouseButton (1) && !firstMouse) {
 			firstMouse = true;
 		}
-		doubleClicked.Clear();
+		else if (whiteBloodCells != null && !wbcSelected  ) {
+			Debug.Log(" de selecting ");
+			foreach(WhiteBloodCell cell in whiteBloodCells) {
+				// FIXME: Find out why nulls are still in whiteBloodCells
+				if(!cell) {
+					continue;
+				}
+				
+				cell.DeSelect();
+			}
+		}
+		else{
+			//click = true;
+			//doubleClickTimer= Time.time;
+			//Debug.Log("single click ");
+		}
+		//doubleClicked.Clear();
 	}
 
 	void OnGUI() {
@@ -363,6 +327,9 @@ public class GameControl : MonoBehaviour {
 	}
 
 	void Update() {
+		if( Input.GetKeyDown( KeyCode.F6 )){
+			rngManager.SpawnDiseaseInfection();
+		}
 		if( Input.GetKeyDown( KeyCode.F8 )){
 			rngManager.SpawnDiseaseInfection();
 		}
@@ -451,7 +418,7 @@ public class GameControl : MonoBehaviour {
 				WhiteBloodCell cell = (WhiteBloodCell)(whiteBloodCells[i]);
 				
 				if (cell.destroyMe) {
-					Debug.Log ("deleting white blood cell...");
+					//Debug.Log ("deleting white blood cell...");
 					//whiteBloodCells.Remove (cell);
 					selected.Remove(cell.gameObject);
 					Destroy (((WhiteBloodCell)(whiteBloodCells[i])).gameObject, 2);

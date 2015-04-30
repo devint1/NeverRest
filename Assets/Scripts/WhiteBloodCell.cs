@@ -12,9 +12,9 @@ public class WhiteBloodCell : MonoBehaviour {
 	public float speed = 0.0075f;
 	public Vector3 destination; //Point, Exitpoint, or disease that WhiteBloodCell is moving towards right now
 	public WhiteBloodCellType type;
-	
+	bool click = false;
 	const int MAX_DISEASE_ABSORBED = 8;
-	
+	float doubleClickTimer = 0;
 	int diseasesabsorbed = 0;
 	Block destBlock = null; // Block the cell is moving to
 	Block nextBlock = null;
@@ -43,10 +43,12 @@ public class WhiteBloodCell : MonoBehaviour {
 		if(!isSelected){
 			gameControl.selected.Add (this.gameObject);
 			gameObject.GetComponent<Renderer>().material.color = Color.blue;
+			isSelected = true;
+			gameControl.wbcSelected= true;
 			Debug.Log ("Selected wbc" + gameObject+isSelected);
+
 		}
-		isSelected = true;
-		gameControl.wbcSelected= true;
+
 		//
 	}
 	
@@ -54,19 +56,33 @@ public class WhiteBloodCell : MonoBehaviour {
 		if(isSelected) {
 			GetComponent<Renderer>().material.SetColor("_Color", colors[(int)type]);
 		}
+
 		isSelected = false;
 		gameControl.wbcSelected= false;
+		//Debug.Log ("DESelected wbc" );
+
+
 	}
 	
 	// Clicked on and selected
 	void OnMouseDown() {
-		if (!isSelected) {
-			Select();
-			gameControl.current_b = currentBlock;
-			gameControl.wbcSelected = true;
-		} else {
-			DeSelect();
-			gameControl.wbcSelected= false;
+		if(Input.GetMouseButtonDown(0)){
+			if (click &&   Time.time <= ( doubleClickTimer +.35)){
+				Debug.Log ("double click timer + " + doubleClickTimer ); 
+				click =false;
+				}
+			else if (!isSelected) {
+				Select ();
+				gameControl.current_b = currentBlock;
+				gameControl.wbcSelected = true;
+				doubleClickTimer = Time.time;
+				click =true;
+			} 
+			else {
+				//DeSelect();
+				//gameControl.wbcSelected= false;
+				//click =false;
+			}
 		}
 	}
 

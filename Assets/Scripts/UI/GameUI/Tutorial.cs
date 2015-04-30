@@ -221,7 +221,9 @@ public class Tutorial : MonoBehaviour {
 
 		}
 		if (GUI.Button(new Rect(50, 50, 50, 20), "No")) {
+			gC.TogglePauseGame ();
 			currentState = TutorialStates.State.Off;
+			
 		}
 	}
 }
