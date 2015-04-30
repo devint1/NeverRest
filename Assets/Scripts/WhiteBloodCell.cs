@@ -45,7 +45,7 @@ public class WhiteBloodCell : MonoBehaviour {
 			gameObject.GetComponent<Renderer>().material.color = Color.blue;
 			isSelected = true;
 			gameControl.wbcSelected= true;
-			Debug.Log ("Selected wbc" + gameObject+isSelected);
+			//Debug.Log ("Selected wbc" + gameObject+isSelected);
 
 		}
 
@@ -80,8 +80,8 @@ public class WhiteBloodCell : MonoBehaviour {
 			} 
 			else {
 				//DeSelect();
-				//gameControl.wbcSelected= false;
-				//click =false;
+				gameControl.wbcSelected= false;
+				click =false;
 			}
 		}
 	}

@@ -80,7 +80,7 @@ public class GameControl : MonoBehaviour {
 	float doubleClickTimer = 0;
 	bool click = false;
 	bool isPaused = false;
-
+	int clickCount =0;
 	float levelProgressSpeed = 1.0f;
 	public float levelProgress = 0f;
 	public int levelDistance = 2000;
@@ -154,126 +154,114 @@ public class GameControl : MonoBehaviour {
 
 	//Only call this function from on GUI
 	void MouseSelection(){
-		if (!mouseDown && Input.GetMouseButton (0)) {
+		if (Input.GetMouseButtonDown (0)) {
+			mouseDown= true;
 			mousePositionStart = Event.current.mousePosition;
-			mouseDown = true;
-			if (click && Time.time <= (doubleClickTimer +.35))
-			    {
-				click =false;
-				if (wbcSelected){
-					foreach(WhiteBloodCell wbc in whiteBloodCells)
-					{
-						if (wbc.currentBlock == current_b){
-							wbc.Select();
-
-							//doubleClicked.Add(wbc);
-
-						}
-						else{
-							wbc.DeSelect();
-						}
-					}
-				//	Debug.Log("selected " + selected.Count);
-				//	Debug.Log("Double click " + doubleClicked.Count);
-				}
-
-
-
-			}
-			else if (click && Time.time >(doubleClickTimer +.35)){
-				click =false;
-			}
-	
-
-	
-
-			else if(selected != null) {
-				foreach(GameObject obj in selected) {
-					// FIXME: Find out why nulls are still in selected
-					if(!obj) {
-						continue;
-					}
-					if(obj.tag == "WhiteBloodCell") {
-						obj.GetComponent<WhiteBloodCell> ().DeSelect();
-					}
-					else if(obj.tag == "Platelet") {
-						obj.GetComponent<Platelets> ().DeSelect();
-					}
-				}
-				selected.Clear();
-			}
-
-		}
-		else if (click){
-			doubleClickTimer= Time.time;
-		}
-		else if (mouseDown && Input.GetMouseButton (0)) {
-			// Beginning of box selection
-			// Draw selection box
-			text = new Texture2D (1, 1);
-			Color col = Color.green;
-			col.a = .15f;
-			text.SetPixel (1, 1, col);
-			text.Apply ();
-			box = new Rect(mousePositionStart.x, mousePositionStart.y,
-			               Event.current.mousePosition.x - mousePositionStart.x, 
-			               Event.current.mousePosition.y - mousePositionStart.y);
-			GUI.DrawTexture (box, text);
-			drawText = true;
-			click = false;
-		} else if(mouseDown && !(Input.GetMouseButton (0)) && !click ) {
-			// End of box selection
-			// Select cells in box
-			box = new Rect(mousePositionStart.x, mousePositionStart.y,
-			               Event.current.mousePosition.x - mousePositionStart.x, 
-			               Event.current.mousePosition.y - mousePositionStart.y);
-			if (whiteBloodCells != null) {
-				if(toggleWBC) {
-					foreach(WhiteBloodCell cell in whiteBloodCells){
-						Vector2 pos = Camera.main.WorldToScreenPoint(cell.transform.position);
-						pos.y = Camera.main.pixelHeight - pos.y;
-						if(box.Contains(pos, true)){
-							cell.Select();
-						}
-						else{
-							//cell.DeSelect();
-						}
-					}
-				}
-				foreach(Platelets cell in platelets){
-					Vector2 pos = Camera.main.WorldToScreenPoint(cell.transform.position);
-					pos.y = Camera.main.pixelHeight - pos.y;
-					if(box.Contains(pos, true)){
-						cell.Select();
-					}
-				}
-			}
-			mouseDown = false;
-			mousePositionStart.x = 0;
-			mousePositionStart.y = 0;
-
-		}
-
-		else if (Input.GetMouseButton (1) && !firstMouse) {
-			firstMouse = true;
-		}
-		else if (whiteBloodCells != null && !wbcSelected  ) {
-			Debug.Log(" de selecting ");
-			foreach(WhiteBloodCell cell in whiteBloodCells) {
-				// FIXME: Find out why nulls are still in whiteBloodCells
-				if(!cell) {
-					continue;
-				}
+			if (click && Time.time <= doubleClickTimer +.35) {
+				click = false;
+				//doubleClickTimer = Time.time;
+				//Debug.Log ("double click ");
+				RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition),Vector2.zero);
 				
-				cell.DeSelect();
+				if(hit.collider != null){
+					//Debug.Log ("hit " + hit.collider.tag);
+					if(hit.collider.tag == "WhiteBloodCell"){
+						//Debug.Log(" click WBC");
+						foreach (WhiteBloodCell wbc in whiteBloodCells){
+							if(wbc.currentBlock == current_b){
+								wbc.Select();
+							}
+							else{
+								wbc.DeSelect();
+							}
+						}
+						foreach (Platelets plat in platelets){
+								plat.DeSelect();
+
+						}
+					}
+					else if(hit.collider.tag == "Platelet"){
+						//Debug.Log(" click platelet");
+						foreach (WhiteBloodCell wbc in whiteBloodCells){
+
+								wbc.DeSelect();
+
+						}
+						foreach (Platelets plat in platelets){
+							if(plat.currentBlock == current_b){
+								plat.Select();
+							}
+							else {
+								plat.DeSelect();
+							}
+						}
+					}
+					else{
+						foreach (Platelets plat in platelets){
+
+								plat.DeSelect();
+
+						}
+						foreach (WhiteBloodCell wbc in whiteBloodCells){
+							
+							wbc.DeSelect();
+							
+						}
+						selected.Clear();
+					}
+
+				}
+
+			}  else {
+				click = true;
+				doubleClickTimer = Time.time;
+				//selected.Clear();
+				if (!mouseDown && Input.GetMouseButton (0)) {
+					
+					// Beginning of box selection
+					// Draw selection box
+					text = new Texture2D (1, 1);
+					Color col = Color.green;
+					col.a = .15f;
+					text.SetPixel (1, 1, col);
+					text.Apply ();
+					box = new Rect(mousePositionStart.x, mousePositionStart.y,
+					               Event.current.mousePosition.x - mousePositionStart.x, 
+					               Event.current.mousePosition.y - mousePositionStart.y);
+					GUI.DrawTexture (box, text);
+					drawText = true;
+				} else if(mouseDown && !(Input.GetMouseButton (0))) {
+					// End of box selection
+					// Select cells in box
+					box = new Rect(mousePositionStart.x, mousePositionStart.y,
+					               Event.current.mousePosition.x - mousePositionStart.x, 
+					               Event.current.mousePosition.y - mousePositionStart.y);
+					if (whiteBloodCells != null) {
+						if(toggleWBC) {
+							foreach(WhiteBloodCell cell in whiteBloodCells){
+								Vector2 pos = Camera.main.WorldToScreenPoint(cell.transform.position);
+								pos.y = Camera.main.pixelHeight - pos.y;
+								if(box.Contains(pos, true)){
+									cell.Select();
+								}
+							}
+						}
+						foreach(Platelets cell in platelets){
+							Vector2 pos = Camera.main.WorldToScreenPoint(cell.transform.position);
+							pos.y = Camera.main.pixelHeight - pos.y;
+							if(box.Contains(pos, true)){
+								cell.Select();
+							}
+						}
+					}
+					mouseDown = false;
+					mousePositionStart.x = 0;
+					mousePositionStart.y = 0;
+				}
 			}
+
 		}
-		else{
-			//click = true;
-			//doubleClickTimer= Time.time;
-			//Debug.Log("single click ");
-		}
-		//doubleClicked.Clear();
+
 	}
 
 	void OnGUI() {
