@@ -15,7 +15,6 @@ public class GameControl : MonoBehaviour {
 	public ArrayList selected;
 	public ArrayList whiteBloodCells;
 	public ArrayList platelets;
-	public ArrayList doubleClicked;
 
 	public Block whiteBloodSpawnPoint;
 	public Block plateletSpawnPoint;
@@ -134,7 +133,7 @@ public class GameControl : MonoBehaviour {
 
 		//GameObject actionBar = (GameObject)Instantiate (actionBarPrefab, new Vector3(10, Screen.height - 150, -1), this.transform.rotation);
 
-		doubleClicked = new ArrayList ();
+
 		selected = new ArrayList();
 		whiteBloodCells = new ArrayList();
 		platelets = new ArrayList ();
@@ -158,100 +157,79 @@ public class GameControl : MonoBehaviour {
 
 	//Only call this function from on GUI
 	void MouseSelection(){
-		if (!mouseDown && Input.GetMouseButton (0)) {
-			mousePositionStart = Event.current.mousePosition;
-			mouseDown = true;
-			if (click && Time.time <= (doubleClickTimer +.35))
-			    {
-				click =false;
-				if (wbcSelected){
-					foreach(WhiteBloodCell wbc in whiteBloodCells)
-					{
-						if (wbc.currentBlock == current_b){
-							wbc.Select();
-
-							doubleClicked.Add(wbc);
-
-						}
-					}
-					Debug.Log("selected " + selected.Count);
-					Debug.Log("Double click " + doubleClicked.Count);
-				}
-
-				/*
-				if(selected != null) {
-					Block current_b;
-
-					foreach(GameObject obj in selected) {
-						//Debug.Log("print obj "+ obj );
-						if(!obj) {
-							doubleClicked.Clear();
-							click =false;
-							continue;
-						}
-						if(obj.tag == "WhiteBloodCell") {
-							obj.GetComponent<WhiteBloodCell> ().DeSelect();
-							doubleClicked.Clear();
-							current_b=obj.GetComponent<WhiteBloodCell> ().currentBlock;
-							Debug.Log("White blood double clicked"); 
-							//Debug.Log(obj.GetComponent<WhiteBloodCell> ().currentBlock + "obj");
-
-							foreach(WhiteBloodCell wbc in doubleClicked){
+		if (Input.GetMouseButtonUp (0)) {
+			//Debug.Log("left click ");
+			if (!click ){
+				click =true;
+				doubleClickTimer = Time.time;
+				//Debug.Log(" set time "+ doubleClickTimer);
+				return;
+			}
+			else if (click && ((Time.time - doubleClickTimer) <.35f)){
+				RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition),Vector2.zero);
+				if(hit.collider != null){
+					//Debug.Log ("hit " + hit.collider.tag);
+					if(hit.collider.tag == "WhiteBloodCell"){
+						//Debug.Log(" click WBC");
+						foreach (WhiteBloodCell wbc in whiteBloodCells){
+							if(wbc.currentBlock == current_b){
+								wbc.Select();
+							}
+							else{
 								wbc.DeSelect();
 							}
-							Debug.Log("Number of WBC " +doubleClicked.Count);
-							doubleClicked.Clear();
-							click =false;
 						}
-						else if(obj.tag == "Platelet") {
-							doubleClicked.Clear();
-							current_b=obj.GetComponent<Platelets> ().currentBlock;
-							obj.GetComponent<Platelets> ().DeSelect();
-							Debug.Log("Platelet double clicked");
-							foreach(Platelets plat in platelets)
-							{
-								
-								if (plat.currentBlock == current_b){
-									
-									doubleClicked.Add(plat);
-									
-								}
+						foreach (Platelets plat in platelets){
+							plat.DeSelect();
+							
+						}
+					}
+					else if(hit.collider.tag == "Platelet"){
+						//Debug.Log(" click platelet");
+						foreach (WhiteBloodCell wbc in whiteBloodCells){
+							
+							wbc.DeSelect();
+							
+						}
+						foreach (Platelets plat in platelets){
+							if(plat.currentBlock == current_b){
+								plat.Select();
 							}
-							foreach(Platelets plat in doubleClicked){
+							else {
 								plat.DeSelect();
 							}
-							Debug.Log("Number of Platelets " +doubleClicked.Count);
-							doubleClicked.Clear();
-							click =false;
 						}
 					}
-					//Debug.Log ("clear double clcick");
-					selected.Clear();
-
-				}
-				Debug.Log ("clear double click");
-				click =false;
-				*/
-
-			}
-			else if (click && Time.time >(doubleClickTimer +.35)){
-				click =false;
-			}
-			else{
-				click = true;
-				doubleClickTimer= Time.time;
-				//Debug.Log("single click ");
-			}
-
-			if (whiteBloodCells != null) {
-				foreach(WhiteBloodCell cell in whiteBloodCells) {
-					// FIXME: Find out why nulls are still in whiteBloodCells
-					if(!cell) {
-						continue;
+					else{
+						foreach (Platelets plat in platelets){
+							
+							plat.DeSelect();
+							
+						}
+						foreach (WhiteBloodCell wbc in whiteBloodCells){
+							
+							wbc.DeSelect();
+							
+						}
+						selected.Clear();
 					}
-					cell.DeSelect();
+
+				
 				}
+
 			}
+			else if (click && ((Time.time - doubleClickTimer) >=.35f)){
+				//Debug.Log("double click " + doubleClickTimer);
+				click =false; 
+			}
+
+		}
+	 	else if (!mouseDown && Input.GetMouseButton (0)) {
+			mousePositionStart = Event.current.mousePosition;
+			mouseDown = true;
+
+		} else if (mouseDown && Input.GetMouseButton (0)) {
+			 
 			if(selected != null) {
 				foreach(GameObject obj in selected) {
 					// FIXME: Find out why nulls are still in selected
@@ -267,7 +245,6 @@ public class GameControl : MonoBehaviour {
 				}
 				selected.Clear();
 			}
-		} else if (mouseDown && Input.GetMouseButton (0)) {
 			// Beginning of box selection
 			// Draw selection box
 			text = new Texture2D (1, 1);
@@ -310,10 +287,8 @@ public class GameControl : MonoBehaviour {
 
 		}
 
-		if (Input.GetMouseButton (1) && !firstMouse) {
-			firstMouse = true;
-		}
-		doubleClicked.Clear();
+	
+	 
 	}
 
 	void OnGUI() {
@@ -332,7 +307,9 @@ public class GameControl : MonoBehaviour {
 		} else if (isPaused) {
 			GUI.TextArea( new Rect( 400, 400, 100, 50), "PAUSED" ); 
 		}
-
+		if (click && (Time.time - doubleClickTimer) > .35) {
+			//click = false ;
+		}
 		rbcSpeed = (heartSlider.value);//(int)(heartSlider.value * 9.0f) + 1;
 		//Debug.Log ("Slider val = " + rbcSpeed);
 
