@@ -11,8 +11,8 @@ public class ProductionQueue : MonoBehaviour {
 	public void QueueItem(float productionTime, float baseCost, Sprite image, ActionBarButton.ButtonType buttonType) {
 		ProductionSlot slot = getFirstEmptyProductionSlot ();
 
-		if(slot && baseCost * slot.costMultiplier > gameControl.energy) {
-			Debug.Log ("ERROR! NOT ENOUGH ENERGY OR NOT ENOUGH SLOTS! ADD CODE HERE TO INFORM PLAYER!");
+		if(slot && baseCost * slot.costMultiplier >= gameControl.energy) {
+			//Debug.Log ("ERROR! NOT ENOUGH ENERGY OR NOT ENOUGH SLOTS! ADD CODE HERE TO INFORM PLAYER!");
 			return;
 		}
 

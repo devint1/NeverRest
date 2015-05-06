@@ -123,7 +123,7 @@ public class Tutorial : MonoBehaviour {
 			}
 			counter++;
 			GUI.TextArea (new Rect (Screen.width/2 - 125, Screen.height/2, 250, 200), "You have a wound on your stomach! The first step to fixing this is creating platelet cells. A platelet cell can be made by clicking the flashing icon in the bottom left or by hitting 'Q'. Notice that each one created costs energy (which is found in the upper left hand corner). This bar will slowly refill over time. Create three platelet cells by hitting Q three times.", tutorialMessageStyle);
-			if (gC.plateletProduction > 2){
+			if (gC.plateletProduction > 1){
 				ab.GetComponent<Renderer>().material.color = Color.white;
 				currentState = TutorialStates.State.Pause;
 				counter = 0;
