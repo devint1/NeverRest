@@ -31,7 +31,7 @@ public class RandomEventManager : MonoBehaviour {
 			SpawnDiseaseInfection();
 		}
 		if(gameControl.persistence && !randomEventCycleStarted) {
-			if(gameControl.persistence.currentLevel == 4) {
+			if(gameControl.persistence.currentLevel == 5) {
 				RaccoonAttack();
 			}
 			StartCoroutine(RandomEventCycle());
@@ -71,7 +71,7 @@ public class RandomEventManager : MonoBehaviour {
 		}
 
 		// Enable raccoon attack on level 4
-		if (gameControl.persistence.currentLevel == 4) {
+		if (gameControl.persistence.currentLevel == 5) {
 			eventType += Mathf.RoundToInt(Random.Range(0, 1));
 		}
 

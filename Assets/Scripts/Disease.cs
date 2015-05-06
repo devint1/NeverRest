@@ -27,14 +27,21 @@ public class Disease : MonoBehaviour {
 			discovered = true;
 		} 
 		else if (gameControl.persistence.currentLevel == 2) {
-			if (type == DiseaseType.undefined) {
-				type = (DiseaseType)Random.Range (1, 4);
-			}
+			type = (DiseaseType) 1;
 
 			discovered = true;
 			string animationState = "Bacteria"+((int)type);
 			gameObject.GetComponent<Animator> ().CrossFade (animationState, 0f);
 		} 
+		else if (gameControl.persistence.currentLevel == 3) {
+			if (type == DiseaseType.undefined) {
+				type = (DiseaseType)Random.Range (1, 4);
+			}
+			
+			discovered = true;
+			string animationState = "Bacteria"+((int)type);
+			gameObject.GetComponent<Animator> ().CrossFade (animationState, 0f);
+		}
 		else {
 			if (type == DiseaseType.undefined) {
 				type = (DiseaseType)Random.Range (1, 4);
@@ -148,7 +155,7 @@ public class Disease : MonoBehaviour {
 				newDiseaseScript.gameControl = gameControl;
 				newDiseaseScript.destination = destination;
 				int chance = Random.Range(3,5);
-				if (chance >= 4) {
+				if (chance >= 4 && gameControl.persistence.currentLevel >= 3) {
 					DiseaseType dt = (DiseaseType)(Random.Range(1,3));
 					newDiseaseScript.type = dt;
 				}
