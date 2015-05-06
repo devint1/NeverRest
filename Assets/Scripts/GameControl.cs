@@ -82,7 +82,6 @@ public class GameControl : MonoBehaviour {
 	bool gameOver = false;
 	bool upgradeMenuOpen = false;
 	float doubleClickTimer = 0;
-	bool click = false;
 	bool isPaused = false;
 
 	float levelProgressSpeed = 1.0f;
@@ -171,13 +170,22 @@ public class GameControl : MonoBehaviour {
 	void MouseSelection(){
 		if (Input.GetMouseButtonUp (0)) {
 			//Debug.Log("left click ");
-			if (!click ){
-				click =true;
+			if (!firstMouse ){
+				firstMouse =true;
 				doubleClickTimer = Time.time;
 				//Debug.Log(" set time "+ doubleClickTimer);
+				RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition),Vector2.zero);
+				if(hit.collider != null){
+					if(hit.collider.tag == "WhiteBloodCell"){
+						hit.collider.gameObject.GetComponent<WhiteBloodCell>().Select();
+					}
+					else if(hit.collider.tag == "Platelet"){
+						hit.collider.gameObject.GetComponent<Platelets> ().Select();
+					}
+				}
 				return;
 			}
-			else if (click && ((Time.time - doubleClickTimer) <.35f)){
+			else if (firstMouse && ((Time.time - doubleClickTimer) <.35f)){
 				RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition),Vector2.zero);
 				if(hit.collider != null){
 					//Debug.Log ("hit " + hit.collider.tag);
@@ -220,9 +228,9 @@ public class GameControl : MonoBehaviour {
 					}
 				}
 			}
-			else if (click && ((Time.time - doubleClickTimer) >=.35f)){
+			else if (firstMouse && ((Time.time - doubleClickTimer) >=.35f)){
 				//Debug.Log("double click " + doubleClickTimer);
-				click =false; 
+				firstMouse =false; 
 			}
 
 		}
@@ -288,9 +296,6 @@ public class GameControl : MonoBehaviour {
 			mousePositionStart.y = 0;
 
 		}
-		if (Input.GetMouseButton (1) && !firstMouse) {
-			firstMouse = true;
-		}
 	}
 
 	void OnGUI() {
@@ -307,9 +312,7 @@ public class GameControl : MonoBehaviour {
 
 			} 
 		}
-		if (click && (Time.time - doubleClickTimer) > .35) {
-			//click = false ;
-		}
+
 		rbcSpeed = (heartSlider.value);//(int)(heartSlider.value * 9.0f) + 1;
 		//Debug.Log ("Slider val = " + rbcSpeed);
 
