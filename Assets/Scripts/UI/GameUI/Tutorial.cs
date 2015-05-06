@@ -130,7 +130,7 @@ public class Tutorial : MonoBehaviour {
 			}
 			break;
 		case TutorialStates.State.WBCProduction:
-			GUI.TextArea (new Rect (125, Screen.height - 290, 250, 150), "Wounds now cause diseases to spawn! You curretly have a wound on your stomach! B Cells, a type of white blood cell, they are used to combat diseases as they enter the body.\nTo create new B Cells, either press the B Cell button or press the 'W' key.\n\nCreate a B-Cell now.", tutorialMessageStyle);
+			GUI.TextArea (new Rect (125, Screen.height - 290, 250, 150), "Wounds now cause diseases to spawn! You currently have a wound on your stomach! B Cells, a type of white blood cell, are used to combat diseases as they enter the body.\nTo create new B Cells, either press the B Cell button or press the 'W' key.\n\nCreate a B-Cell now.", tutorialMessageStyle);
 			ActionBarButton wb = gC.actionBarPrefab.transform.Find("whitebloodcell_Button_Green").GetComponent<ActionBarButton>();
 			if(counter < 30) {
 				wb.GetComponent<Renderer>().material.color = Color.yellow;
@@ -156,7 +156,7 @@ public class Tutorial : MonoBehaviour {
 				if (!gC.IsPaused()){
 					gC.TogglePauseGame();
 				}
-				GUI.Window(0, new Rect (Screen.width/2 - 125, Screen.height/2 -50, 250, 180), DiseaseVariationsDialog, "Diseases can be of different types. Diferent white blood cell types combat different diseases. There are now different types of white blood cells you can build. These can be build by pressig W,E, or R. For a white blood cell to combat a disease they must match colors.", tutorialMessageStyle);
+				GUI.Window(0, new Rect (Screen.width/2 - 125, Screen.height/2 -50, 250, 180), DiseaseVariationsDialog, "Diseases can be of different types. Differrent white blood cell types combat different diseases. There are now different types of white blood cells you can build. These can be build by pressing W,E, or R. For a white blood cell to combat a disease they must match colors.", tutorialMessageStyle);
 			}
 			break;
 		case TutorialStates.State.WaitForLevelFour:
