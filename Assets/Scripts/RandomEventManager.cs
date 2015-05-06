@@ -154,7 +154,7 @@ public class RandomEventManager : MonoBehaviour {
 	void RaccoonAttack (Block location) {
 		Vector3 spawnPoint = location.GetRandomPoint();
 		GameObject raccoon = (GameObject)Instantiate(raccoonPrefab, spawnPoint, Quaternion.identity);
-		int numAttacks = Random.Range(1, 11);;
+		int numAttacks = Random.Range(3, 7);
 		StartCoroutine(AnimateRaccoon(raccoon, numAttacks));
 	}
 
