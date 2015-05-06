@@ -208,7 +208,9 @@ public class Tutorial : MonoBehaviour {
 	void CommenceDialog(int windowID) {
 		//gC.TogglePauseGame ();
 		GUI.TextArea (new Rect (0, 20, 250, 25), "Commence the tutorial?", tutorialMessageStyle);
-		if (!gC.IsPaused()) gC.TogglePauseGame ();
+		if (!gC.IsPaused ()) {
+			gC.TogglePauseGame ();
+		}
 		if (GUI.Button(new Rect(150, 50, 50, 20), "Yes")) {
 			currentState = TutorialStates.State.PlateProduction;
 			gC.rngManager.SpawnWound( GameObject.Find( "/Body/Stomach" ).GetComponent<Block>());
