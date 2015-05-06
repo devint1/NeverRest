@@ -64,6 +64,7 @@ public class GameControl : MonoBehaviour {
 	public Sprite bg1;
 	public Sprite bg2;
 	public Sprite bg3;
+	public Sprite bg4;
 
 	private bool isTutorial;
 	// int mousePressStart = -1;
@@ -104,17 +105,22 @@ public class GameControl : MonoBehaviour {
 			Destroy(GameObject.Find("whitebloodcell_Button_Teal"));
 			Destroy(GameObject.Find("whitebloodcell_Button_Finder"));
 		}
+		
+		if (persistence.currentLevel == 2) {
+			levelCompletion.sprite = bg2;
+		}
 
 		if (persistence.currentLevel == 3) {
 			Destroy (GameObject.Find ("whitebloodcell_Button_Finder"));
-		}
-
-		if (persistence.currentLevel == 2 || persistence.currentLevel == 3) {
-			levelCompletion.sprite = bg2;
+			levelCompletion = bg3;
 		}
 		
 		if (persistence.currentLevel >= 4) {
 			levelCompletion.sprite = bg3;
+		}
+		
+		if (persistence.currentLevel == 2) {
+			levelCompletion.sprite = bg4;
 		}
 
 		background.sprite = backgroundImages[persistence.currentLevel-1];
@@ -392,16 +398,6 @@ public class GameControl : MonoBehaviour {
 		}
 		if (IsPaused()){
 			return;
-		}
-		
-		if (Input.GetKeyDown (KeyCode.B)) {
-			toggleRBC = !toggleRBC;
-			Debug.Log("KeyDown!");
-			changed = false;
-		}
-		if (Input.GetKeyDown (KeyCode.V)) {
-			toggleWBC = !toggleWBC;
-			wbcChanged = false;
 		}
 
 		// Check lose condition
