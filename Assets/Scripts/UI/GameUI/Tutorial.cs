@@ -4,7 +4,7 @@ using TutorialStates;
 
 namespace TutorialStates
 {
-	public enum State{ Off, Done, Commence, Pause, Selection, Move, Unpause, PlateProduction, DiseaseBasicSpawn, WBCProduction, Finish, EnemySpawn, WaitForLevelTwo, WaitForLevelThree, WaitForLevelFour };
+	public enum State{ Off, Done, Commence, Pause, Selection, Move, Unpause, PlateProduction, WBCProduction, Finish, EnemySpawn, WaitForLevelTwo, WaitForLevelThree, WaitForLevelFour };
 }
 public class Tutorial : MonoBehaviour {
 	public GameControl gC;
@@ -21,7 +21,7 @@ public class Tutorial : MonoBehaviour {
 	int counter = 0;
 	
 	public bool StopGameLogic(){
-		if (!(currentState == State.Done || currentState == State.Off || currentState == State.WaitForLevelTwo || currentState == State.WaitForLevelThree)) {
+		if (!(currentState == State.Done || currentState == State.Off || currentState == State.WaitForLevelTwo || currentState == State.WaitForLevelThree || currentState == State.WaitForLevelFour)) {
 			return true;
 		}
 		return false;
@@ -59,8 +59,12 @@ public class Tutorial : MonoBehaviour {
 	
 	void Update(){
 		if (currentState == State.WaitForLevelTwo && gC.persistence.currentLevel == 2) {
-			currentState = State.DiseaseBasicSpawn;
-		} else if (currentState == State.WaitForLevelThree && gC.persistence.currentLevel == 3) {
+			currentState = State.WBCProduction;
+			gC.rngManager.SpawnWound( GameObject.Find( "/Body/Stomach" ).GetComponent<Block>());
+			gC.rngManager.SpawnDiseaseInfection( GameObject.Find( "/Body/Stomach" ).GetComponent<Block>(), 3);
+			if( !gC.IsPaused() ){
+				gC.TogglePauseGame();
+			}
 		}
 		gC.persistence.currentState = currentState;
 	}
@@ -86,7 +90,7 @@ public class Tutorial : MonoBehaviour {
 			text.SetPixel (1, 1, col);
 			text.Apply ();
 			GUI.DrawTexture (box, text);
-			GUI.TextArea (new Rect (Screen.width/2 - 125, Screen.height/2 -50, 275, 150), "Multiple cells can be selected at a time by clicking and dragging around them.\nSelect the three platelet cells in the chest now.", tutorialMessageStyle);
+			GUI.TextArea (new Rect (Screen.width/2 - 125, Screen.height/2 -50, 285, 150), "Multiple cells can be selected at a time by clicking and dragging around them.\nSelect the three platelet cells in the chest now.", tutorialMessageStyle);
 			if (gC.selected.Count >= 2){
 				currentState = TutorialStates.State.Move;
 			}
@@ -118,16 +122,16 @@ public class Tutorial : MonoBehaviour {
 				counter = 0;
 			}
 			counter++;
-			GUI.TextArea (new Rect (Screen.width/2 - 125, Screen.height/2, 250, 200), "You have a wound on your stomach! The first step to fixing this is creating platelet cells. A platelet cell can be made by clicking the flashing icon in the bottom left or by hitting Q. Notice that each one created costs energy (which is found in the upper left hand corner). This bar will slowly refill over time. Create three platelet cells by hitting Q three times.", tutorialMessageStyle);
-			if (gC.plateletProduction > 2){
+			GUI.TextArea (new Rect (Screen.width/2 - 125, Screen.height/2, 250, 200), "You have a wound on your stomach! The first step to fixing this is creating platelet cells. A platelet cell can be made by clicking the flashing icon in the bottom left or by hitting 'Q'. Notice that each one created costs energy (which is found in the upper left hand corner). This bar will slowly refill over time. Create three platelet cells by hitting Q three times.", tutorialMessageStyle);
+			if (gC.plateletProduction > 1){
 				ab.GetComponent<Renderer>().material.color = Color.white;
 				currentState = TutorialStates.State.Pause;
 				counter = 0;
 			}
 			break;
 		case TutorialStates.State.WBCProduction:
-			GUI.TextArea (new Rect (125, Screen.height - 290, 250, 150), "B Cells, a type of white blood cell, are used to combat diseases as they enter the body.\nTo create new B Cells, either press the B Cell button or press the 'Q' key.\n\nCreate a B-Cell now.", tutorialMessageStyle);
-			ActionBarButton wb = gC.actionBarPrefab.transform.Find("whitebloodcell_Button").GetComponent<ActionBarButton>();
+			GUI.TextArea (new Rect (125, Screen.height - 290, 250, 150), "Wounds now cause diseases to spawn! You curretly have a wound on your stomach! B Cells, a type of white blood cell, they are used to combat diseases as they enter the body.\nTo create new B Cells, either press the B Cell button or press the 'W' key.\n\nCreate a B-Cell now.", tutorialMessageStyle);
+			ActionBarButton wb = gC.actionBarPrefab.transform.Find("whitebloodcell_Button_Green").GetComponent<ActionBarButton>();
 			if(counter < 30) {
 				wb.GetComponent<Renderer>().material.color = Color.yellow;
 			}
@@ -147,8 +151,13 @@ public class Tutorial : MonoBehaviour {
 		case TutorialStates.State.Commence:
 			GUI.Window(0, new Rect(Screen.width/2 - 125, Screen.height/2 -50, 250, 75), CommenceDialog, "Tutorial", tutorialMessageStyle);
 			break;
-		case TutorialStates.State.DiseaseBasicSpawn:
-			GUI.TextArea (new Rect (Screen.width/2 - 125, Screen.height/2, 250, 200), "You have diseases in your stomach!", tutorialMessageStyle);
+		case TutorialStates.State.WaitForLevelThree:
+			if (gC.persistence.currentLevel == 3){
+				if (!gC.IsPaused()){
+					gC.TogglePauseGame();
+				}
+				GUI.Window(0, new Rect (Screen.width/2 - 125, Screen.height/2 -50, 250, 180), DiseaseVariationsDialog, "Diseases can be of different types. Diferent white blood cell types combat different diseases. There are now different types of white blood cells you can build. These can be build by pressig W,E, or R. For a white blood cell to combat a disease they must match colors.", tutorialMessageStyle);
+			}
 			break;
 		}
 	}
@@ -206,7 +215,6 @@ public class Tutorial : MonoBehaviour {
 	}
 	
 	void CommenceDialog(int windowID) {
-		//gC.TogglePauseGame ();
 		GUI.TextArea (new Rect (0, 20, 250, 25), "Commence the tutorial?", tutorialMessageStyle);
 		if (!gC.IsPaused ()) {
 			gC.TogglePauseGame ();
@@ -221,10 +229,15 @@ public class Tutorial : MonoBehaviour {
 		}
 		if (GUI.Button(new Rect(50, 50, 50, 20), "No")) {
 			currentState = TutorialStates.State.Off;
-			if(gC.IsPaused())
-			{
-				gC.TogglePauseGame();
+			if (gC.IsPaused()){
+				gC.TogglePauseGame ();
 			}
+		}
+	}
+
+	void DiseaseVariationsDialog(int windowId){
+		if (GUI.Button (new Rect (250 / 2 - 25, 155, 50, 20), "Ok")) {
+			currentState = TutorialStates.State.WaitForLevelFour;
 		}
 	}
 }
