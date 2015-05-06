@@ -49,8 +49,8 @@ public class GameControl : MonoBehaviour {
 	public bool showMenu = false;
 	public bool firstMouse = false;
 
-	public AudioClip loseSound = null;
-	public AudioClip winSound = null;
+	public AudioSource loseSound = null;
+	public AudioSource winSound = null;
 
 	public Tutorial tutorial;
 	public RandomEventManager rngManager;
@@ -118,17 +118,6 @@ public class GameControl : MonoBehaviour {
 		}
 
 		background.sprite = backgroundImages[persistence.currentLevel-1];
-
-		if (winSound) {
-			AudioSource temp = gameObject.AddComponent<AudioSource> ();
-			temp.clip = winSound;
-			//temp.Play();
-		}
-		if (loseSound) {
-			AudioSource temp = gameObject.AddComponent<AudioSource> ();
-			temp.clip = loseSound;
-			//temp.Play();
-		}
 
 		//GameObject gameUI = (GameObject) Instantiate(Resources.Load("GameUI"), Vector3.zero, Quaternion.identity);
 		//gameUI.GetComponent<GameUI>().gC = this;
@@ -493,7 +482,13 @@ public class GameControl : MonoBehaviour {
 		winText.fontSize = 100;
 		yield return new WaitForSeconds(5);
 		persistence.currentLevel++;
-		Application.LoadLevel("MapScene");
+		winSound.Play ();
+		if (persistence.currentLevel < 5) {
+			Application.LoadLevel ("MapScene");
+		} 
+		else {
+			Application.LoadLevel ("WinScene");
+		}
 	}
 
 	IEnumerator Lose() {
@@ -508,6 +503,7 @@ public class GameControl : MonoBehaviour {
 		winText.anchor = TextAnchor.MiddleCenter;
 		winText.alignment = TextAlignment.Center;
 		winText.fontSize = 100;
+		loseSound.Play ();
 		yield return new WaitForSeconds(5);
 		Application.LoadLevel("MapScene");
 	}
