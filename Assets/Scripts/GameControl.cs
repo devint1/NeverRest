@@ -112,14 +112,14 @@ public class GameControl : MonoBehaviour {
 
 		if (persistence.currentLevel == 3) {
 			Destroy (GameObject.Find ("whitebloodcell_Button_Finder"));
-			levelCompletion = bg3;
+			levelCompletion.sprite = bg3;
 		}
 		
 		if (persistence.currentLevel >= 4) {
 			levelCompletion.sprite = bg3;
 		}
 		
-		if (persistence.currentLevel == 2) {
+		if (persistence.currentLevel == 5) {
 			levelCompletion.sprite = bg4;
 		}
 
