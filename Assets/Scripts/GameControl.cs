@@ -66,6 +66,8 @@ public class GameControl : MonoBehaviour {
 	public Sprite bg3;
 	public Sprite bg4;
 
+	public RuntimeAnimatorController tcellAnimation;
+
 	private bool isTutorial;
 	// int mousePressStart = -1;
 	Vector3 mousePositionStart;
@@ -440,6 +442,11 @@ public class GameControl : MonoBehaviour {
 		newWhiteScript.currentBlock = whiteBloodSpawnPoint;
 		newWhiteScript.destination = whiteBloodSpawnPoint.GetRandomPoint ();
 		newWhiteScript.gameControl = this;
+
+		if (type == WhiteBloodCellType.FINDER) {
+			Animator anim = newWhite.GetComponent<Animator> ();
+			anim.runtimeAnimatorController = tcellAnimation;
+		}
 		
 		if (toggleWBC)
 			newWhiteScript.GetComponent<Renderer>().enabled = false;
@@ -478,8 +485,8 @@ public class GameControl : MonoBehaviour {
 		winText.fontSize = 100;
 		yield return new WaitForSeconds(5);
 		persistence.currentLevel++;
-		winSound.Play ();
-		if (persistence.currentLevel < 5) {
+		//winSound.Play ();
+		if (persistence.currentLevel < 6) {
 			Application.LoadLevel ("MapScene");
 		} 
 		else {
