@@ -28,12 +28,7 @@ public class Tutorial : MonoBehaviour {
 	}
 	
 	void Start(){
-		if (gC.persistence.currentLevel == 1) {
-			currentState = TutorialStates.State.Commence;
-		}
-		else {
-			currentState = TutorialStates.State.Off;
-		}
+		currentState = gC.persistence.currentState;
 		
 		bStartedDragCoroutine = false;
 		dragPercent = 0;
@@ -67,6 +62,7 @@ public class Tutorial : MonoBehaviour {
 			currentState = State.DiseaseBasicSpawn;
 		} else if (currentState == State.WaitForLevelThree && gC.persistence.currentLevel == 3) {
 		}
+		gC.persistence.currentState = currentState;
 	}
 	void OnGUI(){
 		switch (currentState) {
@@ -176,7 +172,7 @@ public class Tutorial : MonoBehaviour {
 		if (Input.GetKeyDown (KeyCode.Space)) {
 			currentState = TutorialStates.State.Selection;
 		}
-		GUI.TextArea (new Rect (Screen.width/2 - 125, Screen.height/2 -50, 250, 150), "The tutorial starts out with the game paused. Unpause the game by hitting the space key. Once unpaused, the platelet cells will begin construction. Their progress will be displayed in the bottom left corner along the grey bar with x4 at the top of it. Unpaused the game and wait for the three platelet cells to be created.", tutorialMessageStyle);
+		GUI.TextArea (new Rect (Screen.width/2 - 125, Screen.height/2 -50, 250, 150), "The tutorial starts out with the game paused. Unpause the game by hitting the space key. Once unpaused, the platelet cells will begin construction. Their progress will be displayed in the bottom left corner along the grey bar with x4 at the top of it. Unpause the game and wait for the three platelet cells to be created.", tutorialMessageStyle);
 	}
 	
 	void DoSelection(){

@@ -7,6 +7,7 @@ public class Persistence : MonoBehaviour {
 	public static Persistence i;
 	public  bool isTutorial;
 
+	public TutorialStates.State currentState = TutorialStates.State.Commence;
 		
 	void Awake () {
 		if(!i) {
