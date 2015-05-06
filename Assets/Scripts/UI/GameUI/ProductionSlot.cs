@@ -33,6 +33,7 @@ public class ProductionSlot : MonoBehaviour {
 		if(timeRemaining <= 0) {
 			producing = false;
 			spriteRenderer.sprite = NOT_PRODUCING_IMAGE;
+			spriteRenderer.color = Color.white;
 
 			if (productionType == ActionBarButton.ButtonType.WhiteBloodCellGreen) {
 				gameControl.SpawnWhiteBloodCell(WhiteBloodCellType.GREEN);
@@ -57,11 +58,12 @@ public class ProductionSlot : MonoBehaviour {
 		}
 	}
 
-	public void Produce(float time, Sprite image, ActionBarButton.ButtonType type) {
+	public void Produce(float time, Sprite image, Color col, ActionBarButton.ButtonType type) {
 		producing = true;
 		timeRemaining = time;
 		totalTime = time;
 		spriteRenderer.sprite = image;
+		spriteRenderer.color = col;
 		productionType = type;
 	}
 }
