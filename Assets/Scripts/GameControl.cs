@@ -28,8 +28,6 @@ public class GameControl : MonoBehaviour {
 	public Texture2D energyBarFull;
 	public Texture2D barEmpty;
 
-	public AudioClip backGroundMusic = null;
-
 	public int numDiseaseCells;
 	public int numRBCs = 15;
 	public int whiteBloodProduction = 0;
@@ -50,6 +48,9 @@ public class GameControl : MonoBehaviour {
 	public bool isSelected = false;
 	public bool showMenu = false;
 	public bool firstMouse = false;
+
+	public AudioClip loseSound = null;
+	public AudioClip winSound = null;
 
 	public Tutorial tutorial;
 	public RandomEventManager rngManager;
@@ -118,10 +119,15 @@ public class GameControl : MonoBehaviour {
 
 		background.sprite = backgroundImages[persistence.currentLevel-1];
 
-		if (backGroundMusic) {
+		if (winSound) {
 			AudioSource temp = gameObject.AddComponent<AudioSource> ();
-			temp.clip = backGroundMusic;
-			temp.Play();
+			temp.clip = winSound;
+			//temp.Play();
+		}
+		if (loseSound) {
+			AudioSource temp = gameObject.AddComponent<AudioSource> ();
+			temp.clip = loseSound;
+			//temp.Play();
 		}
 
 		//GameObject gameUI = (GameObject) Instantiate(Resources.Load("GameUI"), Vector3.zero, Quaternion.identity);
