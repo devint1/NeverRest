@@ -485,6 +485,7 @@ public class GameControl : MonoBehaviour {
 		winText.fontSize = 100;
 		yield return new WaitForSeconds(5);
 		winSound.Play();
+		persistence.justWon = true;
 		if (persistence.currentLevel < 5) {
 			persistence.currentLevel++;
 			Application.LoadLevel ("MapScene");
@@ -508,6 +509,7 @@ public class GameControl : MonoBehaviour {
 		winText.alignment = TextAlignment.Center;
 		winText.fontSize = 100;
 		loseSound.Play ();
+		persistence.justWon = false;
 		yield return new WaitForSeconds(5);
 		Application.LoadLevel("MapScene");
 	}

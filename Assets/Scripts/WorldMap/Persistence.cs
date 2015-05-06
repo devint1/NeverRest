@@ -3,6 +3,7 @@ using System.Collections;
 
 public class Persistence : MonoBehaviour {
 	public int currentLevel = 1;
+	public bool justWon = false;
 
 	public AudioSource backGroundMusic;
 
