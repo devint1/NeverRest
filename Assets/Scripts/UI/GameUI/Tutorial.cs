@@ -97,7 +97,7 @@ public class Tutorial : MonoBehaviour {
 			break;
 		case TutorialStates.State.Move:
 			GUI.TextArea (new Rect (Screen.width/2.4f, Screen.height/1.8f, Screen.width/6f, Screen.height/6f), "Right click on a part of the body to move the selected cells. Right click the stomach to send the platelet cells there.", tutorialMessageStyle);
-			if(gC.firstMouse) {
+			if(gC.usedMouse) {
 				currentState = TutorialStates.State.Unpause;
 			}
 			break;

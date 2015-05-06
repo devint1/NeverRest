@@ -49,6 +49,7 @@ public class GameControl : MonoBehaviour {
 	public bool isSelected = false;
 	public bool showMenu = false;
 	public bool firstMouse = false;
+	public bool usedMouse = false;
 
 	public AudioSource loseSound = null;
 	public AudioSource winSound = null;
@@ -183,7 +184,6 @@ public class GameControl : MonoBehaviour {
 						hit.collider.gameObject.GetComponent<Platelets> ().Select();
 					}
 				}
-				return;
 			}
 			else if (firstMouse && ((Time.time - doubleClickTimer) <.35f)){
 				RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition),Vector2.zero);
@@ -299,6 +299,9 @@ public class GameControl : MonoBehaviour {
 			mousePositionStart.x = 0;
 			mousePositionStart.y = 0;
 
+		}
+		if (Input.GetMouseButton (1) && !usedMouse) {
+			usedMouse = true;
 		}
 	}
 
