@@ -475,6 +475,7 @@ public class GameControl : MonoBehaviour {
 		if (gameOver) {
 			yield break;
 		}
+		winSound.Play();
 		gameOver = true;
 		GameObject winTextObj = new GameObject("WinText");
 		winTextObj.transform.position = new Vector3(0.465f, 0.561f, 1f);
@@ -483,8 +484,7 @@ public class GameControl : MonoBehaviour {
 		winText.anchor = TextAnchor.MiddleCenter;
 		winText.alignment = TextAlignment.Center;
 		winText.fontSize = 100;
-		yield return new WaitForSeconds(5);
-		winSound.Play();
+		yield return new WaitForSeconds(2);
 		if (persistence.currentLevel < 5) {
 			persistence.currentLevel++;
 			Application.LoadLevel ("MapScene");
