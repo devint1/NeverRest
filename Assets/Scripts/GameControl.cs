@@ -171,13 +171,23 @@ public class GameControl : MonoBehaviour {
 	void MouseSelection(){
 		if (Input.GetMouseButtonUp (0)) {
 			//Debug.Log("left click ");
-			if (!click ){
-				click =true;
+			if (!firstMouse ){
+				firstMouse =true;
 				doubleClickTimer = Time.time;
-				//Debug.Log(" set time "+ doubleClickTimer);
-				return;
+
+				Debug.Log(" first click ");
+				RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition),Vector2.zero);
+				if(hit.collider){
+					if(hit.collider.tag =="WhiteBloodCell"){
+						hit.collider.gameObject.GetComponent<WhiteBloodCell>().Select();
+					}
+					else if(hit.collider.tag =="Platelet"){
+						hit.collider.gameObject.GetComponent<Platelets>().Select();
+					}
+						return;
+				}
 			}
-			else if (click && ((Time.time - doubleClickTimer) <.35f)){
+			else if (firstMouse && ((Time.time - doubleClickTimer) <.35f)){
 				RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition),Vector2.zero);
 				if(hit.collider != null){
 					//Debug.Log ("hit " + hit.collider.tag);
@@ -188,11 +198,13 @@ public class GameControl : MonoBehaviour {
 								wbc.Select();
 							}
 							else{
+								//Debug.Log (" de select plat");
 								wbc.DeSelect();
 							}
 						}
 						foreach (Platelets plat in platelets){
 							plat.DeSelect();
+							//Debug.Log (" de select plat");
 						}
 					}
 					else if(hit.collider.tag == "Platelet"){
@@ -206,12 +218,14 @@ public class GameControl : MonoBehaviour {
 							}
 							else {
 								plat.DeSelect();
+								//Debug.Log (" de select plat");
 							}
 						}
 					}
 					else{
 						foreach (Platelets plat in platelets){
 							plat.DeSelect();
+							///Debug.Log (" de select plat");
 						}
 						foreach (WhiteBloodCell wbc in whiteBloodCells){
 							wbc.DeSelect();
@@ -220,9 +234,9 @@ public class GameControl : MonoBehaviour {
 					}
 				}
 			}
-			else if (click && ((Time.time - doubleClickTimer) >=.35f)){
-				//Debug.Log("double click " + doubleClickTimer);
-				click =false; 
+			else if (firstMouse&& ((Time.time - doubleClickTimer) >=.35f)){
+				Debug.Log("double click " + doubleClickTimer);
+				firstMouse =false; 
 			}
 
 		}
@@ -232,7 +246,8 @@ public class GameControl : MonoBehaviour {
 
 		} else if (mouseDown && Input.GetMouseButton (0)) {
 			 
-			if(selected != null) {
+			if(selected != null ) {
+				//Debug.Log( "in selected " + click);
 				foreach(GameObject obj in selected) {
 					// FIXME: Find out why nulls are still in selected
 					if(!obj) {
@@ -243,6 +258,7 @@ public class GameControl : MonoBehaviour {
 					}
 					else if(obj.tag == "Platelet") {
 						obj.GetComponent<Platelets> ().DeSelect();
+						Debug.Log("deselect in selected "); 
 					}
 				}
 				selected.Clear();
@@ -288,9 +304,7 @@ public class GameControl : MonoBehaviour {
 			mousePositionStart.y = 0;
 
 		}
-		if (Input.GetMouseButton (1) && !firstMouse) {
-			firstMouse = true;
-		}
+
 	}
 
 	void OnGUI() {
@@ -307,9 +321,7 @@ public class GameControl : MonoBehaviour {
 
 			} 
 		}
-		if (click && (Time.time - doubleClickTimer) > .35) {
-			//click = false ;
-		}
+
 		rbcSpeed = (heartSlider.value);//(int)(heartSlider.value * 9.0f) + 1;
 		//Debug.Log ("Slider val = " + rbcSpeed);
 
