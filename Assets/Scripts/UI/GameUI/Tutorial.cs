@@ -219,6 +219,10 @@ public class Tutorial : MonoBehaviour {
 		}
 		if (GUI.Button(new Rect(50, 50, 50, 20), "No")) {
 			currentState = TutorialStates.State.Off;
+			if(gC.IsPaused())
+			{
+				gC.TogglePauseGame();
+			}
 		}
 	}
 }
