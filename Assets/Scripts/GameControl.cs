@@ -484,12 +484,13 @@ public class GameControl : MonoBehaviour {
 		winText.alignment = TextAlignment.Center;
 		winText.fontSize = 100;
 		yield return new WaitForSeconds(5);
-		persistence.currentLevel++;
-		//winSound.Play ();
-		if (persistence.currentLevel < 6) {
+		winSound.Play();
+		if (persistence.currentLevel < 5) {
+			persistence.currentLevel++;
 			Application.LoadLevel ("MapScene");
 		} 
 		else {
+			Destroy(persistence.gameObject);
 			Application.LoadLevel ("WinScene");
 		}
 	}
