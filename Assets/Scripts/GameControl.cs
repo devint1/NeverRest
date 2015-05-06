@@ -24,10 +24,11 @@ public class GameControl : MonoBehaviour {
 	public GameObject plateletPrefab;
 	public GameObject redBloodCellPrefab;
 	public GameObject actionBarPrefab;
-	public GameObject pausePrefab;
 
 	public Texture2D energyBarFull;
 	public Texture2D barEmpty;
+
+	public AudioClip backGroundMusic = null;
 
 	public int numDiseaseCells;
 	public int numRBCs = 15;
@@ -50,9 +51,6 @@ public class GameControl : MonoBehaviour {
 	public bool showMenu = false;
 	public bool firstMouse = false;
 
-	public AudioSource loseSound = null;
-	public AudioSource winSound = null;
-
 	public Tutorial tutorial;
 	public RandomEventManager rngManager;
 	public Persistence persistence;
@@ -65,9 +63,6 @@ public class GameControl : MonoBehaviour {
 	public Sprite bg1;
 	public Sprite bg2;
 	public Sprite bg3;
-	public Sprite bg4;
-
-	public RuntimeAnimatorController tcellAnimation;
 
 	private bool isTutorial;
 	// int mousePressStart = -1;
@@ -108,25 +103,26 @@ public class GameControl : MonoBehaviour {
 			Destroy(GameObject.Find("whitebloodcell_Button_Teal"));
 			Destroy(GameObject.Find("whitebloodcell_Button_Finder"));
 		}
-		
-		if (persistence.currentLevel == 2) {
-			levelCompletion.sprite = bg2;
-		}
 
 		if (persistence.currentLevel == 3) {
 			Destroy (GameObject.Find ("whitebloodcell_Button_Finder"));
-			levelCompletion.sprite = bg3;
+		}
+
+		if (persistence.currentLevel == 2 || persistence.currentLevel == 3) {
+			levelCompletion.sprite = bg2;
 		}
 		
 		if (persistence.currentLevel >= 4) {
 			levelCompletion.sprite = bg3;
 		}
-		
-		if (persistence.currentLevel == 5) {
-			levelCompletion.sprite = bg4;
-		}
 
 		background.sprite = backgroundImages[persistence.currentLevel-1];
+
+		if (backGroundMusic) {
+			AudioSource temp = gameObject.AddComponent<AudioSource> ();
+			temp.clip = backGroundMusic;
+			temp.Play();
+		}
 
 		//GameObject gameUI = (GameObject) Instantiate(Resources.Load("GameUI"), Vector3.zero, Quaternion.identity);
 		//gameUI.GetComponent<GameUI>().gC = this;
@@ -156,15 +152,14 @@ public class GameControl : MonoBehaviour {
 	}
 
 	public void TogglePauseGame(){
+		if (isPaused == false) {
+			//Time.timeScale = 0;
+		}
+		else{
+			//Time.timeScale = 1;
+		}
 		isPaused = !isPaused;
-		if (isPaused) {
-			GameObject.Instantiate(pausePrefab);
-		}
-		else {
-			foreach(GameObject obj in GameObject.FindGameObjectsWithTag("Pause")) {
-				Destroy(obj);
-			}
-		}
+
 	}
 
 	//Only call this function from on GUI
@@ -175,7 +170,7 @@ public class GameControl : MonoBehaviour {
 				firstMouse =true;
 				doubleClickTimer = Time.time;
 
-				Debug.Log(" first click ");
+				//Debug.Log(" first click ");
 				RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition),Vector2.zero);
 				if(hit.collider){
 					if(hit.collider.tag =="WhiteBloodCell"){
@@ -235,7 +230,7 @@ public class GameControl : MonoBehaviour {
 				}
 			}
 			else if (firstMouse&& ((Time.time - doubleClickTimer) >=.35f)){
-				Debug.Log("double click " + doubleClickTimer);
+				//Debug.Log("double click " + doubleClickTimer);
 				firstMouse =false; 
 			}
 
@@ -320,6 +315,8 @@ public class GameControl : MonoBehaviour {
 				Application.LoadLevel ("MenuScene");
 
 			} 
+		} else if (isPaused) {
+			GUI.TextArea( new Rect( 400, 400, 100, 50), "PAUSED" ); 
 		}
 
 		rbcSpeed = (heartSlider.value);//(int)(heartSlider.value * 9.0f) + 1;
@@ -413,6 +410,16 @@ public class GameControl : MonoBehaviour {
 		if (IsPaused()){
 			return;
 		}
+		
+		if (Input.GetKeyDown (KeyCode.B)) {
+			toggleRBC = !toggleRBC;
+			Debug.Log("KeyDown!");
+			changed = false;
+		}
+		if (Input.GetKeyDown (KeyCode.V)) {
+			toggleWBC = !toggleWBC;
+			wbcChanged = false;
+		}
 
 		// Check lose condition
 		if (checkLoseCondition () || Input.GetKeyDown (KeyCode.F10)) {
@@ -454,11 +461,6 @@ public class GameControl : MonoBehaviour {
 		newWhiteScript.currentBlock = whiteBloodSpawnPoint;
 		newWhiteScript.destination = whiteBloodSpawnPoint.GetRandomPoint ();
 		newWhiteScript.gameControl = this;
-
-		if (type == WhiteBloodCellType.FINDER) {
-			Animator anim = newWhite.GetComponent<Animator> ();
-			anim.runtimeAnimatorController = tcellAnimation;
-		}
 		
 		if (toggleWBC)
 			newWhiteScript.GetComponent<Renderer>().enabled = false;
@@ -496,15 +498,8 @@ public class GameControl : MonoBehaviour {
 		winText.alignment = TextAlignment.Center;
 		winText.fontSize = 100;
 		yield return new WaitForSeconds(5);
-		winSound.Play();
-		if (persistence.currentLevel < 5) {
-			persistence.currentLevel++;
-			Application.LoadLevel ("MapScene");
-		} 
-		else {
-			Destroy(persistence.gameObject);
-			Application.LoadLevel ("WinScene");
-		}
+		persistence.currentLevel++;
+		Application.LoadLevel("MapScene");
 	}
 
 	IEnumerator Lose() {
@@ -519,7 +514,6 @@ public class GameControl : MonoBehaviour {
 		winText.anchor = TextAnchor.MiddleCenter;
 		winText.alignment = TextAlignment.Center;
 		winText.fontSize = 100;
-		loseSound.Play ();
 		yield return new WaitForSeconds(5);
 		Application.LoadLevel("MapScene");
 	}
