@@ -59,7 +59,12 @@ public class Tutorial : MonoBehaviour {
 	
 	void Update(){
 		if (currentState == State.WaitForLevelTwo && gC.persistence.currentLevel == 2) {
-			currentState = State.DiseaseBasicSpawn;
+			currentState = State.WBCProduction;
+			gC.rngManager.SpawnWound( GameObject.Find( "/Body/Stomach" ).GetComponent<Block>());
+			gC.rngManager.SpawnDiseaseInfection( GameObject.Find( "/Body/Stomach" ).GetComponent<Block>(), 3);
+			if( !gC.IsPaused() ){
+				gC.TogglePauseGame();
+			}
 		} else if (currentState == State.WaitForLevelThree && gC.persistence.currentLevel == 3) {
 		}
 		gC.persistence.currentState = currentState;
@@ -126,8 +131,8 @@ public class Tutorial : MonoBehaviour {
 			}
 			break;
 		case TutorialStates.State.WBCProduction:
-			GUI.TextArea (new Rect (125, Screen.height - 290, 250, 150), "B Cells, a type of white blood cell, are used to combat diseases as they enter the body.\nTo create new B Cells, either press the B Cell button or press the 'Q' key.\n\nCreate a B-Cell now.", tutorialMessageStyle);
-			ActionBarButton wb = gC.actionBarPrefab.transform.Find("whitebloodcell_Button").GetComponent<ActionBarButton>();
+			GUI.TextArea (new Rect (125, Screen.height - 290, 250, 150), "Wounds now cause diseases to spawn! You curretly have a wound on your stomach! B Cells, a type of white blood cell, they are used to combat diseases as they enter the body.\nTo create new B Cells, either press the B Cell button or press the 'Q' key.\n\nCreate a B-Cell now.", tutorialMessageStyle);
+			ActionBarButton wb = gC.actionBarPrefab.transform.Find("whitebloodcell_Button_Green").GetComponent<ActionBarButton>();
 			if(counter < 30) {
 				wb.GetComponent<Renderer>().material.color = Color.yellow;
 			}
@@ -146,9 +151,6 @@ public class Tutorial : MonoBehaviour {
 			break;
 		case TutorialStates.State.Commence:
 			GUI.Window(0, new Rect(Screen.width/2 - 125, Screen.height/2 -50, 250, 75), CommenceDialog, "Tutorial", tutorialMessageStyle);
-			break;
-		case TutorialStates.State.DiseaseBasicSpawn:
-			GUI.TextArea (new Rect (Screen.width/2 - 125, Screen.height/2, 250, 200), "You have diseases in your stomach!", tutorialMessageStyle);
 			break;
 		}
 	}
