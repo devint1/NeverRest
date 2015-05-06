@@ -24,6 +24,7 @@ public class GameControl : MonoBehaviour {
 	public GameObject plateletPrefab;
 	public GameObject redBloodCellPrefab;
 	public GameObject actionBarPrefab;
+	public GameObject pausePrefab;
 
 	public Texture2D energyBarFull;
 	public Texture2D barEmpty;
@@ -48,6 +49,7 @@ public class GameControl : MonoBehaviour {
 	public bool isSelected = false;
 	public bool showMenu = false;
 	public bool firstMouse = false;
+	public bool usedMouse = false;
 
 	public AudioSource loseSound = null;
 	public AudioSource winSound = null;
@@ -81,7 +83,6 @@ public class GameControl : MonoBehaviour {
 	bool gameOver = false;
 	bool upgradeMenuOpen = false;
 	float doubleClickTimer = 0;
-	bool click = false;
 	bool isPaused = false;
 
 	float levelProgressSpeed = 1.0f;
@@ -155,27 +156,36 @@ public class GameControl : MonoBehaviour {
 	}
 
 	public void TogglePauseGame(){
-		if (isPaused == false) {
-			//Time.timeScale = 0;
-		}
-		else{
-			//Time.timeScale = 1;
-		}
 		isPaused = !isPaused;
-
+		if (isPaused) {
+			GameObject.Instantiate(pausePrefab);
+		}
+		else {
+			foreach(GameObject obj in GameObject.FindGameObjectsWithTag("Pause")) {
+				Destroy(obj);
+			}
+		}
 	}
 
 	//Only call this function from on GUI
 	void MouseSelection(){
 		if (Input.GetMouseButtonUp (0)) {
 			//Debug.Log("left click ");
-			if (!click ){
-				click =true;
+			if (!firstMouse ){
+				firstMouse =true;
 				doubleClickTimer = Time.time;
 				//Debug.Log(" set time "+ doubleClickTimer);
-				return;
+				RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition),Vector2.zero);
+				if(hit.collider != null){
+					if(hit.collider.tag == "WhiteBloodCell"){
+						hit.collider.gameObject.GetComponent<WhiteBloodCell>().Select();
+					}
+					else if(hit.collider.tag == "Platelet"){
+						hit.collider.gameObject.GetComponent<Platelets> ().Select();
+					}
+				}
 			}
-			else if (click && ((Time.time - doubleClickTimer) <.35f)){
+			else if (firstMouse && ((Time.time - doubleClickTimer) <.35f)){
 				RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition),Vector2.zero);
 				if(hit.collider != null){
 					//Debug.Log ("hit " + hit.collider.tag);
@@ -208,19 +218,23 @@ public class GameControl : MonoBehaviour {
 						}
 					}
 					else{
-						foreach (Platelets plat in platelets){
-							plat.DeSelect();
+						if (platelets != null){
+							foreach (Platelets plat in platelets){
+								plat.DeSelect();
+								}
 						}
-						foreach (WhiteBloodCell wbc in whiteBloodCells){
-							wbc.DeSelect();
+						if (whiteBloodCells != null){
+							foreach (WhiteBloodCell wbc in whiteBloodCells){
+								wbc.DeSelect();
+							}
 						}
 						selected.Clear();
 					}
 				}
 			}
-			else if (click && ((Time.time - doubleClickTimer) >=.35f)){
+			else if (firstMouse && ((Time.time - doubleClickTimer) >=.35f)){
 				//Debug.Log("double click " + doubleClickTimer);
-				click =false; 
+				firstMouse =false; 
 			}
 
 		}
@@ -286,8 +300,8 @@ public class GameControl : MonoBehaviour {
 			mousePositionStart.y = 0;
 
 		}
-		if (Input.GetMouseButton (1) && !firstMouse) {
-			firstMouse = true;
+		if (Input.GetMouseButton (1) && !usedMouse) {
+			usedMouse = true;
 		}
 	}
 
@@ -304,12 +318,8 @@ public class GameControl : MonoBehaviour {
 				Application.LoadLevel ("MenuScene");
 
 			} 
-		} else if (isPaused) {
-			GUI.TextArea( new Rect( 400, 400, 100, 50), "PAUSED" ); 
 		}
-		if (click && (Time.time - doubleClickTimer) > .35) {
-			//click = false ;
-		}
+
 		rbcSpeed = (heartSlider.value);//(int)(heartSlider.value * 9.0f) + 1;
 		//Debug.Log ("Slider val = " + rbcSpeed);
 
@@ -475,6 +485,7 @@ public class GameControl : MonoBehaviour {
 		if (gameOver) {
 			yield break;
 		}
+		winSound.Play();
 		gameOver = true;
 		GameObject winTextObj = new GameObject("WinText");
 		winTextObj.transform.position = new Vector3(0.465f, 0.561f, 1f);

@@ -154,7 +154,7 @@ public class RandomEventManager : MonoBehaviour {
 	void RaccoonAttack (Block location) {
 		Vector3 spawnPoint = location.GetRandomPoint();
 		GameObject raccoon = (GameObject)Instantiate(raccoonPrefab, spawnPoint, Quaternion.identity);
-		int numAttacks = Random.Range(1, 11);;
+		int numAttacks = Random.Range(3, 7);
 		StartCoroutine(AnimateRaccoon(raccoon, numAttacks));
 	}
 
@@ -172,10 +172,10 @@ public class RandomEventManager : MonoBehaviour {
 			SpawnWound(randomBodyPart);
 			SpawnDiseaseInfection(randomBodyPart, 5);
 		}
-		float alpha = raccoon.renderer.material.color.a;
+		float alpha = raccoon.GetComponent<Renderer>().material.color.a;
 		for (float t = 0.0f; t < time; t += Time.deltaTime / time) {
 			Color newColor = new Color(1, 1, 1, Mathf.Lerp(alpha, 0, t));
-			raccoon.renderer.material.color = newColor;
+			raccoon.GetComponent<Renderer>().material.color = newColor;
 			yield return null;
 		}
 		Destroy(raccoon);

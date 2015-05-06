@@ -97,7 +97,7 @@ public class Tutorial : MonoBehaviour {
 			break;
 		case TutorialStates.State.Move:
 			GUI.TextArea (new Rect (Screen.width/2.4f, Screen.height/1.8f, Screen.width/6f, Screen.height/6f), "Right click on a part of the body to move the selected cells. Right click the stomach to send the platelet cells there.", tutorialMessageStyle);
-			if(gC.firstMouse) {
+			if(gC.usedMouse) {
 				currentState = TutorialStates.State.Unpause;
 			}
 			break;
@@ -123,14 +123,14 @@ public class Tutorial : MonoBehaviour {
 			}
 			counter++;
 			GUI.TextArea (new Rect (Screen.width/2 - 125, Screen.height/2, 250, 200), "You have a wound on your stomach! The first step to fixing this is creating platelet cells. A platelet cell can be made by clicking the flashing icon in the bottom left or by hitting 'Q'. Notice that each one created costs energy (which is found in the upper left hand corner). This bar will slowly refill over time. Create three platelet cells by hitting Q three times.", tutorialMessageStyle);
-			if (gC.plateletProduction > 2){
+			if (gC.plateletProduction > 1){
 				ab.GetComponent<Renderer>().material.color = Color.white;
 				currentState = TutorialStates.State.Pause;
 				counter = 0;
 			}
 			break;
 		case TutorialStates.State.WBCProduction:
-			GUI.TextArea (new Rect (125, Screen.height - 290, 250, 150), "Wounds now cause diseases to spawn! You curretly have a wound on your stomach! B Cells, a type of white blood cell, they are used to combat diseases as they enter the body.\nTo create new B Cells, either press the B Cell button or press the 'W' key.\n\nCreate a B-Cell now.", tutorialMessageStyle);
+			GUI.TextArea (new Rect (125, Screen.height - 290, 250, 150), "Wounds now cause diseases to spawn! You currently have a wound on your stomach! B Cells, a type of white blood cell, are used to combat diseases as they enter the body.\nTo create new B Cells, either press the B Cell button or press the 'W' key.\n\nCreate a B-Cell now.", tutorialMessageStyle);
 			ActionBarButton wb = gC.actionBarPrefab.transform.Find("whitebloodcell_Button_Green").GetComponent<ActionBarButton>();
 			if(counter < 30) {
 				wb.GetComponent<Renderer>().material.color = Color.yellow;
@@ -156,7 +156,15 @@ public class Tutorial : MonoBehaviour {
 				if (!gC.IsPaused()){
 					gC.TogglePauseGame();
 				}
-				GUI.Window(0, new Rect (Screen.width/2 - 125, Screen.height/2 -50, 250, 180), DiseaseVariationsDialog, "Diseases can be of different types. Diferent white blood cell types combat different diseases. There are now different types of white blood cells you can build. These can be build by pressig W,E, or R. For a white blood cell to combat a disease they must match colors.", tutorialMessageStyle);
+				GUI.Window(0, new Rect (Screen.width/2 - 125, Screen.height/2 -50, 250, 180), DiseaseVariationsDialog, "Diseases can be of different types. Differrent white blood cell types combat different diseases. There are now different types of white blood cells you can build. These can be build by pressing W,E, or R. For a white blood cell to combat a disease they must match colors.", tutorialMessageStyle);
+			}
+			break;
+		case TutorialStates.State.WaitForLevelFour:
+			if (gC.persistence.currentLevel == 4){
+				if (!gC.IsPaused()){
+					gC.TogglePauseGame();
+				}
+				GUI.Window(0, new Rect (Screen.width/2 - 125, Screen.height/2 -50, 250, 180), DiseaseIdentificationDialog, "Diseases are now not automatically identified. You must identify diseases by using finder-T cells. To create a finder T cell use the 'T' key. When a disease comes in contact with a T-Cell, it will be indetified. After that you can combat it", tutorialMessageStyle);
 			}
 			break;
 		}
@@ -215,9 +223,10 @@ public class Tutorial : MonoBehaviour {
 	}
 	
 	void CommenceDialog(int windowID) {
-		//gC.TogglePauseGame ();
 		GUI.TextArea (new Rect (0, 20, 250, 25), "Commence the tutorial?", tutorialMessageStyle);
-		gC.TogglePauseGame ();
+		if (!gC.IsPaused ()) {
+			gC.TogglePauseGame ();
+		}
 		if (GUI.Button(new Rect(150, 50, 50, 20), "Yes")) {
 			currentState = TutorialStates.State.PlateProduction;
 			gC.rngManager.SpawnWound( GameObject.Find( "/Body/Stomach" ).GetComponent<Block>());
@@ -228,12 +237,21 @@ public class Tutorial : MonoBehaviour {
 		}
 		if (GUI.Button(new Rect(50, 50, 50, 20), "No")) {
 			currentState = TutorialStates.State.Off;
+			if (gC.IsPaused()){
+				gC.TogglePauseGame ();
+			}
 		}
 	}
 
 	void DiseaseVariationsDialog(int windowId){
 		if (GUI.Button (new Rect (250 / 2 - 25, 155, 50, 20), "Ok")) {
 			currentState = TutorialStates.State.WaitForLevelFour;
+		}
+	}
+
+	void DiseaseIdentificationDialog(int windowId){
+		if (GUI.Button (new Rect (250 / 2 - 25, 155, 50, 20), "Ok")) {
+			currentState = TutorialStates.State.Done;
 		}
 	}
 }
