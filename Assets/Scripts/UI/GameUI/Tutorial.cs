@@ -159,6 +159,14 @@ public class Tutorial : MonoBehaviour {
 				GUI.Window(0, new Rect (Screen.width/2 - 125, Screen.height/2 -50, 250, 180), DiseaseVariationsDialog, "Diseases can be of different types. Diferent white blood cell types combat different diseases. There are now different types of white blood cells you can build. These can be build by pressig W,E, or R. For a white blood cell to combat a disease they must match colors.", tutorialMessageStyle);
 			}
 			break;
+		case TutorialStates.State.WaitForLevelFour:
+			if (gC.persistence.currentLevel == 4){
+				if (!gC.IsPaused()){
+					gC.TogglePauseGame();
+				}
+				GUI.Window(0, new Rect (Screen.width/2 - 125, Screen.height/2 -50, 250, 180), DiseaseIdentificationDialog, "Diseases are now not automatically identified. You must identify diseases by using finder-T cells. To create a finder T cell use the 'T' key. When a disease comes in contact with a T-Cell, it will be indetified. After that you can combat it", tutorialMessageStyle);
+			}
+			break;
 		}
 	}
 	
@@ -238,6 +246,12 @@ public class Tutorial : MonoBehaviour {
 	void DiseaseVariationsDialog(int windowId){
 		if (GUI.Button (new Rect (250 / 2 - 25, 155, 50, 20), "Ok")) {
 			currentState = TutorialStates.State.WaitForLevelFour;
+		}
+	}
+
+	void DiseaseIdentificationDialog(int windowId){
+		if (GUI.Button (new Rect (250 / 2 - 25, 155, 50, 20), "Ok")) {
+			currentState = TutorialStates.State.Done;
 		}
 	}
 }
