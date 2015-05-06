@@ -36,3 +36,4 @@ ehthumbs.db
 Assets/placeholderforgit.meta
 *.exe
 ProjectSettings/TagManager.asset
+Assets/Scripts/UI/GameUI/Tutorial.cs

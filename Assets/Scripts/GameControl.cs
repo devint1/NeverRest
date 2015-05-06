@@ -218,11 +218,15 @@ public class GameControl : MonoBehaviour {
 						}
 					}
 					else{
-						foreach (Platelets plat in platelets){
-							plat.DeSelect();
+						if (platelets != null){
+							foreach (Platelets plat in platelets){
+								plat.DeSelect();
+								}
 						}
-						foreach (WhiteBloodCell wbc in whiteBloodCells){
-							wbc.DeSelect();
+						if (whiteBloodCells != null){
+							foreach (WhiteBloodCell wbc in whiteBloodCells){
+								wbc.DeSelect();
+							}
 						}
 						selected.Clear();
 					}
