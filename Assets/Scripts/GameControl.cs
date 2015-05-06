@@ -24,6 +24,7 @@ public class GameControl : MonoBehaviour {
 	public GameObject plateletPrefab;
 	public GameObject redBloodCellPrefab;
 	public GameObject actionBarPrefab;
+	public GameObject pausePrefab;
 
 	public Texture2D energyBarFull;
 	public Texture2D barEmpty;
@@ -155,14 +156,15 @@ public class GameControl : MonoBehaviour {
 	}
 
 	public void TogglePauseGame(){
-		if (isPaused == false) {
-			//Time.timeScale = 0;
-		}
-		else{
-			//Time.timeScale = 1;
-		}
 		isPaused = !isPaused;
-
+		if (isPaused) {
+			GameObject.Instantiate(pausePrefab);
+		}
+		else {
+			foreach(GameObject obj in GameObject.FindGameObjectsWithTag("Pause")) {
+				Destroy(obj);
+			}
+		}
 	}
 
 	//Only call this function from on GUI
@@ -304,8 +306,6 @@ public class GameControl : MonoBehaviour {
 				Application.LoadLevel ("MenuScene");
 
 			} 
-		} else if (isPaused) {
-			GUI.TextArea( new Rect( 400, 400, 100, 50), "PAUSED" ); 
 		}
 		if (click && (Time.time - doubleClickTimer) > .35) {
 			//click = false ;
