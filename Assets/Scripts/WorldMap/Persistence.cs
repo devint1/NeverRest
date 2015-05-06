@@ -4,7 +4,7 @@ using System.Collections;
 public class Persistence : MonoBehaviour {
 	public int currentLevel = 1;
 
-	public AudioClip backGroundMusic = null;
+	public AudioSource backGroundMusic;
 
 	public static Persistence i;
 	public  bool isTutorial;
@@ -17,9 +17,7 @@ public class Persistence : MonoBehaviour {
 			DontDestroyOnLoad(gameObject);
 
 			if (backGroundMusic) {
-				AudioSource temp = gameObject.AddComponent<AudioSource> ();
-				temp.clip = backGroundMusic;
-				temp.Play();
+				backGroundMusic.Play();
 			}
 		}
 		else {
