@@ -13,6 +13,7 @@ public class ActionBarButton : MonoBehaviour {
 	private const float PLAT_BASE_COST = 10f; 
 	private const float WBC_DEFAULT_BUILDTIME = 15.0f;
 	private const float PLAT_DEFAULT_BUILDTIME = 15.0f;
+	private const float TCELL_BASE_COST = 1.0f;
 
 	public Sprite PRODUCTION_SPRITE;
 
@@ -46,7 +47,7 @@ public class ActionBarButton : MonoBehaviour {
 			else if(buttonType == ButtonType.WhiteBloodCellTeal)
 				GUI.TextArea(new Rect(Input.mousePosition.x+10,Screen.height-(Input.mousePosition.y+65),170,68), "White Blood Cell:\nNeutralizes Teal Bacteria\nHotkey: R\nBase Cost: " + WBC_BASE_COST + " Energy");
 			else if(buttonType == ButtonType.WhiteBloodCellFinder)
-				GUI.TextArea(new Rect(Input.mousePosition.x+10,Screen.height-(Input.mousePosition.y+65),170,68), "Helper T Cell:\nIdentifies Unknown Bacteria\nHotkey: T\nBase Cost: " + WBC_BASE_COST + " Energy");
+				GUI.TextArea(new Rect(Input.mousePosition.x+10,Screen.height-(Input.mousePosition.y+65),170,68), "Helper T Cell:\nIdentifies Unknown Bacteria\nHotkey: T\nBase Cost: " + TCELL_BASE_COST + " Energy");
 		}
 	}
 
@@ -68,7 +69,11 @@ public class ActionBarButton : MonoBehaviour {
 	}
 
 	void QueueWhiteBloodCell () {
-		productionQueue.QueueItem (WBC_DEFAULT_BUILDTIME, WBC_BASE_COST, PRODUCTION_SPRITE, buttonType);
+		if (buttonType == ButtonType.WhiteBloodCellFinder) {
+			productionQueue.QueueItem (WBC_DEFAULT_BUILDTIME, TCELL_BASE_COST, PRODUCTION_SPRITE, buttonType);
+		} else {
+			productionQueue.QueueItem (WBC_DEFAULT_BUILDTIME, WBC_BASE_COST, PRODUCTION_SPRITE, buttonType);
+		}
 	}
 
 	void QueuePlatelet () {
