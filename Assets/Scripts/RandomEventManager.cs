@@ -172,10 +172,10 @@ public class RandomEventManager : MonoBehaviour {
 			SpawnWound(randomBodyPart);
 			SpawnDiseaseInfection(randomBodyPart, 5);
 		}
-		float alpha = raccoon.GetComponent<Renderer>().material.color.a;
+		float alpha = raccoon.renderer.material.color.a;
 		for (float t = 0.0f; t < time; t += Time.deltaTime / time) {
 			Color newColor = new Color(1, 1, 1, Mathf.Lerp(alpha, 0, t));
-			raccoon.GetComponent<Renderer>().material.color = newColor;
+			raccoon.renderer.material.color = newColor;
 			yield return null;
 		}
 		Destroy(raccoon);
