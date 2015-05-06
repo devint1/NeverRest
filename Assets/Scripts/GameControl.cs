@@ -181,15 +181,12 @@ public class GameControl : MonoBehaviour {
 						}
 						foreach (Platelets plat in platelets){
 							plat.DeSelect();
-							
 						}
 					}
 					else if(hit.collider.tag == "Platelet"){
 						//Debug.Log(" click platelet");
 						foreach (WhiteBloodCell wbc in whiteBloodCells){
-							
 							wbc.DeSelect();
-							
 						}
 						foreach (Platelets plat in platelets){
 							if(plat.currentBlock == current_b){
@@ -202,21 +199,14 @@ public class GameControl : MonoBehaviour {
 					}
 					else{
 						foreach (Platelets plat in platelets){
-							
 							plat.DeSelect();
-							
 						}
 						foreach (WhiteBloodCell wbc in whiteBloodCells){
-							
 							wbc.DeSelect();
-							
 						}
 						selected.Clear();
 					}
-
-				
 				}
-
 			}
 			else if (click && ((Time.time - doubleClickTimer) >=.35f)){
 				//Debug.Log("double click " + doubleClickTimer);
@@ -286,9 +276,9 @@ public class GameControl : MonoBehaviour {
 			mousePositionStart.y = 0;
 
 		}
-
-	
-	 
+		if (Input.GetMouseButton (1) && !firstMouse) {
+			firstMouse = true;
+		}
 	}
 
 	void OnGUI() {
