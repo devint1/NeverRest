@@ -25,6 +25,8 @@ public class GameControl : MonoBehaviour {
 	public GameObject redBloodCellPrefab;
 	public GameObject actionBarPrefab;
 	public GameObject pausePrefab;
+	public GameObject winTextPrefab;
+	public GameObject loseTextPrefab;
 
 	public Texture2D energyBarFull;
 	public Texture2D barEmpty;
@@ -487,14 +489,8 @@ public class GameControl : MonoBehaviour {
 		}
 		winSound.Play();
 		gameOver = true;
-		GameObject winTextObj = new GameObject("WinText");
-		winTextObj.transform.position = new Vector3(0.465f, 0.561f, 1f);
-		GUIText winText = (GUIText)winTextObj.AddComponent(typeof(GUIText));
-		winText.text = "YOU WIN!!!";
-		winText.anchor = TextAnchor.MiddleCenter;
-		winText.alignment = TextAlignment.Center;
-		winText.fontSize = 100;
-		yield return new WaitForSeconds(5);
+		Instantiate (winTextPrefab, Vector3.zero, this.transform.rotation);
+		yield return new WaitForSeconds(4);
 		winSound.Play();
 		persistence.justWon = true;
 		if (persistence.currentLevel < 5) {
@@ -512,16 +508,10 @@ public class GameControl : MonoBehaviour {
 			yield break;
 		}
 		gameOver = true;
-		GameObject winTextObj = new GameObject("WinText");
-		winTextObj.transform.position = new Vector3(0.465f, 0.561f, 1f);
-		GUIText winText = (GUIText)winTextObj.AddComponent(typeof(GUIText));
-		winText.text = "YOU LOSE!!!";
-		winText.anchor = TextAnchor.MiddleCenter;
-		winText.alignment = TextAlignment.Center;
-		winText.fontSize = 100;
+		Instantiate (loseTextPrefab, Vector3.zero, this.transform.rotation);
 		loseSound.Play ();
 		persistence.justWon = false;
-		yield return new WaitForSeconds(5);
+		yield return new WaitForSeconds(4);
 		Application.LoadLevel("MapScene");
 	}
 

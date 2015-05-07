@@ -45,11 +45,11 @@ public class MapControl : MonoBehaviour {
 	}
 
 	void slowlyShowBootPrintInLevel(GameObject bootContainer) {
-		float i = ((p.currentLevel-2) * 3f) + 13f;
+		float i = ((p.currentLevel-2) * 2f) + 9f;
 		foreach (Transform child in bootContainer.transform)
 		{
 			i += 1f;
-			StartCoroutine (waitAndShowBoot ( i*0.15f, child.gameObject.GetComponent<SpriteRenderer>() ) );
+			StartCoroutine (waitAndShowBoot ( i*0.2f, child.gameObject.GetComponent<SpriteRenderer>() ) );
 		}
 	}
 
